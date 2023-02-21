@@ -70,9 +70,9 @@
         background-color: var(--text-primary);
         opacity: .89;
         width: 93.5%;
-        height: 70%;
+        height: 1.35em;
         margin-left: 3.5%;
-        margin-top: 1%;
+        margin-top: .4rem;
         animation: progress-bar 10s cubic-bezier(0,.55,.55,.27) .1s 1 alternate forwards;
     }
 </style>

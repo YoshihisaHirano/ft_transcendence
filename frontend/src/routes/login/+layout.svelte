@@ -4,9 +4,7 @@
     import '/src/styles/global.css'
 </script>
 
-<nav>
-	<a href="/">home</a>
-	<a href="/about">about</a>
-</nav>
-
+<svelte:head>
+    <title>FT_Transcendence | Login</title>
+</svelte:head>
 <slot/>

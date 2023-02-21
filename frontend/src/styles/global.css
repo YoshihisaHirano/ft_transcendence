@@ -43,9 +43,9 @@ h6 {
 }
 
 body {
-    background-color: var(--background-primary);
-    color: var(--text-primary);
-    font-family: 'Press Start 2P', cursive;
+	background-color: var(--background-primary);
+	color: var(--text-primary);
+	font-family: 'Press Start 2P', cursive;
 }
 
 .visually-hidden {
@@ -53,4 +53,17 @@ body {
 	width: 0;
 	height: 0;
 	opacity: 0;
+}
+
+.simple-shadow {
+	box-shadow: 2px 0 var(--text-primary), -2px 0 var(--text-primary), 0 -2px var(--text-primary),
+		0 2px var(--text-primary);
+	margin: 2px auto;
+}
+
+.three-step-shadow {
+	box-shadow: 3px 0 var(--background-primary), -3px 0 var(--background-primary), 0 -3px var(--background-primary), 0 3px var(--background-primary), 6px 0 var(--background-primary), -6px 0 var(--background-primary),
+		0 -6px var(--background-primary), 0 6px var(--background-primary), 0 0 0 3px var(--background-primary), 9px 0 var(--text-primary), -9px 0 var(--text-primary), 0 9px var(--text-primary), 0 -9px var(--text-primary),
+		0 -3px 0 3px var(--text-primary), 0 3px 0 3px var(--text-primary), 3px 0 0 3px var(--text-primary), -3px 0 0 3px var(--text-primary);
+	margin: 6px auto;
 }
