@@ -3,6 +3,9 @@ import { writable } from 'svelte/store';
 import type { Writable } from 'svelte/store';
 import { getFromStorage } from '$lib/utils/storage';
 
-export const appState: Writable<AppState> = writable({
-	isLoggedIn: getFromStorage('isLoggedIn') ? true : false
-});
+export const initialState = {
+	isLoggedIn: getFromStorage('userId') ? true : false,
+	user: null,
+}
+
+export const appState: Writable<AppState> = writable({...initialState});
