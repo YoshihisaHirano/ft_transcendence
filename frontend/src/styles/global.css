@@ -62,8 +62,29 @@ body {
 }
 
 .three-step-shadow {
-	box-shadow: 3px 0 var(--background-primary), -3px 0 var(--background-primary), 0 -3px var(--background-primary), 0 3px var(--background-primary), 6px 0 var(--background-primary), -6px 0 var(--background-primary),
-		0 -6px var(--background-primary), 0 6px var(--background-primary), 0 0 0 3px var(--background-primary), 9px 0 var(--text-primary), -9px 0 var(--text-primary), 0 9px var(--text-primary), 0 -9px var(--text-primary),
-		0 -3px 0 3px var(--text-primary), 0 3px 0 3px var(--text-primary), 3px 0 0 3px var(--text-primary), -3px 0 0 3px var(--text-primary);
+	box-shadow: 3px 0 var(--btn-bg-color), -3px 0 var(--btn-bg-color),
+		0 -3px var(--btn-bg-color), 0 3px var(--btn-bg-color),
+		6px 0 var(--btn-bg-color), -6px 0 var(--btn-bg-color),
+		0 -6px var(--btn-bg-color), 0 6px var(--btn-bg-color),
+		0 0 0 3px var(--btn-bg-color), 9px 0 var(--text-primary), -9px 0 var(--text-primary),
+		0 9px var(--text-primary), 0 -9px var(--text-primary), 0 -3px 0 3px var(--text-primary),
+		0 3px 0 3px var(--text-primary), 3px 0 0 3px var(--text-primary),
+		-3px 0 0 3px var(--text-primary);
 	margin: 6px auto;
+}
+
+.four-step-shadow {
+	box-shadow: 3px 0 var(--btn-bg-color), -3px 0 var(--btn-bg-color),
+		0 -3px var(--btn-bg-color), 0 3px var(--btn-bg-color),
+		6px 0 var(--btn-bg-color), -6px 0 var(--btn-bg-color),
+		0 -6px var(--btn-bg-color), 0 6px var(--btn-bg-color),
+		0 0 0 3px var(--btn-bg-color), 9px 0 var(--btn-bg-color),
+		-9px 0 var(--btn-bg-color), 0 9px var(--btn-bg-color),
+		0 -9px var(--btn-bg-color), 0 -3px 0 3px var(--btn-bg-color),
+		0 3px 0 3px var(--btn-bg-color), 3px 0 0 3px var(--btn-bg-color),
+		-3px 0 0 3px var(--btn-bg-color), 12px 0 var(--text-primary), -12px 0 var(--text-primary),
+		0 -12px var(--text-primary), 0 12px var(--text-primary), 6px 0 0 3px var(--text-primary),
+		-6px 0 0 3px var(--text-primary), 0 6px 0 3px var(--text-primary),
+		0 -6px 0 3px var(--text-primary), 0 0 0 6px var(--text-primary);
+	margin: 12px auto;
 }

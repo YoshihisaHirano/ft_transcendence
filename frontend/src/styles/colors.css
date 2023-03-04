@@ -1,4 +1,6 @@
 :root {
     --background-primary: #050609;
     --text-primary: #f9f9f8;
+    --color-accent-blue: #0001FC;
+    --btn-bg-color: var(--background-primary);
 }
