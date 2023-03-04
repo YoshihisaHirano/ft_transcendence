@@ -9,7 +9,7 @@ export const matchHistory: GameStats[] = [
 		userTwoName: 'kitten',
 		userTwoScore: 2
 	},
-    {
+	{
 		userOneId: '7hf57brwyu45',
 		userOneName: 'aalannys',
 		userOneScore: 7,
@@ -17,7 +17,7 @@ export const matchHistory: GameStats[] = [
 		userTwoName: 'unicorn',
 		userTwoScore: 10
 	},
-    {
+	{
 		userOneId: '7hf57brwyu45',
 		userOneName: 'aalannys',
 		userOneScore: 5,
@@ -25,7 +25,7 @@ export const matchHistory: GameStats[] = [
 		userTwoName: 'kitten',
 		userTwoScore: 2
 	},
-    {
+	{
 		userOneId: '7hf57brwyu45',
 		userOneName: 'aalannys',
 		userOneScore: 7,
@@ -33,7 +33,7 @@ export const matchHistory: GameStats[] = [
 		userTwoName: 'unicorn',
 		userTwoScore: 10
 	},
-    {
+	{
 		userOneId: '7hf57brwyu45',
 		userOneName: 'aalannys',
 		userOneScore: 5,
@@ -41,7 +41,7 @@ export const matchHistory: GameStats[] = [
 		userTwoName: 'kitten',
 		userTwoScore: 2
 	},
-    {
+	{
 		userOneId: '7hf57brwyu45',
 		userOneName: 'aalannys',
 		userOneScore: 7,
@@ -49,7 +49,7 @@ export const matchHistory: GameStats[] = [
 		userTwoName: 'unicorn',
 		userTwoScore: 10
 	},
-    {
+	{
 		userOneId: '7hf57brwyu45',
 		userOneName: 'aalannys',
 		userOneScore: 5,
@@ -57,7 +57,7 @@ export const matchHistory: GameStats[] = [
 		userTwoName: 'kitten',
 		userTwoScore: 2
 	},
-    {
+	{
 		userOneId: '7hf57brwyu45',
 		userOneName: 'aalannys',
 		userOneScore: 7,
@@ -65,7 +65,7 @@ export const matchHistory: GameStats[] = [
 		userTwoName: 'unicorn',
 		userTwoScore: 10
 	},
-    {
+	{
 		userOneId: '7hf57brwyu45',
 		userOneName: 'aalannys',
 		userOneScore: 5,
@@ -73,7 +73,7 @@ export const matchHistory: GameStats[] = [
 		userTwoName: 'kitten',
 		userTwoScore: 2
 	},
-    {
+	{
 		userOneId: '7hf57brwyu45',
 		userOneName: 'aalannys',
 		userOneScore: 7,
@@ -118,3 +118,10 @@ export const mainUser: User = {
 	friends: [secondUser, thirdUser],
 	matchHistory: matchHistory
 };
+
+export const userCredentials = {
+	login: 'login',
+	password: 'password',
+};
+
+export const userDb = [mainUser, secondUser, thirdUser];

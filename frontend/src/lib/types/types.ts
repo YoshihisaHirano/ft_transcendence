@@ -1,5 +1,6 @@
 export interface AppState {
     isLoggedIn: boolean;
+    user: User | null;
 }
 
 export interface GameStats {
