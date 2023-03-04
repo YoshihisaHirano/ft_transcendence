@@ -1,2 +1,6 @@
-<h1>home</h1>
-<p>this is the home page.</p>
+<script>
+	import UserProfile from "$lib/components/UserProfile/UserProfile.svelte";
+    import {mainUser} from '$lib/mockData/mockData';
+</script>
+
+<UserProfile isLoggedIn userData={mainUser}/>

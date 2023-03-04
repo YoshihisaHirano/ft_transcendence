@@ -1,13 +1,13 @@
 <script>
 	import Button from '$lib/components/Button/Button.svelte';
 	import { appState } from '$lib/store/appState';
-	import { removeCookie } from '$lib/utils/cookies';
+	import { removeFromStorage } from '$lib/utils/storage';
 
 	function logout() {
 		appState.update((prevState) => {
 			return { ...prevState, isLoggedIn: false };
 		});
-		removeCookie('isLoggedIn');
+		removeFromStorage('isLoggedIn');
 		console.log('logout');
 	}
 </script>

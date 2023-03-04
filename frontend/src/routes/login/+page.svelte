@@ -3,14 +3,14 @@
     import Button from "$lib/components/Button/Button.svelte";
     import dino from '$lib/images/dino.svg';
     import { appState } from "$lib/store/appState";
-	import { setCookie } from "$lib/utils/cookies";
+	import { saveToStorage } from "$lib/utils/storage";
 	import { beforeUpdate } from "svelte";
 
     function login() {
         appState.update((prevState) => {
             return { ...prevState, isLoggedIn: true }
         })
-        setCookie('isLoggedIn', 'true');
+        saveToStorage('isLoggedIn', 'true');
         goto('/');
         console.log("login");
     }
