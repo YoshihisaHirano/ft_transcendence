@@ -125,3 +125,15 @@ export const userCredentials = {
 };
 
 export const userDb = [mainUser, secondUser, thirdUser];
+
+const messages = [
+	{ author: 'kitten', authorId: 'aaaa', text: 'hello' },
+	{ author: 'aalannys', authorId: 'aa1aa', text: 'covfefe' },
+	{ author: 'guest', authorId: 'a2aaa', text: 'how are you' },
+]
+
+export const userChats = [
+	{ adminId: '7hf57brwyu45', chatId: 'gfw2yrw3e', chatname: 'chatty chat', members: [secondUser, mainUser], messages: [] },
+	{ adminId: '7hf57brwyu45', chatId: 'vgqrtfe', chatname: 'kitten chat', members: [secondUser, mainUser, thirdUser], messages: [ ...messages, ...messages ] },
+	{ adminId: 'h53g2ghegv', chatId: 'udq7t7qtr', chatname: 'unicorn chat', members: [mainUser, thirdUser], messages: [messages[2], messages[0]] },
+]

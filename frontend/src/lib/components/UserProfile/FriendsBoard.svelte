@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { User } from '$lib/types/types';
+	import OnlineIndicator from '$lib/components/OnlineIndicator/OnlineIndicator.svelte';
 	import UserRecord from './UserRecord.svelte';
 
 	export let friends: User[], currentId: string;
@@ -9,7 +10,7 @@
 	{#if friends.length}
 		{#each friends as { username, isOnline, id }}
 			<p>
-                <span class="online-indicator" class:active={isOnline}/>
+                <OnlineIndicator {isOnline} />
                 <UserRecord {username} userId={id} {currentId}  />
             </p>
 		{/each}
@@ -24,17 +25,4 @@
 		width: 85%;
 		margin: 2rem auto;
 	}
-
-    .online-indicator {
-        display: inline-block;
-        height: 1rem;
-        width: 1rem;
-        border-radius: 50%;
-        opacity: .8;
-        background-color: #996611;
-    }
-
-    .online-indicator.active {
-        background-color: #43B047;
-    }
 </style>

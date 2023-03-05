@@ -23,3 +23,17 @@ export interface User {
     ladderLevel: number;
     matchHistory: GameStats[];
 }
+
+export interface Message {
+    text: string;
+    author: string;
+    authorId: string;
+}
+
+export interface Chat {
+    chatId: string;
+    chatname: string;
+    members: User[];
+    messages: Message[];
+    adminId: string;
+}
