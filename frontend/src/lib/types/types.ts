@@ -66,3 +66,17 @@ export interface NewUser {
 	username: string;
 	image: string;
 }
+
+export interface Message {
+    text: string;
+    author: string;
+    authorId: string;
+}
+
+export interface Chat {
+    chatId: string;
+    chatname: string;
+    members: User[];
+    messages: Message[];
+    adminId: string;
+}
