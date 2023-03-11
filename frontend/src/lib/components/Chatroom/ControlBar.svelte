@@ -4,16 +4,24 @@
 	import { getFromStorage } from '$lib/utils/storage';
 	import UserRecord from '$lib/components/UserProfile/UserRecord.svelte';
 	import OnlineIndicator from '$lib/components/OnlineIndicator/OnlineIndicator.svelte';
+	import Modal from '$lib/components/Modal/Modal.svelte';
+	import doorIcon from '$lib/images/door_icon.svg';
 
 	export let adminId: string, chatMembers: User[], chatname: string, chatId: string;
 	$: userId = getFromStorage('userId') || '';
 	$: isAdmin = userId === adminId;
 	let btnRef: HTMLButtonElement;
 	$: offsetLeft = btnRef?.offsetLeft || 0;
+
 	$: dropdownActive = false;
+	$: modalOpen = false;
 
 	function toggleDropdown() {
 		dropdownActive = !dropdownActive;
+	}
+
+	function toggleModal() {
+		modalOpen = !modalOpen;
 	}
 </script>
 
@@ -28,17 +36,8 @@
 				bind:this={btnRef}
 				on:click={toggleDropdown}>▼</button
 			>
-            <button title="Leave the chat">
-                <svg xmlns="http://www.w3.org/2000/svg" width="25px" height="25px" viewBox="0 0 20 20" fill="none">
-                    <path fill-rule="evenodd" clip-rule="evenodd" d="M15.6666 8L17.75 10.5L15.6666 8Z" stroke="#FFF" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path fill-rule="evenodd" clip-rule="evenodd" d="M15.6666 13L17.75 10.5L15.6666 13Z" stroke="#FFF" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M16.5 10.5L10 10.5" stroke="#FFF" stroke-width="1" stroke-linecap="round"/>
-                    <line x1="4" y1="3.5" x2="13" y2="3.5" stroke="#FFF" stroke-width="1" stroke-linecap="round"/>
-                    <line x1="4" y1="17.5" x2="13" y2="17.5" stroke="#FFF" stroke-width="1" stroke-linecap="round"/>
-                    <path d="M13 3.5V7.5" stroke="#FFF" stroke-width="1" stroke-linecap="round"/>
-                    <path d="M13 13.5V17.5" stroke="#FFF" stroke-width="1" stroke-linecap="round"/>
-                    <path d="M4 3.5L4 17.5" stroke="#FFF" stroke-width="1" stroke-linecap="round"/>
-                </svg>
+            <button title="Leave the chat" class="leave-btn">
+				<img src={doorIcon} alt="leave the chat">
             </button>
 			<div class="members-dropdown" style="left: {offsetLeft}px">
 				{#each chatMembers as member}
@@ -59,11 +58,15 @@
 			</div>
 		</div>
 		{#if isAdmin}
-			<button class="chat-settings-btn">
+			<button class="chat-settings-btn" on:click={toggleModal}>
 				<CogIcon />
 			</button>
 		{/if}
 	</div>
+{/if}
+
+{#if modalOpen}
+	<Modal title="{chatname} settings" onClose={toggleModal}/>
 {/if}
 
 <style>
@@ -139,5 +142,9 @@
 
 	.chat-settings-btn {
 		justify-self: flex-end;
+	}
+
+	.leave-btn {
+		padding: 0;
 	}
 </style>
