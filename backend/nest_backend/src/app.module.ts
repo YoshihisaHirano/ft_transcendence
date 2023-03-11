@@ -3,6 +3,8 @@ import { UserModule } from './user/user.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import entities from './entities';
+import { StatsModule } from 'src/stats/stats.module';
+import { TournamentModule } from 'src/tournament/tournament.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -21,8 +23,8 @@ import entities from './entities';
       inject: [ConfigService],
     }),
     UserModule,
+    StatsModule,
+    TournamentModule,
   ],
-  controllers: [],
-  providers: [],
 })
 export class AppModule {}
