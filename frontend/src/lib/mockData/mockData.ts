@@ -85,36 +85,42 @@ export const matchHistory: GameStats[] = [
 
 export const secondUser: User = {
 	id: 'ggrd476yhgv',
-	profileImg: '',
+	image: '',
 	isOnline: false,
 	username: 'kitten',
-	ladderLevel: 5,
-	wins: 6,
-	loses: 8,
+	tournamentStats: {
+		ladderLevel: 5,
+		wins: 6,
+		losses: 8,
+	},
 	friends: [],
 	matchHistory: []
 };
 
 export const thirdUser: User = {
 	id: 'h53g2ghegv',
-	profileImg: '',
+	image: '',
 	isOnline: true,
 	username: 'unicorn',
-	ladderLevel: 3,
-	wins: 9,
-	loses: 11,
+	tournamentStats: {
+		ladderLevel: 3,
+		wins: 9,
+		losses: 11,
+	},
 	friends: [secondUser],
 	matchHistory: []
 };
 
 export const mainUser: User = {
 	id: '7hf57brwyu45',
-	profileImg: '',
+	image: '',
 	isOnline: true,
 	username: 'aalannys',
-	ladderLevel: 1,
-	wins: 20,
-	loses: 5,
+	tournamentStats: {
+		ladderLevel: 1,
+		wins: 20,
+		losses: 5,
+	},
 	friends: [secondUser, thirdUser],
 	matchHistory: matchHistory
 };
