@@ -4,8 +4,8 @@ import {
   Controller,
   Get,
   Param,
-  Post,
-} from '@nestjs/common';
+  Post, Put
+} from "@nestjs/common";
 import { UserService } from 'src/user/services/user/user.service';
 import { CreateUserDto } from 'src/dtos/createUser.dto';
 import { FriendshipDto } from 'src/dtos/friendship.dto';
@@ -87,5 +87,18 @@ export class UserController {
   @Post('deletefriend')
   deleteFriends(@Body() friendshipDto: FriendshipDto) {
     return this.userService.deleteFriend(friendshipDto);
+  }
+  @Get('login/:login')
+  async getUserByLogin(@Param('login') login: string) {
+    const userId = await this.userService.findUserIdByLogin(login);
+    if (userId == null) {
+      return null;
+    }
+    return this.getUserById(userId);
+  }
+  @Put('/:id')
+  async updateUser(@Param('id') id: string, @Body('image') image: string) {
+    const user = await this.userService.updateUserPicture(id, image);
+    return this.getUserById(user.id);
   }
 }
