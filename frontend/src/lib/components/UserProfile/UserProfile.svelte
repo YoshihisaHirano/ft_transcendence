@@ -4,28 +4,57 @@
 	import ProfilePicture from './ProfilePicture.svelte';
 	import GameBoard from './GameBoard.svelte';
 	import FriendsBoard from './FriendsBoard.svelte';
+	import { appState } from '$lib/store/appState';
+	import Button from '../Button/Button.svelte';
+	import userService from '$lib/services/userService';
 
-	export let userData: User, isLoggedIn: boolean;
-	let { id, username, profileImg, wins, loses, matchHistory, ladderLevel, friends } = userData;
+	export let userData: User, isCurrentUser: boolean;
+	$: ({ id, username, image, tournamentStats, matchHistory, friends } = userData);
+
+	$: isFriend = false;
+	$: if (!isCurrentUser) {
+		if ($appState?.user?.friends) {
+			isFriend = $appState.user.friends.findIndex((item) => item.id === id) != -1;
+		}
+	}
+
+	async function toggleFriendship() {
+		const userId = $appState?.user?.id || '';
+		if (!isFriend) {
+			await userService.toggleFriendship(userId, id, true);
+		} else {
+			await userService.toggleFriendship(userId, id, false);
+		}
+	}
 </script>
 
 <div class="user-profile-container">
 	<div class="user-profile-info">
-		<ProfilePicture imageSrc={profileImg} {isLoggedIn} />
+		<ProfilePicture imageSrc={image} {isCurrentUser} />
 		<p>{username}</p>
-		<p>{ladderLevel} place</p>
+		<p>{tournamentStats.ladderLevel} place</p>
+		{#if !isCurrentUser}
+			<Button className="friendship-btn" variant={isFriend ? "danger" : "success"} onClick={toggleFriendship}>
+				{isFriend ? "Unfriend" : "Befriend"}
+			</Button>
+		{/if}
 	</div>
 	<div class="user-profile-games">
-		<GameBoard {wins} {loses} {matchHistory} currentId={id} />
-		{#if isLoggedIn}
+		<GameBoard
+			wins={tournamentStats.wins}
+			loses={tournamentStats.losses}
+			{matchHistory}
+			currentId={id}
+		/>
+		{#if isCurrentUser}
 			<Link internal target="/game" bg="#0001FC">Fancy a game?</Link>
 		{/if}
 	</div>
 	<div class="user-profile-friends">
-		{#if isLoggedIn}
+		{#if isCurrentUser}
 			<Link internal target="/chatrooms" bg="#DB55DD">Chat with friends</Link>
 		{/if}
-		<FriendsBoard {friends} currentId={id} />
+		<FriendsBoard {friends} currentId={$appState?.user?.id || id} />
 	</div>
 </div>
 
@@ -47,5 +76,9 @@
 
 	.user-profile-games {
 		flex-basis: 50%;
+	}
+
+	:global(.friendship-btn) {
+		margin-top: 1.5rem;	
 	}
 </style>

@@ -2,34 +2,34 @@
 	import { goto } from '$app/navigation';
 	import Button from '$lib/components/Button/Button.svelte';
 	import dino from '$lib/images/dino.svg';
-	import { mainUser, userCredentials } from '$lib/mockData/mockData';
 	import { appState } from '$lib/store/appState';
 	import { saveToStorage } from '$lib/utils/storage';
 	import { beforeUpdate } from 'svelte';
-
-	$: credentials = {
-		login: '',
-		password: ''
-	};
+	import userService from '$lib/services/userService';
+	import UserCreateForm from '$lib/components/UserCreateForm/UserCreateForm.svelte';
 
 	$: loginFailed = false;
+	$: renderCreateForm = false;
+	$: intraLogin = '';
 
 	async function login() {
-		/* credentials will be checked by backend */
-		if (
-			credentials.login !== userCredentials.login ||
-			credentials.password !== userCredentials.password
-		) {
+		intraLogin = await userService.getIntraLogin() || '';
+		if (!intraLogin) {
 			loginFailed = true;
 			return;
 		}
-        /* if credentials are correct, the user data will be sent */
-        const user = mainUser;
-		appState.update((prevState) => {
-			return { ...prevState, isLoggedIn: true, user: user };
-		});
-		saveToStorage('userId', user.id);
-		goto('/');
+		const user = await userService.getUserByLogin(intraLogin);
+		/* if user is not present, the site renders the user create page */
+		if (!user) {
+			renderCreateForm = true;
+			return;
+		} else {
+			appState.update((prevState) => {
+				return { ...prevState, isLoggedIn: true, user: user };
+			});
+			saveToStorage('userId', user.id);
+			goto('/');
+		}
 	}
 
 	beforeUpdate(() => {
@@ -40,32 +40,23 @@
 </script>
 
 <main>
-	<fieldset>
-		{#if loginFailed}
-			<legend>Invalid credentials!</legend>
-		{/if}
-		<img src={dino} alt="" />
-		<label for="login">
-			Login
-			<input id="login" type="text" bind:value={credentials.login} class:failed={loginFailed} />
-		</label>
-		<label for="password">
-			Password
-			<input
-				id="password"
-				type="password"
-				bind:value={credentials.password}
-				class:failed={loginFailed}
-			/>
-		</label>
-		<Button variant="success" onClick={login}>Let me in</Button>
-	</fieldset>
+	{#if renderCreateForm}
+		<UserCreateForm {intraLogin} />
+	{:else}
+		<fieldset>
+			<img src={dino} alt="" />
+			{#if loginFailed}
+				<legend>Login failed!</legend>
+			{/if}
+			<Button variant="success" onClick={login}>Login with 42intra</Button>
+		</fieldset>
+	{/if}
 </main>
 
 <style>
-    main {
-        padding: 8rem 0;
-    }
+	main {
+		padding: 8rem 0;
+	}
 
 	img {
 		position: absolute;
@@ -79,13 +70,6 @@
 		color: #df0024;
 	}
 
-	label {
-		display: block;
-		color: var(--text-primary);
-		text-align: end;
-		width: 31rem;
-	}
-
 	fieldset {
 		position: relative;
 		width: 85%;
@@ -96,9 +80,5 @@
 		align-items: center;
 		padding: 2rem 0;
 		gap: 1rem;
-	}
-
-	input.failed {
-		border: 0.15rem solid #df0024;
 	}
 </style>

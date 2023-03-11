@@ -1,7 +1,7 @@
 <script lang="ts">
 	import defaultPicture from '$lib/images/default_pic.svg';
 	import CogIcon from '../CogIcon/CogIcon.svelte';
-	export let imageSrc: string, isLoggedIn: boolean;
+	export let imageSrc: string, isCurrentUser: boolean;
 
 	$: uploadVisible = false;
 
@@ -16,7 +16,7 @@
 	on:pointerleave={() => setUploadVisibility(false)}
 >
 	<img src={imageSrc || defaultPicture} alt="user profile pic" />
-	{#if isLoggedIn}
+	{#if isCurrentUser}
 		<div class="upload-picture" class:active={uploadVisible}>
 			<label for="upload-profile-pic">
 				<CogIcon/>
@@ -44,6 +44,7 @@
 		aspect-ratio: 1 / 1;
 		max-width: 100%;
 		height: auto;
+		object-fit: cover;
 	}
 
 	.upload-picture {
