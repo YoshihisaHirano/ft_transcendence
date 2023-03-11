@@ -81,4 +81,16 @@ export class UserService {
       [id],
     );
   }
+  async findUserIdByLogin(login: string) {
+    const user = await this.userRepository.findOne({ where: { login: login } });
+    if (user == null) {
+      return null;
+    }
+    return user.id;
+  }
+  async updateUserPicture(id: string, image: string) {
+    const user = await this.findUserById(id);
+    user.image = image;
+    return this.userRepository.save(user);
+  }
 }
