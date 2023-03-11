@@ -1,4 +1,11 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+} from '@nestjs/common';
 import { UserService } from 'src/user/services/user/user.service';
 import { CreateUserDto } from 'src/dtos/createUser.dto';
 import { FriendshipDto } from 'src/dtos/friendship.dto';
@@ -45,7 +52,12 @@ export class UserController {
   async createUser(
     @Body() createUserDto: CreateUserDto,
   ): Promise<ResponseUserDto> {
-    const user = await this.userService.createUser(createUserDto);
+    let user;
+    try {
+      user = await this.userService.createUser(createUserDto);
+    } catch (err) {
+      throw err;
+    }
     await this.tournamentService.addUser(user);
     const tournamentStats: TournamentDto = {
       wins: 0,
