@@ -28,12 +28,6 @@ export interface User {
 	matchHistory: GameStats[];
 }
 
-export interface NewUser {
-	login: string;
-	username: string;
-	image: string;
-}
-
 export interface Message {
     text: string;
     author: string;
@@ -65,4 +59,10 @@ export interface ChatSettings {
     privacyMode: PrivacyMode;
     password?: string;
     adminId: string;
+}
+
+export interface NewUser {
+	login: string;
+	username: string;
+	image: string;
 }
