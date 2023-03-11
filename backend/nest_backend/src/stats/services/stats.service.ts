@@ -21,9 +21,11 @@ export class StatsService {
     const stats = await this.statsRepository.find({
       where: [{ playerOneId: userId }, { playerTwoId: userId }],
       take: 10,
+      order: { createdDate: 'DESC' },
     });
     return stats.map((item) => {
       delete item.id;
+      delete item.createdDate;
       return item;
     });
   }

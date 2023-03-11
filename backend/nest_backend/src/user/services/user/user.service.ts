@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { User } from 'src/entities';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -15,7 +15,14 @@ export class UserService {
   createUser(createUserDto: CreateUserDto) {
     const newUser = this.userRepository.create(createUserDto);
     newUser.isOnline = true;
-    return this.userRepository.save(newUser);
+    return this.userRepository.save(newUser).catch((e) => {
+      if (/(already exists)/.test(e.detail)) {
+        throw new BadRequestException(
+          'Account with this username already exists.',
+        );
+      }
+      return e;
+    });
   }
 
   findUserById(id: string) {
@@ -73,5 +80,17 @@ export class UserService {
             );  `,
       [id],
     );
+  }
+  async findUserIdByLogin(login: string) {
+    const user = await this.userRepository.findOne({ where: { login: login } });
+    if (user == null) {
+      return null;
+    }
+    return user.id;
+  }
+  async updateUserPicture(id: string, image: string) {
+    const user = await this.findUserById(id);
+    user.image = image;
+    return this.userRepository.save(user);
   }
 }
