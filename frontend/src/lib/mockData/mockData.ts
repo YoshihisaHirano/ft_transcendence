@@ -1,4 +1,4 @@
-import type { GameStats, User } from '$lib/types/types';
+import type { Chat, GameStats, Message, User } from '$lib/types/types';
 
 export const matchHistory: GameStats[] = [
 	{
@@ -132,14 +132,32 @@ export const userCredentials = {
 
 export const userDb = [mainUser, secondUser, thirdUser];
 
-const messages = [
-	{ author: 'kitten', authorId: 'aaaa', text: 'hello' },
-	{ author: 'aalannys', authorId: 'aa1aa', text: 'covfefe' },
-	{ author: 'guest', authorId: 'a2aaa', text: 'how are you' },
+const messages: Message[] = [
+	{ author: 'kitten', authorId: 'aaaa', text: 'hello', chatId: 'aafaf' },
+	{ author: 'aalannys', authorId: 'aa1aa', text: 'covfefe', chatId: 'aafaf' },
+	{ author: 'guest', authorId: 'a2aaa', text: 'how are you', chatId: 'aafaf' },
 ]
 
-export const userChats = [
-	{ adminId: '7hf57brwyu45', chatId: 'gfw2yrw3e', chatname: 'chatty chat', members: [secondUser, mainUser], messages: [] },
-	{ adminId: '7hf57brwyu45', chatId: 'vgqrtfe', chatname: 'kitten chat', members: [secondUser, mainUser, thirdUser], messages: [ ...messages, ...messages ] },
-	{ adminId: 'h53g2ghegv', chatId: 'udq7t7qtr', chatname: 'unicorn chat', members: [mainUser, thirdUser], messages: [messages[2], messages[0]] },
+export const userChats: Chat[] = [
+	{ adminId: '7hf57brwyu45', chatId: 'gfw2yrw3e', chatname: 'chatty chat', members: [secondUser, mainUser], messages: [], privacyMode: 'public' },
+	{ adminId: '7hf57brwyu45', chatId: 'vgqrtfe', chatname: 'kitten chat', members: [secondUser, mainUser, thirdUser], messages: [ ...messages, ...messages ], privacyMode: 'private' },
+	{ adminId: 'h53g2ghegv', chatId: 'udq7t7qtr', chatname: 'unicorn chat', members: [mainUser, thirdUser], messages: [messages[2], messages[0]], privacyMode: 'protected' },
 ]
+
+export const newGroupChat: Chat = {
+	chatId: 'sfsgdh',
+	adminId: '7hf57brwyu45',
+	members: [mainUser],
+	chatname: 'LOTR',
+	messages: [],
+	privacyMode: 'public'
+}
+
+export const newDMChat: Chat = {
+	chatId: 'dghdhsds',
+	adminId: '7hf57brwyu45',
+	members: [mainUser, secondUser],
+	chatname: 'Kitten chat',
+	privacyMode: 'private',
+	messages: []
+}
