@@ -11,7 +11,7 @@
 	function sendMessage() {
 		/* socket logic will be here */
 		if (messageText) {
-			messages = [...messages, { author: 'You', authorId: 'aaaa', text: messageText }];
+			messages = [...messages, { author: 'You', authorId: 'aaaa', text: messageText, chatId: '9076shs' }];
 			messageText = '';
 		}
 	}
@@ -19,7 +19,7 @@
 
 <div class="chat-window simple-shadow">
 	{#if chat}
-		<ControlBar adminId={chat.adminId} chatMembers={chat.members} chatname={chat.chatname}  chatId={chat.chatId} />
+		<ControlBar privacyMode={chat.privacyMode} password={chat.password} adminId={chat.adminId} chatMembers={chat.members} chatname={chat.chatname}  chatId={chat.chatId} />
 	{/if}
 	<MessageDisplay {messages} />
 	<div class="input-area">

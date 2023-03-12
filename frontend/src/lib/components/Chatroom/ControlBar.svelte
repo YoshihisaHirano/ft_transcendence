@@ -1,13 +1,20 @@
 <script lang="ts">
-	import type { User } from '$lib/types/types';
+	import type { PrivacyMode, User } from '$lib/types/types';
 	import CogIcon from '$lib/components/CogIcon/CogIcon.svelte';
 	import { getFromStorage } from '$lib/utils/storage';
 	import UserRecord from '$lib/components/UserProfile/UserRecord.svelte';
 	import OnlineIndicator from '$lib/components/OnlineIndicator/OnlineIndicator.svelte';
 	import Modal from '$lib/components/Modal/Modal.svelte';
 	import doorIcon from '$lib/images/door_icon.svg';
+	import ChatSettings from './ChatSettings.svelte';
 
-	export let adminId: string, chatMembers: User[], chatname: string, chatId: string;
+	export let adminId: string,
+		chatMembers: User[],
+		chatname: string,
+		chatId: string,
+		privacyMode: PrivacyMode,
+		password: string | undefined;
+
 	$: userId = getFromStorage('userId') || '';
 	$: isAdmin = userId === adminId;
 	let btnRef: HTMLButtonElement;
@@ -30,15 +37,15 @@
 		<div class="chat-header">
 			<p>{chatname}</p>
 			<button
-                title="{dropdownActive ? 'Hide' : 'Show'} participants"
+				title="{dropdownActive ? 'Hide' : 'Show'} participants"
 				class="dropdown-btn"
 				class:active={dropdownActive}
 				bind:this={btnRef}
 				on:click={toggleDropdown}>▼</button
 			>
-            <button title="Leave the chat" class="leave-btn">
-				<img src={doorIcon} alt="leave the chat">
-            </button>
+			<button title="Leave the chat" class="leave-btn">
+				<img src={doorIcon} alt="leave the chat" />
+			</button>
 			<div class="members-dropdown" style="left: {offsetLeft}px">
 				{#each chatMembers as member}
 					<div class="chat-member">
@@ -47,10 +54,10 @@
 							<UserRecord currentId={userId} username={member.username} userId={member.id} />
 						</div>
 						<div class="chat-member-controls">
-                            <button title="Invite to a game">🏓</button>
+							<button title="Invite to a game">🏓</button>
 							{#if isAdmin}
 								<button title="Mute">🔇</button>
-                                <button title="Delete from the chat">❌</button>
+								<button title="Delete from the chat">❌</button>
 							{/if}
 						</div>
 					</div>
@@ -66,7 +73,9 @@
 {/if}
 
 {#if modalOpen}
-	<Modal title="{chatname} settings" onClose={toggleModal}/>
+	<Modal title="{chatname} settings" onClose={toggleModal}>
+		<ChatSettings {chatname} {chatId} {privacyMode} {password} {adminId} members={chatMembers} />
+	</Modal>
 {/if}
 
 <style>

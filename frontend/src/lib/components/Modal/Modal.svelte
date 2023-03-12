@@ -44,5 +44,6 @@
 
     .modal-title {
         font-size: 1.05rem;
+        margin-bottom: 24px;
     }
 </style>
