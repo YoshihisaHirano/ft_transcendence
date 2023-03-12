@@ -71,12 +71,30 @@ export interface Message {
     text: string;
     author: string;
     authorId: string;
+    chatId: string;
 }
 
 export interface Chat {
-    chatId: string;
+    chatId: string; // equal to roomId
     chatname: string;
     members: User[];
     messages: Message[];
+    adminId: string;
+    privacyMode: PrivacyMode,
+    password?: string;
+}
+
+export interface NewChat {
+    chatname: string;
+    members?: string[];
+    privacyMode: PrivacyMode;
+    password?: string;
+}
+
+export interface ChatSettings {
+    chatId: string;
+    chatname: string;
+    privacyMode: PrivacyMode;
+    password?: string;
     adminId: string;
 }
