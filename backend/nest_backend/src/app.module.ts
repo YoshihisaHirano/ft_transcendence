@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import entities from './entities';
 import { StatsModule } from 'src/stats/stats.module';
 import { TournamentModule } from 'src/tournament/tournament.module';
+import { AuthModule } from './auth/auth.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -25,6 +26,7 @@ import { TournamentModule } from 'src/tournament/tournament.module';
     UserModule,
     StatsModule,
     TournamentModule,
+    AuthModule,
   ],
 })
 export class AppModule {}
