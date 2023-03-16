@@ -1,11 +1,12 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Get,
   Param,
-  Post, Put
-} from "@nestjs/common";
+  Post,
+  Put,
+  UseGuards,
+} from '@nestjs/common';
 import { UserService } from 'src/user/services/user/user.service';
 import { CreateUserDto } from 'src/dtos/createUser.dto';
 import { FriendshipDto } from 'src/dtos/friendship.dto';
@@ -15,6 +16,9 @@ import { Stats } from 'src/entities';
 import { ShortResponseUserDto } from 'src/dtos/shortResponseUser.dto';
 import { TournamentDto } from 'src/dtos/tournament.dto';
 import { ResponseUserDto } from 'src/dtos/responseUser.dto';
+import * as bcrypt from 'bcrypt';
+import { AuthService } from 'src/auth/auth.service';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 @Controller('users')
 export class UserController {
@@ -22,14 +26,26 @@ export class UserController {
     private readonly userService: UserService,
     private readonly tournamentService: TournamentService,
     private readonly statsService: StatsService,
+    private readonly authService: AuthService,
   ) {}
 
+  @Post('/login')
+  async userLogin(@Body('login') login: string) {
+    const id = await this.userService.findUserIdByLogin(login);
+    const token = await this.authService.login(login);
+    return {
+      id: id,
+      token: token,
+    };
+  }
   @Get()
   getUsers() {
+    //test method
     return this.userService.getUsers();
   }
 
-  @Get('/:id')
+  @UseGuards(JwtAuthGuard)
+  @Get('/id/:id')
   async getUserById(@Param('id') id: string): Promise<ResponseUserDto> {
     const stats: Stats[] = await this.statsService.getUserStats(id);
     const friends: ShortResponseUserDto[] =
@@ -48,6 +64,7 @@ export class UserController {
     };
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post('create')
   async createUser(
     @Body() createUserDto: CreateUserDto,
@@ -75,30 +92,37 @@ export class UserController {
     };
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post('addfriend')
   addFriends(@Body() friendshipDto: FriendshipDto) {
     return this.userService.addFriend(friendshipDto);
   }
+  @UseGuards(JwtAuthGuard)
   @Get('friends/:id')
   //test method
   getFriends(@Param('id') id: string) {
     return this.userService.findFriends(id);
   }
+  @UseGuards(JwtAuthGuard)
   @Post('deletefriend')
   deleteFriends(@Body() friendshipDto: FriendshipDto) {
     return this.userService.deleteFriend(friendshipDto);
   }
-  @Get('login/:login')
-  async getUserByLogin(@Param('login') login: string) {
-    const userId = await this.userService.findUserIdByLogin(login);
-    if (userId == null) {
-      return null;
-    }
-    return this.getUserById(userId);
-  }
+  @UseGuards(JwtAuthGuard)
   @Put('/:id')
   async updateUser(@Param('id') id: string, @Body('image') image: string) {
     const user = await this.userService.updateUserPicture(id, image);
     return this.getUserById(user.id);
+  }
+  @Get('/test/password')
+  async TestMethod() {
+    //password testing
+    const saltOrRounds = 10;
+    const password = 'password';
+    const hash = await bcrypt.hash(password, saltOrRounds);
+    console.log(hash);
+    const input = 'pasword';
+    const isMatch = await bcrypt.compare(input, hash);
+    console.log(isMatch);
   }
 }
