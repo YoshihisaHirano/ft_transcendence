@@ -27,6 +27,7 @@
 				type="password"
 				name="chat-password"
 				id="chat-password"
+				required={chatSettings.privacyMode == 'protected'}
 				bind:value={chatSettings.password}
 			/>
 		</label>
@@ -53,4 +54,8 @@
     .radio-group {
         padding-bottom: 12px;
     }
+
+	.radio-group label {
+		cursor: pointer;
+	}
 </style>
