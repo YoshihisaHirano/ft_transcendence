@@ -4,6 +4,7 @@
 	import type { User } from '$lib/types/types';
 
 	export let members: User[] = [],
+		chatId: string = '',
 		friends: User[],
 		newChat: boolean = false;
 
@@ -12,7 +13,7 @@
 	function addMembers(e: Event) {
 		e.preventDefault();
 		if (newMembers.length) {
-			chatService.addMembers(newMembers);
+			chatService.addMembers(newMembers, chatId);
 		}
 	}
 
