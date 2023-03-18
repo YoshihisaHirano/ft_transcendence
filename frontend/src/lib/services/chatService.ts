@@ -21,7 +21,11 @@ export default {
 		}
 	},
 
-	addMembers: async (members: string[]): Promise<void> => {
+	addMembers: async (members: string[], chatId: string): Promise<void> => {
+		return;
+	},
+
+	removeMember: async (memberId: string, chatId: string): Promise<void> => {
 		return;
 	},
 

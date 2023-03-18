@@ -64,7 +64,7 @@
 		<Button disabled={!areSettingsChanged} onClick={updateChat} variant="danger">Save</Button>
 	</fieldset>
 	{#if friends.length}
-		<AddChatMembers {friends} {members}/>
+		<AddChatMembers {friends} {members} {chatId}/>
 	{/if}
 </form>
 
