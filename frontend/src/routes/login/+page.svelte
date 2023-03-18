@@ -3,7 +3,7 @@
 	import Button from '$lib/components/Button/Button.svelte';
 	import dino from '$lib/images/dino.svg';
 	import { appState } from '$lib/store/appState';
-	import { saveToStorage } from '$lib/utils/storage';
+	import { saveCookie } from '$lib/utils/storage';
 	import { beforeUpdate } from 'svelte';
 	import userService from '$lib/services/userService';
 	import UserCreateForm from '$lib/components/UserCreateForm/UserCreateForm.svelte';
@@ -27,7 +27,7 @@
 			appState.update((prevState) => {
 				return { ...prevState, isLoggedIn: true, user: user };
 			});
-			saveToStorage('userId', user.id);
+			saveCookie('user-id', user.id);
 			goto('/');
 		}
 	}
@@ -48,7 +48,9 @@
 			{#if loginFailed}
 				<legend>Login failed!</legend>
 			{/if}
-			<Button variant="success" onClick={login}>Login with 42intra</Button>
+			LOGIN
+			<!-- <a href="/intra-login" on:click={redirectUser}></a> -->
+			<!-- <Button variant="success" onClick={login}>Login with 42intra</Button> -->
 		</fieldset>
 	{/if}
 </main>

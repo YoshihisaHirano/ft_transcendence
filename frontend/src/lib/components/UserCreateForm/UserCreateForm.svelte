@@ -2,7 +2,7 @@
 	import { goto } from '$app/navigation';
 	import userService from '$lib/services/userService';
 	import { appState } from '$lib/store/appState';
-	import { saveToStorage } from '$lib/utils/storage';
+	import { saveCookie } from '$lib/utils/storage';
 	import Button from '../Button/Button.svelte';
 
 	export let intraLogin: string;
@@ -30,7 +30,7 @@
             appState.update((prevState) => {
 				return { ...prevState, isLoggedIn: true, user: user };
 			});
-			saveToStorage('userId', user.id);
+			saveCookie('user-id', user.id);
 			goto('/');
 		}
 	}
