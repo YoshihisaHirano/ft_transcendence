@@ -4,7 +4,7 @@ import type { AppState } from '$lib/types/types';
 import { userDb } from '$lib/mockData/mockData';
 import type { PageLoad } from './$types';
 import { appState } from '$lib/store/appState';
-import { getFromStorage } from '$lib/utils/storage';
+import { getCookie } from '$lib/utils/storage';
 import type { User } from '$lib/types/types';
 import userService from '$lib/services/userService';
 
@@ -20,7 +20,7 @@ export const load: PageLoad = async () => {
 			user: null
 		}
 	};
-	if (!getFromStorage('userId')) return pageData;
+	if (!getCookie('user-id')) return pageData;
 	let currentState: AppState = initialState;
 	/* if there's no user in store, then load it from backend by id */
 	appState.subscribe((state) => {
@@ -35,7 +35,7 @@ export const load: PageLoad = async () => {
 		};
 	} else {
 		/* userId is stored in localStorage on login */
-		const id = getFromStorage('userId');
+		const id = getCookie('user-id');
 		const user = await userService.getUserById(id as string);
 		appState.update((prevState) => ({
 			...prevState,
