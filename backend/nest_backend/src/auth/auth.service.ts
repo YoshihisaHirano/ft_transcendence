@@ -7,8 +7,6 @@ export class AuthService {
 
   async login(login: string) {
     const payload = { login: login };
-    return {
-      access_token: this.jwtService.sign(payload),
-    };
+    return this.jwtService.sign(payload);
   }
 }
