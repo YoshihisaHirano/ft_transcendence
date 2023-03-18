@@ -48,6 +48,7 @@ export interface NewChat {
     members: string[];
     privacyMode: PrivacyMode;
     password?: string;
+    adminId?: string;
 }
 
 export interface ChatSettings {

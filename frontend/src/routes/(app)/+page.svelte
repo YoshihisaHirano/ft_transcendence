@@ -12,5 +12,5 @@
 </script>
 
 {#if userData.user}
-    <UserProfile isLoggedIn userData={userData.user}/>
+    <UserProfile isCurrentUser userData={userData.user}/>
 {/if}

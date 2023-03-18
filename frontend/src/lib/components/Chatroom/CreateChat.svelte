@@ -6,15 +6,17 @@
 	import Button from '../Button/Button.svelte';
 	import chatService from '$lib/services/chatService';
 
+	$: friends = $appState.user?.friends || [];
+	$: id = $appState.user?.id || '';
+
 	$: newChat = {
 		chatname: '',
 		members: [],
 		privacyMode: 'public',
-		password: ''
+		password: '',
+		adminId: id
 	} as NewChat;
 
-	$: friends = $appState.user?.friends || [];
-	$: id = $appState.user?.id || '';
 	let formRef: HTMLFormElement;
 
 	function createChat(e: Event) {
