@@ -1,4 +1,4 @@
-import { newDMChat, newGroupChat } from '$lib/mockData/mockData';
+import { newDMChat, newGroupChat, userChats } from '$lib/mockData/mockData';
 import type { Chat, ChatSettings, NewChat } from '$lib/types/types';
 
 const endpoint = 'chats/';
@@ -31,5 +31,13 @@ export default {
 
 	updateChat: async (settings: ChatSettings): Promise<void> => {
 		return;
+	},
+
+	checkChatPassword: async (password: string): Promise<boolean> => {
+		return true;
+	},
+
+	getChatById: async (chatId: string): Promise<Chat | null> => {
+		return userChats.find(item => item.chatId === chatId) || null;
 	}
 };
