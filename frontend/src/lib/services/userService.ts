@@ -4,7 +4,7 @@ import { addContentType, baseUrl } from './settings';
 
 const endpoint = 'users/';
 const baseUrlWithEndpoint = new URL(endpoint, baseUrl);
-const isMocking = false;
+const isMocking = true;
 
 export default {
 	getUserById: async (userId: string): Promise<User | null> => {

@@ -10,6 +10,6 @@
     }
 </script>
 
-{#if userData}
-    <UserProfile isCurrentUser userData={userData}/>
+{#if userData.user}
+    <UserProfile isCurrentUser={true} userData={userData.user}/>
 {/if}
