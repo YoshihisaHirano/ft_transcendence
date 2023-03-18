@@ -53,7 +53,7 @@ export interface Chat {
 
 export interface NewChat {
     chatname: string;
-    members?: string[];
+    members: string[];
     privacyMode: PrivacyMode;
     password?: string;
 }

@@ -4,9 +4,16 @@
 	import privateIcon from '$lib/images/locked_icon.svg';
 	import protectedIcon from '$lib/images/key_icon.svg';
 	import frog from "$lib/images/frog_friend.svg";
+	import Modal from '../Modal/Modal.svelte';
+	import CreateChat from './CreateChat.svelte';
 
 	export let userChats: Chat[];
 	$: selectedChat = null as Chat | null;
+	$: isModalOpen = false;
+
+	function toggleModal() {
+		isModalOpen = !isModalOpen;
+	}
 </script>
 
 <div class="chat-container">
@@ -15,7 +22,7 @@
 			<p>{userChats.length} chats
 			<img src={frog} alt="" width="24px" height="24px">
 		</p>
-			<button>+</button>
+			<button on:click={toggleModal}>+</button>
 		</div>
 		{#each userChats as chat}
 			<input
@@ -42,6 +49,12 @@
 	</div>
 	<ChatWindow chat={selectedChat} />
 </div>
+
+{#if isModalOpen}
+	<Modal title="create new chat" onClose={toggleModal}>
+		<CreateChat/>
+	</Modal>
+{/if}
 
 <style>
 	.chat-container {

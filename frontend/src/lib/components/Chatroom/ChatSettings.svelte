@@ -4,6 +4,8 @@
 	import chatService from '$lib/services/chatService';
 	import type { ChatSettings, PrivacyMode, User } from '$lib/types/types';
 	import PrivacySelect from '../PrivacySelect/PrivacySelect.svelte';
+	import AddChatMembers from '../AddChatMembers/AddChatMembers.svelte';
+
 	export let chatId: string,
 		privacyMode: PrivacyMode,
 		password: string | undefined,
@@ -12,7 +14,7 @@
 		chatname: string;
 
 	$: friends = $appState.user?.friends || [];
-	$: newMembers = [] as string[];
+
 	$: chatSettings = {
 		chatId,
 		adminId,
@@ -21,74 +23,54 @@
 		chatname
 	} as ChatSettings;
 
+	let formRef: HTMLFormElement;
+
 	$: areSettingsChanged =
 		chatSettings.privacyMode != privacyMode ||
 		chatSettings.password !== password ||
 		chatSettings.adminId != adminId ||
 		chatSettings.chatname != chatname;
 
-	function addMembers() {
-		if (newMembers.length) {
-			chatService.addMembers(newMembers);
+	function updateChat(e: Event) {
+		e.preventDefault();
+		if (formRef && formRef.reportValidity()) {
+			chatService.updateChat(chatSettings);
 		}
 	}
 </script>
 
-<div class="">
+<form bind:this={formRef}>
 	<fieldset>
 		<legend> Chat settings </legend>
 		<div class="settings-field">
 			<label for="chatname">
-				chat name
-				<input id="chatname" type="text" bind:value={chatSettings.chatname} />
+				<p>chat name</p>
+				<input id="chatname" type="text" required bind:value={chatSettings.chatname} />
+			</label>
+		</div>
+		<div class="settings-field">
+			<label for="admin">
+				<p>chat admin</p>
+				<select name="admin" id="admin" bind:value={chatSettings.adminId}>
+					{#each members as { id, username }}
+						<option value={id} selected={id === adminId}>{username}</option>
+					{/each}
+				</select>
 			</label>
 		</div>
 		<div class="settings-field">
 			<PrivacySelect bind:chatSettings />
 		</div>
-		<Button disabled={!areSettingsChanged} onClick={() => console.log('hi')} variant="danger"
-			>Save</Button
-		>
+		<Button disabled={!areSettingsChanged} onClick={updateChat} variant="danger">Save</Button>
 	</fieldset>
 	{#if friends.length}
-		<fieldset class="members">
-			<legend> Add members </legend>
-			<div class="members-select">
-				<p>Choose members</p>
-				<div class="members-dropdown">
-					{#each friends as friend}
-						<label>
-							{friend.username}
-							<input type="checkbox" value={friend.id} bind:group={newMembers} />
-						</label>
-					{/each}
-				</div>
-			</div>
-			<Button disabled={newMembers.length < 1} onClick={addMembers} variant="success">Add</Button>
-		</fieldset>
+		<AddChatMembers {friends} {members}/>
 	{/if}
-</div>
+</form>
 
 <style>
-	.members-select {
-		position: relative;
-		width: fit-content;
-	}
-
-	.members-dropdown {
-		position: absolute;
-		width: 100%;
-		background-color: var(--text-primary);
-		color: var(--background-primary);
-		display: none;
-	}
-
-	.members-dropdown label {
-		display: block;
-	}
-
-	fieldset.members {
-		display: flex;
+	fieldset {
+		padding: 1.5rem 1rem;
 	}
 
 	.settings-field + .settings-field {
@@ -97,5 +79,24 @@
 
 	input {
 		display: block;
+	}
+
+	fieldset:first-of-type {
+		margin-bottom: 2rem;
+	}
+
+	label p {
+		margin-bottom: 0.5rem;
+	}
+
+	select {
+		appearance: none;
+		padding: 0.35rem 0.25rem;
+		min-width: 8rem;
+		max-width: 10rem;
+	}
+
+	:global(.members-add-btn) {
+		margin-right: 0;
 	}
 </style>

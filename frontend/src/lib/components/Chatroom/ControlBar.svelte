@@ -7,6 +7,7 @@
 	import Modal from '$lib/components/Modal/Modal.svelte';
 	import doorIcon from '$lib/images/door_icon.svg';
 	import ChatSettings from './ChatSettings.svelte';
+	import linkIcon from '$lib/images/link_icon.svg';
 
 	export let adminId: string,
 		chatMembers: User[],
@@ -35,6 +36,11 @@
 {#if chatId}
 	<div class="chat-control-bar">
 		<div class="chat-header">
+			{#if privacyMode !== 'private'}
+				<button title="share chat link" class="share-btn">
+					<img src={linkIcon} alt="share chat link" />
+				</button>
+			{/if}
 			<p>{chatname}</p>
 			<button
 				title="{dropdownActive ? 'Hide' : 'Show'} participants"
@@ -54,10 +60,10 @@
 							<UserRecord currentId={userId} username={member.username} userId={member.id} />
 						</div>
 						<div class="chat-member-controls">
-							<button title="Invite to a game">🏓</button>
+							<button title="Invite to a game" id="invite-{member.id}">🏓</button>
 							{#if isAdmin}
-								<button title="Mute">🔇</button>
-								<button title="Delete from the chat">❌</button>
+								<button title="Mute" id="mute-{member.id}">🔇</button>
+								<button title="Delete from the chat" id="remove-{member.id}">❌</button>
 							{/if}
 						</div>
 					</div>
@@ -85,6 +91,11 @@
 		margin: 0;
 		outline: none;
 		border: none;
+	}
+
+	.share-btn {
+		position: absolute;
+		left: .5rem;
 	}
 
 	.members-dropdown {

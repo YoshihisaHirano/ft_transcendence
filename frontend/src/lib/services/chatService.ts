@@ -1,5 +1,5 @@
 import { newDMChat, newGroupChat } from '$lib/mockData/mockData';
-import type { Chat, NewChat } from '$lib/types/types';
+import type { Chat, ChatSettings, NewChat } from '$lib/types/types';
 
 const endpoint = 'chats/';
 const isMocking = true;
@@ -22,6 +22,10 @@ export default {
 	},
 
 	addMembers: async (members: string[]): Promise<void> => {
+		return;
+	},
+
+	updateChat: async (settings: ChatSettings): Promise<void> => {
 		return;
 	}
 };
