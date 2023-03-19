@@ -1,14 +1,18 @@
 <script>
 	import Button from '$lib/components/Button/Button.svelte';
 	import { appState } from '$lib/store/appState';
-	import { removeCookie } from '$lib/utils/storage';
 	import { page } from '$app/stores';
+	import { removeFromStorage } from '$lib/utils/storage';
+	import userService from '$lib/services/userService';
+	import { goto } from '$app/navigation';
 
-	function logout() {
+	async function logout() {
 		appState.update((prevState) => {
 			return { ...prevState, isLoggedIn: false };
 		});
-		removeCookie('user-id');
+		removeFromStorage('userId');
+		await userService.logout();
+		goto('/login');
 	}
 
 	const navLinks = [
