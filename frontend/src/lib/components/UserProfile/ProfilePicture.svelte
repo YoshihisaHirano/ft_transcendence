@@ -14,7 +14,7 @@
 	on:pointerenter={() => setUploadVisibility(true)}
 	on:pointerleave={() => setUploadVisibility(false)}
 >
-	<img src={imageSrc || defaultPicture} alt="user profile pic" />
+	<img src={imageSrc !== 'null' ? imageSrc : defaultPicture} alt="user profile pic" />
 	{#if isCurrentUser}
 		<div class="upload-picture" class:active={uploadVisible}>
 			<label for="upload-profile-pic">

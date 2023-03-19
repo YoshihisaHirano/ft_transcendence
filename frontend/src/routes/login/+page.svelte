@@ -1,40 +1,38 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import Button from '$lib/components/Button/Button.svelte';
 	import dino from '$lib/images/dino.svg';
 	import { appState } from '$lib/store/appState';
-	import { saveCookie } from '$lib/utils/storage';
 	import { beforeUpdate } from 'svelte';
-	import userService from '$lib/services/userService';
 	import UserCreateForm from '$lib/components/UserCreateForm/UserCreateForm.svelte';
+	import { saveToStorage } from '$lib/utils/storage';
+	import Link from '$lib/components/Link/Link.svelte';
+	/** @type {import('./$types').PageData} */
+	export let data: {
+		userId: string;
+		login: string;
+		redirectUrl?: string;
+	};
 
 	$: loginFailed = false;
 	$: renderCreateForm = false;
 	$: intraLogin = '';
 
-	async function login() {
-		intraLogin = await userService.getIntraLogin() || '';
-		if (!intraLogin) {
-			loginFailed = true;
-			return;
-		}
-		const user = await userService.getUserByLogin(intraLogin);
-		/* if user is not present, the site renders the user create page */
-		if (!user) {
-			renderCreateForm = true;
-			return;
-		} else {
-			appState.update((prevState) => {
-				return { ...prevState, isLoggedIn: true, user: user };
-			});
-			saveCookie('user-id', user.id);
-			goto('/');
-		}
-	}
-
 	beforeUpdate(() => {
 		if ($appState.isLoggedIn) {
 			goto('/');
+		}
+		if (data.redirectUrl) {
+			return;
+		}
+		if (data.userId) {
+			saveToStorage('userId' ,data.userId);
+			appState.update((val) => ({
+				...val, isLoggedIn: true
+			}));
+			goto('/');
+		} else {
+			intraLogin = data.login;
+			renderCreateForm = true;
 		}
 	});
 </script>
@@ -48,9 +46,9 @@
 			{#if loginFailed}
 				<legend>Login failed!</legend>
 			{/if}
-			LOGIN
-			<!-- <a href="/intra-login" on:click={redirectUser}></a> -->
-			<!-- <Button variant="success" onClick={login}>Login with 42intra</Button> -->
+			{#if data.redirectUrl}
+				<Link internal={false} target={data.redirectUrl}>LOGIN</Link>
+			{/if}
 		</fieldset>
 	{/if}
 </main>
