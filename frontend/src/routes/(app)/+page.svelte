@@ -1,16 +1,10 @@
 <script lang="ts">
-	/** @type {import('./$types').PageData} */
-	import { goto } from "$app/navigation";
 	import UserProfile from "$lib/components/UserProfile/UserProfile.svelte";
-	import type { PageData } from "./$types";
-    export let data: PageData;
-    $: userData = data.data;
+	import { appState } from "$lib/store/appState";
 
-    if (userData && !userData.success) {
-        goto('/404');
-    }
+    $: userData = $appState.user;
 </script>
 
-{#if userData.user}
-    <UserProfile isCurrentUser userData={userData.user}/>
+{#if userData}
+    <UserProfile isCurrentUser userData={userData}/>
 {/if}

@@ -8,7 +8,7 @@
 	export let intraLogin: string;
 
 	$: newUser = {
-        image: 'no-image',
+        image: 'null',
 		login: intraLogin,
 		username: '',
 	};

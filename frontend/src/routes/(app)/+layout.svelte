@@ -4,6 +4,7 @@
 	import '/src/styles/global.css';
 	import Header from '$lib/components/Header/Header.svelte';
 	import AuthLayout from '$lib/components/AuthLayout/AuthLayout.svelte';
+
 </script>
 
 <svelte:head>
