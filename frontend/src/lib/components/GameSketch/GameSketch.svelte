@@ -1,29 +1,76 @@
 <script lang="ts">
-    import P5 from "p5-svelte";
-    import type { Sketch } from "p5-svelte";
+	import P5 from 'p5-svelte';
+	import type { Sketch } from 'p5-svelte';
+	import { Ball } from '$lib/sketchLib/Ball';
+	import { Paddle } from '$lib/sketchLib/Paddle';
 
-    const sketch: Sketch = (p5) => {
+	let scores = {
+		score1: 0,
+		score2: 0
+	};
+
+	const sketch: Sketch = (p5) => {
+		let ball: Ball;
+		let left: Paddle;
+		let right: Paddle;
+
+		const score1Div = document.getElementById('score1');
+		const score2Div = document.getElementById('score2');
+
 		p5.setup = () => {
 			p5.createCanvas(Math.min(p5.windowWidth * 0.8, 800), Math.min(p5.windowHeight * 0.8, 400));
+			ball = new Ball(p5);
+			left = new Paddle(p5, true);
+			right = new Paddle(p5, false);
 		};
+
+        p5.keyReleased = () => {
+			left.move(0);
+			right.move(0);
+		}
+
+		p5.keyPressed = () => {
+			console.log(p5.key);
+			if (p5.key == 'a') {
+				left.move(-10);
+			} else if (p5.key == 'z') {
+				left.move(10);
+			}
+
+			if (p5.key == 'j') {
+				right.move(-10);
+			} else if (p5.key == 'm') {
+				right.move(10);
+			}
+		}
+
 		p5.draw = () => {
-			p5.ellipse(p5.width / 2, p5.height / 2, 10, 10);
+			p5.background(p5.color(5, 6, 9));
+
+			ball.checkPaddleRight(right);
+			ball.checkPaddleLeft(left);
+
+			left.show();
+			right.show();
+			left.update();
+			right.update();
+
+			ball.update();
+			ball.edges(scores);
+			ball.show();
+
+			if (score1Div && score2Div) {
+				score1Div.innerHTML = scores.score1.toString();
+				score2Div.innerHTML = scores.score2.toString();
+			}
+
+			if (scores.score1 > 15 || scores.score2 > 15) {
+				scores.score1 = 0;
+				scores.score2 = 0;
+				p5.noLoop();
+			}
 		};
-	}
+	};
 </script>
 
-<div class="game-info">
-    <div class="game-info-right"></div>
-    <div class="game-info-left"></div>
-</div>
-<div class="game-field-wrapper">
-    <P5 {sketch} />
-</div>
-
-<style>
-    .game-field-wrapper {
-        width: fit-content;
-        margin: 0 auto;
-        border: 1px dashed var(--text-primary);
-    }
-</style>
+<P5 {sketch} />

@@ -1,5 +1,5 @@
 <script>
-	import GameSketch from "$lib/components/GameSketch/GameSketch.svelte";
+	import GameScreen from "$lib/components/GameScreen/GameScreen.svelte";
 </script>
 
-<GameSketch/>
+<GameScreen player1="" player2="" />
