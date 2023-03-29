@@ -1,2 +1,5 @@
-<h1>about</h1>
-<p>this is the game page.</p>
+<script>
+	import GameSketch from "$lib/components/GameSketch/GameSketch.svelte";
+</script>
+
+<GameSketch/>
