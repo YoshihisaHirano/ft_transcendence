@@ -6,6 +6,7 @@ import entities from './entities';
 import { StatsModule } from 'src/stats/stats.module';
 import { TournamentModule } from 'src/tournament/tournament.module';
 import { AuthModule } from './auth/auth.module';
+import { ChatModule } from './chat/chat.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -27,6 +28,7 @@ import { AuthModule } from './auth/auth.module';
     StatsModule,
     TournamentModule,
     AuthModule,
+    ChatModule,
   ],
 })
 export class AppModule {}

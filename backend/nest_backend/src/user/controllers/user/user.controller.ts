@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -16,7 +17,6 @@ import { Stats } from 'src/entities';
 import { ShortResponseUserDto } from 'src/dtos/shortResponseUser.dto';
 import { TournamentDto } from 'src/dtos/tournament.dto';
 import { ResponseUserDto } from 'src/dtos/responseUser.dto';
-import * as bcrypt from 'bcrypt';
 import { AuthService } from 'src/auth/auth.service';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
@@ -109,20 +109,30 @@ export class UserController {
     return this.userService.deleteFriend(friendshipDto);
   }
   @UseGuards(JwtAuthGuard)
-  @Put('/:id')
-  async updateUser(@Param('id') id: string, @Body('image') image: string) {
+  @Put('update')
+  async updateUser(@Body('id') id: string, @Body('image') image: string) {
     const user = await this.userService.updateUserPicture(id, image);
     return this.getUserById(user.id);
   }
-  @Get('/test/password')
-  async TestMethod() {
-    //password testing
-    const saltOrRounds = 10;
-    const password = 'password';
-    const hash = await bcrypt.hash(password, saltOrRounds);
-    console.log(hash);
-    const input = 'pasword';
-    const isMatch = await bcrypt.compare(input, hash);
-    console.log(isMatch);
+  @Put('blacklist')
+  addUserToBlacklist(
+    @Body('userId') userId: string,
+    @Body('blackId') blackId: string,
+  ) {
+    return this.userService.addToBlacklist(userId, blackId);
+  }
+  @Delete('blacklist')
+  deleteUserFromBlacklist(
+    @Body('userId') userId: string,
+    @Body('blackId') blackId: string,
+  ) {
+    return this.userService.deleteFromBlacklist(userId, blackId);
+  }
+  @Get('blacklist/:userId/:checkId')
+  checkIfUserInBlacklist(
+    @Param('userId') userId: string,
+    @Param('checkId') checkId: string,
+  ) {
+    return this.userService.checkBlacklist(userId, checkId);
   }
 }
