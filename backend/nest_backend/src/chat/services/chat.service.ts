@@ -88,7 +88,7 @@ export class ChatService {
   }
   async findDirectChat(userOneId: string, userTwoId: string) {
     //fail
-    return this.chatRepository
+    /*return this.chatRepository
       .createQueryBuilder('chat')
       .where('chat.isDirect = :direct', { direct: true })
       .andWhere(
@@ -99,6 +99,14 @@ export class ChatService {
           );
         }),
       )
-      .getOneOrFail();
+      .getMany();*/
+    return this.chatRepository
+      .createQueryBuilder('chat')
+      .where('chat.isDirect = :direct', { direct: true })
+      .andWhere(
+        ':firstId = ANY (chat.members) AND :secondId = ANY (chat.members)',
+        { firstId: userOneId, secondId: userTwoId },
+      )
+      .getOne();
   }
 }
