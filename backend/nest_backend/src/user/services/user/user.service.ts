@@ -15,6 +15,7 @@ export class UserService {
   createUser(createUserDto: CreateUserDto) {
     const newUser = this.userRepository.create(createUserDto);
     newUser.isOnline = true;
+    newUser.blacklist = [];
     return this.userRepository.save(newUser).catch((e) => {
       if (/(already exists)/.test(e.detail)) {
         throw new BadRequestException(
@@ -92,5 +93,23 @@ export class UserService {
     const user = await this.findUserById(id);
     user.image = image;
     return this.userRepository.save(user);
+  }
+  async addToBlacklist(userId: string, blackId: string) {
+    const user = await this.findUserById(userId);
+    if (!user.blacklist.includes(blackId)) {
+      user.blacklist.push(blackId);
+    }
+    return this.userRepository.save(user);
+  }
+  async deleteFromBlacklist(userId: string, blackId: string) {
+    const user = await this.findUserById(userId);
+    if (user.blacklist.includes(blackId)) {
+      user.blacklist = user.blacklist.filter((id) => id != blackId);
+    }
+    return this.userRepository.save(user);
+  }
+  async checkBlacklist(userId: string, checkId: string) {
+    const user = await this.findUserById(userId);
+    return user.blacklist.includes(checkId);
   }
 }

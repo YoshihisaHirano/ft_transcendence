@@ -24,4 +24,7 @@ export class User {
   @ManyToMany(() => User)
   @JoinTable()
   friends: User[];
+
+  @Column('text', { array: true })
+  blacklist: string[];
 }
