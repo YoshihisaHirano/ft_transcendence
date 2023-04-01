@@ -18,6 +18,7 @@ export class ChatService {
     }
     const newChat = this.chatRepository.create(createChatDto);
     newChat.muteList = [];
+    
     return this.chatRepository.save(newChat);
   }
   getAllChats() {
