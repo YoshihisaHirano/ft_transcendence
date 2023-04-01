@@ -9,7 +9,7 @@ async function bootstrap() {
     cert: process.env.CERTIFICATE,
   };
   const app = await NestFactory.create(AppModule, {
-    httpsOptions,
+    // httpsOptions,
   });
   await app.listen(3000);
   app.enableCors({
