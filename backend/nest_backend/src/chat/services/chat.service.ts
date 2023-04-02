@@ -88,19 +88,6 @@ export class ChatService {
     return chat.muteList.includes(userId);
   }
   async findDirectChat(userOneId: string, userTwoId: string) {
-    //fail
-    /*return this.chatRepository
-      .createQueryBuilder('chat')
-      .where('chat.isDirect = :direct', { direct: true })
-      .andWhere(
-        new Brackets((qb) => {
-          qb.where(':id = ANY (chat.members)', { id: userOneId }).andWhere(
-            ':id = ANY (chat.members)',
-            { id: userTwoId },
-          );
-        }),
-      )
-      .getMany();*/
     return this.chatRepository
       .createQueryBuilder('chat')
       .where('chat.isDirect = :direct', { direct: true })
