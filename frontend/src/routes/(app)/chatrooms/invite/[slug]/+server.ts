@@ -1,6 +1,7 @@
 import chatService from '$lib/services/chatService';
 import { redirect } from '@sveltejs/kit';
 
+/** @type {import('./$types').RequestHandler} */
 export async function GET({ cookies, params }) {
     const id = params.slug;
     const userId = cookies.get('user-id') as string;

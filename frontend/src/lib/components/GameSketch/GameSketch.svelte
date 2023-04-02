@@ -3,6 +3,7 @@
 	import type { Sketch } from 'p5-svelte';
 	import { Ball } from '$lib/sketchLib/Ball';
 	import { Paddle } from '$lib/sketchLib/Paddle';
+	import { gameState } from '$lib/store/gameState';
 
 	let scores = {
 		score1: 0,
@@ -24,13 +25,12 @@
 			right = new Paddle(p5, false);
 		};
 
-        p5.keyReleased = () => {
+		p5.keyReleased = () => {
 			left.move(0);
 			right.move(0);
-		}
+		};
 
 		p5.keyPressed = () => {
-			console.log(p5.key);
 			if (p5.key == 'a') {
 				left.move(-10);
 			} else if (p5.key == 'z') {
@@ -42,7 +42,7 @@
 			} else if (p5.key == 'm') {
 				right.move(10);
 			}
-		}
+		};
 
 		p5.draw = () => {
 			p5.background(p5.color(5, 6, 9));
@@ -64,10 +64,25 @@
 				score2Div.innerHTML = scores.score2.toString();
 			}
 
-			if (scores.score1 > 15 || scores.score2 > 15) {
+			if (scores.score1 > 2 || scores.score2 > 2) {
+				p5.noLoop();
+				console.log('game finished', scores);
+				if ($gameState) {
+					const updatedGame = { ...$gameState };
+					updatedGame.stats.userOneScore = scores.score1;
+					updatedGame.stats.userTwoScore = scores.score2;
+					updatedGame.status = 'finished';
+					gameState.update((val) => {
+						return val
+							? {
+									status: 'finished',
+									stats: { ...val.stats, userOneScore: scores.score1, userTwoScore: scores.score2 }
+							  }
+							: null;
+					});
+				}
 				scores.score1 = 0;
 				scores.score2 = 0;
-				p5.noLoop();
 			}
 		};
 	};

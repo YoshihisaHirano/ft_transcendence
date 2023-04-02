@@ -4,9 +4,10 @@
 	import { appState } from '$lib/store/appState';
 	import { beforeUpdate } from 'svelte';
 	import UserCreateForm from '$lib/components/UserCreateForm/UserCreateForm.svelte';
-	import { saveToStorage } from '$lib/utils/storage';
+	import { removeFromStorage, saveToStorage } from '$lib/utils/storage';
 	import Link from '$lib/components/Link/Link.svelte';
 	/** @type {import('./$types').PageData} */
+
 	export let data: {
 		userId: string;
 		login: string;
@@ -18,11 +19,11 @@
 	$: intraLogin = '';
 
 	beforeUpdate(() => {
-		if ($appState.isLoggedIn) {
-			goto('/');
-		}
 		if (data.redirectUrl) {
 			return;
+		}
+		if ($appState.isLoggedIn) {
+			goto('/');
 		}
 		if (data.userId) {
 			saveToStorage('userId' ,data.userId);

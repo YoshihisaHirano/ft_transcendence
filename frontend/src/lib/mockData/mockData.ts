@@ -112,7 +112,7 @@ export const thirdUser: User = {
 };
 
 export const mainUser: User = {
-	id: '7hf57brwyu45',
+	id: '0e512379-be69-4aa1-b6d6-b68f5c3e134d',
 	image: '',
 	isOnline: true,
 	username: 'aalannys',
@@ -139,14 +139,14 @@ const messages: Message[] = [
 ]
 
 export const userChats: Chat[] = [
-	{ adminId: '7hf57brwyu45', chatId: 'gfw2yrw3e', chatname: 'chatty chat', members: [secondUser, mainUser], messages: [], privacyMode: 'public' },
-	{ adminId: '7hf57brwyu45', chatId: 'vgqrtfe', chatname: 'kitten chat', members: [secondUser, mainUser, thirdUser], messages: [ ...messages, ...messages ], privacyMode: 'private' },
+	{ adminId: '0e512379-be69-4aa1-b6d6-b68f5c3e134d', chatId: 'gfw2yrw3e', chatname: 'chatty chat', members: [secondUser, mainUser], messages: [], privacyMode: 'public' },
+	{ adminId: '0e512379-be69-4aa1-b6d6-b68f5c3e134d', chatId: 'vgqrtfe', chatname: 'kitten chat', members: [secondUser, mainUser, thirdUser], messages: [ ...messages, ...messages ], privacyMode: 'private' },
 	{ adminId: 'h53g2ghegv', chatId: 'udq7t7qtr', chatname: 'unicorn chat', members: [mainUser, thirdUser], messages: [messages[2], messages[0]], privacyMode: 'protected' },
 ]
 
 export const newGroupChat: Chat = {
 	chatId: 'sfsgdh',
-	adminId: '7hf57brwyu45',
+	adminId: '0e512379-be69-4aa1-b6d6-b68f5c3e134d',
 	members: [mainUser],
 	chatname: 'LOTR',
 	messages: [],
@@ -155,7 +155,7 @@ export const newGroupChat: Chat = {
 
 export const newDMChat: Chat = {
 	chatId: 'dghdhsds',
-	adminId: '7hf57brwyu45',
+	adminId: '0e512379-be69-4aa1-b6d6-b68f5c3e134d',
 	members: [mainUser, secondUser],
 	chatname: 'Kitten chat',
 	privacyMode: 'private',

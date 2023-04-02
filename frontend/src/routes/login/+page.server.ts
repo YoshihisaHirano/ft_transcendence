@@ -20,9 +20,6 @@ export const load: PageServerLoad = async ({ cookies }) => {
 			login
 		}
 	} else {
-		// cookies.set('user-login', '', {
-		// 	expires: new Date(0)
-		// })
 		return {
 			userId,
 			login

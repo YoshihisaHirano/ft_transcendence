@@ -32,6 +32,7 @@ export async function GET({ url, cookies, fetch }) {
 			const meJson = await me.json();
 			login = meJson.login;
 		} catch (err) {
+			console.error(err);
 			throw redirect(302, '/404');
 		}
 	}

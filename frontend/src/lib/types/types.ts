@@ -1,5 +1,12 @@
 export type PrivacyMode = 'public' | 'private' | 'protected';
 
+type GameStatus = 'waiting' | 'in progress' | 'finished';
+
+export interface GameState {
+	status: GameStatus;
+	stats: GameStats;
+}
+
 export interface AppState {
 	isLoggedIn: boolean;
 	user: User | null;
@@ -12,6 +19,13 @@ export interface GameStats {
 	userTwoId: string;
 	userTwoName: string;
 	userTwoScore: number;
+}
+
+export interface Tournament {
+	wins: number;
+	losses: number;
+	username: string;
+	playerId: string;
 }
 
 export interface User {
