@@ -65,4 +65,11 @@ export class ChatController {
   ) {
     return this.chatService.findDirectChat(userOneId, userTwoId);
   }
+  @Get('member/:chatId/:userId')
+  checkUserMembership(
+    @Param('chatId') chatId: string,
+    @Param('userId') userId: string,
+  ) {
+    return this.chatService.isUserChatMember(chatId, userId);
+  }
 }

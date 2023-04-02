@@ -18,7 +18,6 @@ export class ChatService {
     }
     const newChat = this.chatRepository.create(createChatDto);
     newChat.muteList = [];
-    
     return this.chatRepository.save(newChat);
   }
   getAllChats() {
@@ -88,19 +87,6 @@ export class ChatService {
     return chat.muteList.includes(userId);
   }
   async findDirectChat(userOneId: string, userTwoId: string) {
-    //fail
-    /*return this.chatRepository
-      .createQueryBuilder('chat')
-      .where('chat.isDirect = :direct', { direct: true })
-      .andWhere(
-        new Brackets((qb) => {
-          qb.where(':id = ANY (chat.members)', { id: userOneId }).andWhere(
-            ':id = ANY (chat.members)',
-            { id: userTwoId },
-          );
-        }),
-      )
-      .getMany();*/
     return this.chatRepository
       .createQueryBuilder('chat')
       .where('chat.isDirect = :direct', { direct: true })
@@ -109,5 +95,14 @@ export class ChatService {
         { firstId: userOneId, secondId: userTwoId },
       )
       .getOne();
+  }
+  async isUserChatMember(chatId: string, userId: string) {
+    const chat = await this.chatRepository.findOne({
+      where: { chatId: chatId },
+    });
+    if (chat == null) {
+      return false;
+    }
+    return chat.members.includes(userId);
   }
 }

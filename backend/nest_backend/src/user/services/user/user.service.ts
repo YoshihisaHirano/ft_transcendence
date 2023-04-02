@@ -83,7 +83,10 @@ export class UserService {
     );
   }
   async findUserIdByLogin(login: string) {
-    const user = await this.userRepository.findOne({ where: { login: login } });
+    const user = await this.userRepository
+      .createQueryBuilder('user')
+      .where('user.login = :login', { login: login })
+      .getOne();
     if (user == null) {
       return null;
     }
