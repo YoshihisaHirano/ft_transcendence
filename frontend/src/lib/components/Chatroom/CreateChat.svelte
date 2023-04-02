@@ -5,6 +5,9 @@
 	import { appState } from '$lib/store/appState';
 	import Button from '../Button/Button.svelte';
 	import chatService from '$lib/services/chatService';
+	import { chatState } from '$lib/store/chatState';
+
+	export let toggleModal: () => void;
 
 	$: friends = $appState.user?.friends || [];
 	$: id = $appState.user?.id || '';
@@ -14,23 +17,34 @@
 		members: [],
 		privacyMode: 'public',
 		password: '',
-		adminId: id
+		adminId: id,
+		isDirect: false
 	} as NewChat;
 
 	let formRef: HTMLFormElement;
+	$: errorMsg = '';
 
-	function createChat(e: Event) {
+	$: createDisabled = (newChat.privacyMode === 'protected' && !newChat.password) || !newChat.chatname;
+
+	async function createChat(e: Event) {
 		e.preventDefault();
 		if (formRef && formRef.reportValidity()) {
 			newChat.members = [...newChat.members, id];
-            chatService.createChat(newChat);
+            const resChat = await chatService.createChat(newChat);
+			if ('message' in resChat) {
+				errorMsg = resChat.message;
+			} else {
+				chatState.update((val) => ([...val, resChat]));
+				errorMsg = '';
+				toggleModal();
+			}
 		}
 	}
 </script>
 
 <form bind:this={formRef}>
 	<fieldset>
-		<legend>{newChat.chatname || 'new chat'}</legend>
+		<legend>{newChat.chatname || errorMsg || 'new chat'}</legend>
 		<div class="settings-field">
 			<label for="chatname">
 				<p>chat name</p>
@@ -44,7 +58,7 @@
 			<PrivacySelect bind:chatSettings={newChat} />
 		</div>
 	</fieldset>
-	<Button className="new-chat-btn" variant="success" onClick={createChat}>Create!</Button>
+	<Button disabled={createDisabled} className="new-chat-btn" variant="success" onClick={createChat}>Create!</Button>
 </form>
 
 <style>

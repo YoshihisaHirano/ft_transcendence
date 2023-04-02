@@ -1,10 +1,10 @@
 import type { AppState } from './../types/types';
 import { writable } from 'svelte/store';
 import type { Writable } from 'svelte/store';
-import { getCookie } from '$lib/utils/cookies';
+import { getFromStorage } from '$lib/utils/storage';
 
 export const initialState = {
-	isLoggedIn: getCookie('user-id') ? true : false,
+	isLoggedIn: getFromStorage('userId') ? true : false,
 	user: null,
 }
 

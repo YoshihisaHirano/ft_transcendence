@@ -1,11 +1,13 @@
 <script lang="ts">
 	import Button from '$lib/components/Button/Button.svelte';
-	import type { Chat } from '$lib/types/types';
+	import type { Chat, Message } from '$lib/types/types';
 	import MessageDisplay from './MessageDisplay.svelte';
 	import ControlBar from './ControlBar.svelte';
+	import { chatState } from '$lib/store/chatState';
 
 	export let chat: Chat | null;
-	$: messages = chat ? chat.messages : [];
+	$: reactiveChat = $chatState.find((item) => item.chatId === chat?.chatId);
+	$: messages = [] as Message[];
 	$: messageText = '';
 
 	function sendMessage() {
@@ -18,8 +20,8 @@
 </script>
 
 <div class="chat-window simple-shadow">
-	{#if chat}
-		<ControlBar privacyMode={chat.privacyMode} password={chat.password} adminId={chat.adminId} chatMembers={chat.members} chatname={chat.chatname}  chatId={chat.chatId} />
+	{#if reactiveChat}
+		<ControlBar privacyMode={reactiveChat.privacyMode} password="" adminId={reactiveChat.adminId} chatMembers={reactiveChat.members} chatname={reactiveChat.chatname}  chatId={reactiveChat.chatId} />
 	{/if}
 	<MessageDisplay {messages} />
 	<div class="input-area">

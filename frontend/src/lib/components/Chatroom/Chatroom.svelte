@@ -1,13 +1,14 @@
 <script lang="ts">
-	import type { Chat, Message } from '$lib/types/types';
+	import type { Chat } from '$lib/types/types';
 	import ChatWindow from './ChatWindow.svelte';
 	import privateIcon from '$lib/images/locked_icon.svg';
 	import protectedIcon from '$lib/images/key_icon.svg';
 	import frog from "$lib/images/frog_friend.svg";
 	import Modal from '../Modal/Modal.svelte';
 	import CreateChat from './CreateChat.svelte';
+	import { chatState } from '$lib/store/chatState';
 
-	export let userChats: Chat[];
+	$: userChats = $chatState;
 	$: selectedChat = null as Chat | null;
 	$: isModalOpen = false;
 
@@ -28,12 +29,12 @@
 			<input
 				type="radio"
 				name="group"
-				id={chat.chatname}
+				id={chat.chatId}
 				bind:group={selectedChat}
 				value={chat}
 				class="visually-hidden"
 			/>
-			<label for={chat.chatname}>
+			<label for={chat.chatId}>
 				{chat.chatname}
 				{#if chat.privacyMode != 'public'}
 					{@const isPrivate = chat.privacyMode == 'private'}
@@ -52,7 +53,7 @@
 
 {#if isModalOpen}
 	<Modal title="create new chat" onClose={toggleModal}>
-		<CreateChat/>
+		<CreateChat {toggleModal}/>
 	</Modal>
 {/if}
 

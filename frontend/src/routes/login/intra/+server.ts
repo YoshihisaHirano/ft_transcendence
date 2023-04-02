@@ -45,9 +45,9 @@ export async function GET({ url, cookies, fetch }) {
 					...addContentType()
 				}
 			});
-			console.log(JSON.stringify({ login }), 'login')
+			// console.log(JSON.stringify({ login }), 'login')
             const logMeJSON = await logMe.json();
-			console.log(login, logMeJSON);
+			// console.log(login, logMeJSON);
 			cookies.set('user-token', logMeJSON.token, {
                 path: '/'
             });

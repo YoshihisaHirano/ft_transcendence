@@ -5,6 +5,7 @@
 	import type { ChatSettings, PrivacyMode, User } from '$lib/types/types';
 	import PrivacySelect from '../PrivacySelect/PrivacySelect.svelte';
 	import AddChatMembers from '../AddChatMembers/AddChatMembers.svelte';
+	import { chatState } from '$lib/store/chatState';
 
 	export let chatId: string,
 		privacyMode: PrivacyMode,
@@ -31,10 +32,18 @@
 		chatSettings.adminId != adminId ||
 		chatSettings.chatname != chatname;
 
-	function updateChat(e: Event) {
+	async function updateChat(e: Event) {
 		e.preventDefault();
 		if (formRef && formRef.reportValidity()) {
-			chatService.updateChat(chatSettings);
+			const updatedChat = await chatService.updateChat(chatSettings);
+			if (!('message' in updatedChat)) {
+				chatState.update((val) => {
+					const updatedChatIdx = val.findIndex((item) => item.chatId === chatId);
+					const updatedChats = val.slice();
+					updatedChats[updatedChatIdx] = updatedChat;
+					return [ ...updatedChats ];
+				})
+			}
 		}
 	}
 </script>

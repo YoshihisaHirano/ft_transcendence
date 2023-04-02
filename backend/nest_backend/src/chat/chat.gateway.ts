@@ -16,7 +16,7 @@ import { MuteService } from './services/mute.service';
 	namespace: '/chat',
 	cors: {
 		credentials: true,
-		origin: "http://127.0.0.1:5176",
+		origin: "http://localhost:5176",
 		methods: ['GET', 'POST'],
 	  	transports: ['websocket'],
 	}
