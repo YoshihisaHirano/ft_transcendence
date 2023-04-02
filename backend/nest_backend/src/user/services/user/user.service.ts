@@ -87,7 +87,6 @@ export class UserService {
       .createQueryBuilder('user')
       .where('user.login = :login', { login: login })
       .getOne();
-    console.log(user);
     if (user == null) {
       return null;
     }

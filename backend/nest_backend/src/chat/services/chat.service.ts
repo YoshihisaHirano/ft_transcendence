@@ -18,7 +18,6 @@ export class ChatService {
     }
     const newChat = this.chatRepository.create(createChatDto);
     newChat.muteList = [];
-    
     return this.chatRepository.save(newChat);
   }
   getAllChats() {
@@ -96,5 +95,14 @@ export class ChatService {
         { firstId: userOneId, secondId: userTwoId },
       )
       .getOne();
+  }
+  async isUserChatMember(chatId: string, userId: string) {
+    const chat = await this.chatRepository.findOne({
+      where: { chatId: chatId },
+    });
+    if (chat == null) {
+      return false;
+    }
+    return chat.members.includes(userId);
   }
 }
