@@ -105,4 +105,12 @@ export class ChatService {
     }
     return chat.members.includes(userId);
   }
+  deleteChat(chatId: string) {
+    return this.chatRepository.delete({ chatId: chatId });
+  }
+  findById(id: string) {
+    return this.chatRepository.findOne({
+      where: { chatId: id },
+    });
+  }
 }

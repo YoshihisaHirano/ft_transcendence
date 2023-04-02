@@ -92,6 +92,17 @@ export class UserService {
     }
     return user.id;
   }
+
+  async findUsernameById(id: string) {
+    const user = await this.userRepository
+      .createQueryBuilder('user')
+      .where('user.id = :id', { id: id })
+      .getOne();
+    if (user == null) {
+      return null;
+    }
+    return user.username;
+  }
   async updateUserPicture(id: string, image: string) {
     const user = await this.findUserById(id);
     user.image = image;
@@ -114,5 +125,16 @@ export class UserService {
   async checkBlacklist(userId: string, checkId: string) {
     const user = await this.findUserById(userId);
     return user.blacklist.includes(checkId);
+  }
+  async getShortInfoByIds(ids: string[]) {
+    const res = [];
+    for (const id of ids) {
+      res.push({
+        id: id,
+        username: await this.findUsernameById(id),
+        isOnline: true,
+      });
+    }
+    return res;
   }
 }
