@@ -25,25 +25,36 @@ export class ChatGateway {
 		console.log(newChatData);
 		try {
 			const chat = await this.chatService.createChat(newChatData);
-			client.emit('newChatCreateStatus', chat); // change to chatId?? 
+			console.log(chat);
+			// join to room admin
+			client.emit('newChatCreateStatus', chat);
 		} catch (e)
 		{
+			console.log(e);
 			client.emit('newChatCreateStatus', null);
 		}
 	}
 
-	// @SubscribeMessage('joinChat')
-	// handleJoinRoom(client: Socket, data: JoinChatData) {
-	// 	const joinData = new JoinChatData();
-	// 	joinData.chatId = data.chatId;
-	// 	joinData.userId = data.userId;
-	// 	joinData.password = data.password;
-	// 	const joinResult: JoinChatStatus = this.chatService.joinChat(joinData);
-	// 	if (joinResult.status === true) {
-	// 		client.join(joinData.chatId); // id
-	// 	}
-	// 	client.emit('joinChatStatus', joinResult);
-	// }
+	@SubscribeMessage('joinChat')
+	async handleJoinRoom(client: Socket, data) {
+		// if (this.chatService.checkUserInChat(data.userId)) {
+		if (true) {
+			// await const messages = this.chatService.getMessages(data.chatId);
+			const messages = [{
+				id: "123",
+				text: "hello world",
+				authorUsername: "Navalny",
+				authorId: data.userId,
+				chatId: data.chatId,
+				createdDate: "12 12 3213 1"
+			}];
+			client.join(data.chatId);
+			client.emit("joinChatStatus", messages);
+		} else {
+			client.emit("joinChatStatus", null);
+		}
+		
+	}
 
 	// @SubscribeMessage('leaveChat')
 	// handleLeaveRoom(client: Socket, data: LeaveChatData) {
