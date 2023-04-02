@@ -4,29 +4,63 @@
 	import MessageDisplay from './MessageDisplay.svelte';
 	import ControlBar from './ControlBar.svelte';
 	import { chatState } from '$lib/store/chatState';
+	import { messagesState } from '$lib/store/messagesState';
+	import { chatIo } from '$lib/sockets/websocketConnection';
+	import { appState } from '$lib/store/appState';
+	import { onMount } from 'svelte';
 
 	export let chat: Chat | null;
 	$: reactiveChat = $chatState.find((item) => item.chatId === chat?.chatId);
-	$: messages = [] as Message[];
 	$: messageText = '';
 
+	onMount(() => {
+		chatIo.on('newMessage', (data) => {
+			const chatId = chat?.chatId;
+			if (chatId) {
+				messagesState.update((val) => {
+					const chatMsg = val[chatId].slice();
+					chatMsg.push(data);
+					return {
+						...val,
+						[chatId]: [...chatMsg]
+					};
+				});
+			}
+		});
+
+		return () => chatIo.off('newMessage');
+	});
+
 	function sendMessage() {
-		/* socket logic will be here */
-		if (messageText) {
-			messages = [...messages, { author: 'You', authorId: 'aaaa', text: messageText, chatId: '9076shs' }];
+		const user = $appState.user;
+		if (messageText && chat?.chatId && user) {
+			const newMessage: Message = {
+				chatId: chat.chatId,
+				authorUsername: user.username,
+				authorId: user.id,
+				text: messageText
+			};
 			messageText = '';
+			chatIo.emit('newMessage', newMessage);
 		}
 	}
 </script>
 
 <div class="chat-window simple-shadow">
 	{#if reactiveChat}
-		<ControlBar privacyMode={reactiveChat.privacyMode} password="" adminId={reactiveChat.adminId} chatMembers={reactiveChat.members} chatname={reactiveChat.chatname}  chatId={reactiveChat.chatId} />
+		<ControlBar
+			privacyMode={reactiveChat.privacyMode}
+			password=""
+			adminId={reactiveChat.adminId}
+			chatMembers={reactiveChat.members}
+			chatname={reactiveChat.chatname}
+			chatId={reactiveChat.chatId}
+		/>
+		<MessageDisplay messages={$messagesState[reactiveChat.chatId] || []} />
 	{/if}
-	<MessageDisplay {messages} />
 	<div class="input-area">
 		<textarea bind:value={messageText} name="chat-message" id="chat-message" cols="45" rows="2" />
-		<Button onClick={sendMessage} variant="success" className="chat-btn">Send</Button>
+		<Button disabled={messageText === ''} onClick={sendMessage} variant="success" className="chat-btn">Send</Button>
 	</div>
 </div>
 

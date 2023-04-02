@@ -28,13 +28,6 @@ export interface User {
 	matchHistory: GameStats[];
 }
 
-export interface Message {
-    text: string;
-    author: string;
-    authorId: string;
-    chatId: string;
-}
-
 export interface NewChat {
     chatname: string;
     members: string[];
@@ -52,7 +45,7 @@ export interface NewUser {
 
 export interface Message {
     text: string;
-    author: string;
+    authorUsername: string;
     authorId: string;
     chatId: string;
 }
@@ -74,4 +67,8 @@ export interface ChatSettings {
     privacyMode: PrivacyMode;
     password?: string | null;
     adminId: string;
+}
+
+export interface MessagesState {
+    [chatId: string]: Message[]
 }

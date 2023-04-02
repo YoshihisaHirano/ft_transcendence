@@ -1,16 +1,37 @@
 <script lang="ts">
-	import type { Chat } from '$lib/types/types';
+	import type { Chat, Message, MessagesState } from '$lib/types/types';
 	import ChatWindow from './ChatWindow.svelte';
 	import privateIcon from '$lib/images/locked_icon.svg';
 	import protectedIcon from '$lib/images/key_icon.svg';
-	import frog from "$lib/images/frog_friend.svg";
+	import frog from '$lib/images/frog_friend.svg';
 	import Modal from '../Modal/Modal.svelte';
 	import CreateChat from './CreateChat.svelte';
 	import { chatState } from '$lib/store/chatState';
+	import { chatIo } from '$lib/sockets/websocketConnection';
+	import { onMount } from 'svelte';
+	import { appState } from '$lib/store/appState';
+	import { messagesState } from '$lib/store/messagesState';
 
 	$: userChats = $chatState;
 	$: selectedChat = null as Chat | null;
 	$: isModalOpen = false;
+
+	onMount(() => {
+		const userId = $appState.user?.id;
+		if (userId) {
+			userChats.forEach((chat) => {
+				chatIo.emit('joinChat', { userId, chatId: chat.chatId });
+			});
+		}
+		chatIo.on('joinChatStatus', (messages) => {
+			messagesState.update((val) => ({
+				...val,
+				[messages.chatId]: [...messages.messages]
+			}));
+		});
+
+		return () => chatIo.off('joinChatStatus');
+	});
 
 	function toggleModal() {
 		isModalOpen = !isModalOpen;
@@ -20,9 +41,10 @@
 <div class="chat-container">
 	<div class="chats-list simple-shadow">
 		<div class="chat-list-controls">
-			<p>{userChats.length} chats
-			<img src={frog} alt="" width="24px" height="24px">
-		</p>
+			<p>
+				{userChats.length} chats
+				<img src={frog} alt="" width="24px" height="24px" />
+			</p>
 			<button on:click={toggleModal}>+</button>
 		</div>
 		{#each userChats as chat}
@@ -39,11 +61,7 @@
 				{#if chat.privacyMode != 'public'}
 					{@const isPrivate = chat.privacyMode == 'private'}
 					{@const tip = isPrivate ? 'chat is private' : 'chat is protected'}
-					<img
-						src={isPrivate ? privateIcon : protectedIcon}
-						alt={tip}
-						title={tip}
-					/>
+					<img src={isPrivate ? privateIcon : protectedIcon} alt={tip} title={tip} />
 				{/if}
 			</label>
 		{/each}
@@ -53,7 +71,7 @@
 
 {#if isModalOpen}
 	<Modal title="create new chat" onClose={toggleModal}>
-		<CreateChat {toggleModal}/>
+		<CreateChat {toggleModal} />
 	</Modal>
 {/if}
 
@@ -89,7 +107,7 @@
 
 	.chat-list-controls {
 		display: flex;
-		border: 1px solid #FFF;
+		border: 1px solid #fff;
 		justify-content: space-between;
 		align-items: center;
 		text-align: center;
@@ -115,5 +133,4 @@
 		display: inline;
 		vertical-align: bottom;
 	}
-
 </style>

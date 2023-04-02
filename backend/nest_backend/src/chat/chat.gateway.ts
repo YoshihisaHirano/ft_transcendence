@@ -51,11 +51,12 @@ export class ChatGateway {
 
 	@SubscribeMessage('joinChat')
 	async handleJoinRoom(client: Socket, data: UserChangeChatStatus) {
+		// console.log(data.chatId);
 		if (this.chatService.isUserChatMember(data.chatId, data.userId) ) {
 			this.users.set(data.userId, client.id);
 			const messages = await this.messageService.findChatMessages(data.chatId);
 			client.join(data.chatId);
-			client.emit("joinChatStatus", messages);
+			client.emit("joinChatStatus", { chatId: data.chatId, messages});
 		} else {
 			client.emit("joinChatStatus", null);
 		}

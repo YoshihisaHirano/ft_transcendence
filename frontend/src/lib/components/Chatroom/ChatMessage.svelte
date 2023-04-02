@@ -2,12 +2,12 @@
 	import type { Message } from "$lib/types/types";
 
     export let message: Message;
-    let areYouAuthor = message.author === 'You';
+    let areYouAuthor = message.authorUsername === 'You';
 </script>
 
 <div class="message-container" class:mirrored={areYouAuthor}>
     <div>
-        <p class="message-author">{message.author}:</p>
+        <p class="message-author">{message.authorUsername}:</p>
         <p class="message-text">{message.text}</p>
     </div>
 </div>
