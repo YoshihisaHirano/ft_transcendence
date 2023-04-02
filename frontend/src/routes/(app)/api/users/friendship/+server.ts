@@ -10,6 +10,7 @@ export async function POST({ request, fetch, cookies }) {
 		throw redirect(303, '/login');
 	} else {
 		try {
+			console.log(createBackendUrl(backendEnpoint));
 			await fetch(createBackendUrl(backendEnpoint), {
 				method: 'POST',
 				headers: {

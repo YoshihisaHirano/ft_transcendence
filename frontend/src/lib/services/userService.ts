@@ -4,7 +4,7 @@ import { addContentType, baseUrl } from './settings';
 
 const endpoint = 'users/';
 const baseUrlWithEndpoint = new URL(endpoint, baseUrl);
-const isMocking = true;
+const isMocking = false;
 
 export default {
 	getUserById: async (userId: string): Promise<User | null> => {
@@ -20,17 +20,6 @@ export default {
 				return null;
 			}
 		}
-	},
-
-	getUserByLogin: async (intraLogin: string): Promise<User | null> => {
-		/* I send the intra login to the backend
-		so that it checks whether the user has already been created */
-		return null;
-	},
-
-	getIntraLogin: async (): Promise<string | null> => {
-		/* the login happens with 42 Oauth  */
-		return Math.random() > 0.2 ? 'aalannys' : null;
 	},
 
 	createUser: async (newUser: NewUser): Promise<User | Error> => {
@@ -62,7 +51,7 @@ export default {
 		} else {
 			const methodEndpoint = add ? 'addfriend' : 'deletefriend';
 			try {
-				await fetch(new URL('/friendship', baseUrlWithEndpoint), {
+				await fetch(new URL('friendship', baseUrlWithEndpoint), {
 					headers: {
 						...addContentType()
 					},

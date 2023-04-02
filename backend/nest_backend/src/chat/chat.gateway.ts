@@ -13,13 +13,13 @@ import { MessageService } from './services/message.service';
 import { MuteService } from './services/mute.service';
 
 @WebSocketGateway({
-  namespace: '/chat',
-  cors: {
-    credentials: true,
-    origin: 'http://127.0.0.1:5501',
-    methods: ['GET', 'POST'],
-    transports: ['websocket'],
-  },
+	namespace: '/chat',
+	cors: {
+		credentials: true,
+		origin: "http://127.0.0.1:5176",
+		methods: ['GET', 'POST'],
+	  	transports: ['websocket'],
+	}
 })
 
 export class ChatGateway {
