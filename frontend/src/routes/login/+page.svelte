@@ -1,64 +1,84 @@
 <script lang="ts">
-	import { goto } from "$app/navigation";
-    import Button from "$lib/components/Button/Button.svelte";
-    import dino from '$lib/images/dino.svg';
-    import { appState } from "$lib/store/appState";
-	import { setCookie } from "$lib/utils/cookies";
-	import { beforeUpdate } from "svelte";
+	import { goto } from '$app/navigation';
+	import dino from '$lib/images/dino.svg';
+	import { appState } from '$lib/store/appState';
+	import { beforeUpdate } from 'svelte';
+	import UserCreateForm from '$lib/components/UserCreateForm/UserCreateForm.svelte';
+	import { saveToStorage } from '$lib/utils/storage';
+	import Link from '$lib/components/Link/Link.svelte';
+	/** @type {import('./$types').PageData} */
+	export let data: {
+		userId: string;
+		login: string;
+		redirectUrl?: string;
+	};
 
-    function login() {
-        appState.update((prevState) => {
-            return { ...prevState, isLoggedIn: true }
-        })
-        setCookie('isLoggedIn', 'true');
-        goto('/');
-        console.log("login");
-    }
+	$: loginFailed = false;
+	$: renderCreateForm = false;
+	$: intraLogin = '';
 
-    beforeUpdate(() => {
-        if ($appState.isLoggedIn) {
-            goto('/');
-        }
-    })
+	beforeUpdate(() => {
+		if ($appState.isLoggedIn) {
+			goto('/');
+		}
+		if (data.redirectUrl) {
+			return;
+		}
+		if (data.userId) {
+			saveToStorage('userId' ,data.userId);
+			appState.update((val) => ({
+				...val, isLoggedIn: true
+			}));
+			goto('/');
+		} else {
+			intraLogin = data.login;
+			renderCreateForm = true;
+		}
+	});
 </script>
 
-<fieldset>
-    <img src={dino} alt="">
-    <label for="">
-        Login
-        <input type="text">
-    </label>
-    <label for="">
-        Password
-        <input type="text">
-    </label>
-    <Button variant="success" onClick={login}>Let me in</Button>
-</fieldset>
+<main>
+	{#if renderCreateForm}
+		<UserCreateForm {intraLogin} />
+	{:else}
+		<fieldset>
+			<img src={dino} alt="" />
+			{#if loginFailed}
+				<legend>Login failed!</legend>
+			{/if}
+			{#if data.redirectUrl}
+				<Link internal={false} target={data.redirectUrl}>LOGIN</Link>
+			{/if}
+		</fieldset>
+	{/if}
+</main>
 
 <style>
-    img {
-        position: absolute;
-        max-width: 10rem;
-        bottom: -3rem;
-        left: -4rem;
-    }
+	main {
+		padding: 8rem 0;
+	}
 
-    label {
-        display: block;
-        color: var(--text-primary);
-        text-align: end;
-        width: 31rem;
-    }
+	img {
+		position: absolute;
+		max-width: 10rem;
+		bottom: -3rem;
+		left: -4rem;
+	}
 
-    fieldset {
-        position: relative;
-        width: 85%;
-        margin: 15% auto;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        padding: 2rem 0;
-        gap: 1rem;
-    }
+	legend {
+		margin-left: 1rem;
+		color: #df0024;
+	}
+
+	fieldset {
+		position: relative;
+		width: 85%;
+		margin: 0 auto;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		padding: 2rem 0;
+		gap: 1rem;
+	}
 </style>

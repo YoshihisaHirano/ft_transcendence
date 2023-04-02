@@ -4,6 +4,7 @@
 	import '/src/styles/global.css';
 	import Header from '$lib/components/Header/Header.svelte';
 	import AuthLayout from '$lib/components/AuthLayout/AuthLayout.svelte';
+
 </script>
 
 <svelte:head>
@@ -18,7 +19,7 @@
 
 <style>
 	main {
-		padding-top: 10rem;
+		padding: 10rem 0 5rem;
 		max-width: 95vw;
 		margin: 0 auto;
 	}

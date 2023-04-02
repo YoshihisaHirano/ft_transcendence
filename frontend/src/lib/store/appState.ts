@@ -3,6 +3,9 @@ import { writable } from 'svelte/store';
 import type { Writable } from 'svelte/store';
 import { getCookie } from '$lib/utils/cookies';
 
-export const appState: Writable<AppState> = writable({
-	isLoggedIn: getCookie('isLoggedIn') ? true : false
-});
+export const initialState = {
+	isLoggedIn: getCookie('user-id') ? true : false,
+	user: null,
+}
+
+export const appState: Writable<AppState> = writable({...initialState});
