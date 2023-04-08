@@ -18,6 +18,7 @@ export function getFromStorage(key: string) {
 }
 
 export function removeFromStorage(key: string) {
+    console.log('haveStorage', haveStorage);
     if (haveStorage) {
         localStorage.removeItem(key);
     }

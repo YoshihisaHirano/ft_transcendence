@@ -4,7 +4,6 @@ import type { Writable } from 'svelte/store';
 import { getFromStorage } from '$lib/utils/storage';
 
 export const initialState = {
-	isLoggedIn: getFromStorage('userId') ? true : false,
 	user: null,
 }
 

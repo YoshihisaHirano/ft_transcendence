@@ -1,7 +1,6 @@
 export type PrivacyMode = 'public' | 'private' | 'protected';
 
 export interface AppState {
-	isLoggedIn: boolean;
 	user: User | null;
 }
 

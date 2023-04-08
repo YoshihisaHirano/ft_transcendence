@@ -2,15 +2,10 @@
 	import Button from '$lib/components/Button/Button.svelte';
 	import { appState } from '$lib/store/appState';
 	import { page } from '$app/stores';
-	import { removeFromStorage } from '$lib/utils/storage';
 	import userService from '$lib/services/userService';
 	import { goto } from '$app/navigation';
 
 	async function logout() {
-		appState.update((prevState) => {
-			return { ...prevState, isLoggedIn: false };
-		});
-		removeFromStorage('userId');
 		await userService.logout();
 		goto('/login');
 	}

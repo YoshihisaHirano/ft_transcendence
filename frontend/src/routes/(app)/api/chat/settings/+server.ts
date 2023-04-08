@@ -11,14 +11,11 @@ export async function PUT({ url, cookies, fetch, request }) {
     const backendEnpoint = removeApiEndpoint(url.pathname);
 	const bodyJson = await request.json();
 	const authToken = cookies.get('user-token');
-	if (!authToken) {
-		throw redirect(303, '/login');
-	} else {
 		try {
 			const res = await fetch(createBackendUrl(backendEnpoint), {
 				method: 'PUT',
 				headers: {
-					...addAuthHeader(authToken),
+					...addAuthHeader(authToken || ''),
 					...addContentType()
 				},
 				body: JSON.stringify(bodyJson)
@@ -29,5 +26,4 @@ export async function PUT({ url, cookies, fetch, request }) {
             console.error(error);
 			return new Response(null);
         }
-	}
 }

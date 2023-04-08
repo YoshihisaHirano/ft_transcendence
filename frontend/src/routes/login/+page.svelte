@@ -18,16 +18,13 @@
 	$: intraLogin = '';
 
 	beforeUpdate(() => {
-		if ($appState.isLoggedIn) {
-			goto('/');
-		}
 		if (data.redirectUrl) {
 			return;
 		}
 		if (data.userId) {
 			saveToStorage('userId' ,data.userId);
 			appState.update((val) => ({
-				...val, isLoggedIn: true
+				...val
 			}));
 			goto('/');
 		} else {

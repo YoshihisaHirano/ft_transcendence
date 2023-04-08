@@ -1,28 +1,32 @@
 import { mainUser } from '$lib/mockData/mockData';
 import type { NewUser, User } from '$lib/types/types';
-import { addContentType, baseUrl } from './settings';
+import { removeFromStorage } from '$lib/utils/storage';
+import { addContentType, baseUrl, unauthorizedCode } from './settings';
 
 const endpoint = 'users/';
 const baseUrlWithEndpoint = new URL(endpoint, baseUrl);
 const isMocking = false;
 
 export default {
-	getUserById: async (userId: string): Promise<User | null> => {
+	async getUserById (userId: string): Promise<User | null> {
 		const baseIdUrl = new URL('id/', baseUrlWithEndpoint);
 		if (isMocking) {
 			return mainUser;
 		} else {
 			try {
 				const res = await fetch(new URL(userId, baseIdUrl));
+				if (res.status === 401) {
+					await this.logout();
+					return null;
+				}
 				return res.json();
 			} catch (err) {
-				console.error(err);
 				return null;
 			}
 		}
 	},
 
-	createUser: async (newUser: NewUser): Promise<User | Error> => {
+	async createUser (newUser: NewUser): Promise<User | Error> {
 		if (isMocking) {
 			return mainUser;
 		} else {
@@ -34,42 +38,53 @@ export default {
 					method: 'POST',
 					body: JSON.stringify(newUser)
 				});
+				if (res.status === 401) {
+					await this.logout();
+					return new Error('Unauthorized!');
+				}
 				return res.json();
 			} catch (error) {
+				if ((error as Error).message === unauthorizedCode) {
+					this.logout();
+				}
 				return error as Error;
 			}
 		}
 	},
 
-	toggleFriendship: async (
+	async toggleFriendship (
 		userId: string,
 		friendId: string,
 		add: boolean
-	): Promise<void> => {
+	): Promise<void> {
 		if (isMocking) {
 			return;
 		} else {
 			const methodEndpoint = add ? 'addfriend' : 'deletefriend';
 			try {
-				await fetch(new URL('friendship', baseUrlWithEndpoint), {
+				const res = await fetch(new URL('friendship', baseUrlWithEndpoint), {
 					headers: {
 						...addContentType()
 					},
 					method: "POST",
 					body: JSON.stringify({ userId, friendId, methodEndpoint })
 				});
+				if (res.status === 401) {
+					await this.logout();
+					return;
+				}
 			} catch (err) {
-				// TODO: error handling!
 				return;
 			}
 		}
 	},
 
-	logout: async (): Promise<void> => {
+	async logout (): Promise<void> {
 		try {
 			await fetch(new URL('logout/', baseUrlWithEndpoint), {
 				method: 'DELETE'
 			});
+			removeFromStorage('userId');
 		} catch (error) {
 			console.error(error);
 		}

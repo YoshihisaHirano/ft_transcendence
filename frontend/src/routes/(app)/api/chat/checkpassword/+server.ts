@@ -12,7 +12,7 @@ export async function POST({ url, cookies, fetch, request }) {
 	const bodyJson = await request.json();
 	const authToken = cookies.get('user-token');
 	if (!authToken) {
-		throw redirect(303, '/login');
+		// throw redirect(303, '/login');
 	} else {
 		try {
 			const res = await fetch(createBackendUrl(backendEnpoint), {
