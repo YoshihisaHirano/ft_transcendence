@@ -149,6 +149,6 @@ export class ChatController {
   }
   @Get('mutelist')
   findAllMuted() {
-    return this.muteService.getAll();
+    // return this.muteService.getAll();
   }
 }
