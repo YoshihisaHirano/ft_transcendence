@@ -1,22 +1,63 @@
-import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
 import { ChatService } from 'src/chat/services/chat.service';
 import { CreateChatDto } from 'src/dtos/createChat.dto';
 import { UpdateChatDto } from 'src/dtos/updateChat.dto';
+import { UserService } from 'src/user/services/user/user.service';
+import { ShortResponseUserDto } from 'src/dtos/shortResponseUser.dto';
+import { ResponseChatDto } from 'src/dtos/responseChat.dto';
+import { Chat } from 'src/entities';
 
 @Controller('chat')
 export class ChatController {
-  constructor(private readonly chatService: ChatService) {}
+  constructor(
+    private readonly chatService: ChatService,
+    private readonly userService: UserService,
+  ) {}
   @Post('create')
-  createChat(@Body() createChatDto: CreateChatDto) {
-    return this.chatService.createChat(createChatDto);
+  async createChat(
+    @Body() createChatDto: CreateChatDto,
+  ): Promise<ResponseChatDto> {
+    const chat = await this.chatService.createChat(createChatDto);
+    const members: ShortResponseUserDto[] =
+      await this.userService.getShortInfoByIds(chat.members);
+    return {
+      chatname: chat.chatname,
+      members: members,
+      adminId: chat.adminId,
+      privacyMode: chat.privacyMode,
+      isDirect: chat.isDirect,
+    };
   }
   @Get('all')
   getAllChats() {
     return this.chatService.getAllChats();
   }
   @Get('userid/:id')
-  getChatsByUserId(@Param('id') userId: string) {
-    return this.chatService.getChatsWhereUserIsMember(userId);
+  async getChatsByUserId(
+    @Param('id') userId: string,
+  ): Promise<ResponseChatDto[]> {
+    const res: ResponseChatDto[] = [];
+    const chats: Chat[] = await this.chatService.getChatsWhereUserIsMember(
+      userId,
+    );
+    for (const chat of chats) {
+      res.push({
+        chatname: chat.chatname,
+        members: await this.userService.getShortInfoByIds(chat.members),
+        adminId: chat.adminId,
+        privacyMode: chat.privacyMode,
+        isDirect: chat.isDirect,
+      });
+    }
+    return res;
   }
   @Put('addmembers')
   addUserToChat(
@@ -71,5 +112,22 @@ export class ChatController {
     @Param('userId') userId: string,
   ) {
     return this.chatService.isUserChatMember(chatId, userId);
+  }
+  @Delete('deletechat/:chatId')
+  deleteChat(@Param('chatId') chatId: string) {
+    return this.chatService.deleteChat(chatId);
+  }
+  @Get('chatbyid/:id')
+  async getChatById(@Param('id') id: string): Promise<ResponseChatDto> {
+    const chat = await this.chatService.findById(id);
+    const members: ShortResponseUserDto[] =
+      await this.userService.getShortInfoByIds(chat.members);
+    return {
+      chatname: chat.chatname,
+      members: members,
+      adminId: chat.adminId,
+      privacyMode: chat.privacyMode,
+      isDirect: chat.isDirect,
+    };
   }
 }
