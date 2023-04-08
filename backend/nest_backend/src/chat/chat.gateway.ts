@@ -23,9 +23,12 @@ import { MessageService } from './services/message.service';
 
 export class ChatGateway {
 	
-  	constructor(private chatService: ChatService, private messageService: MessageService) {}
+  	constructor(private chatService: ChatService, private messageService: MessageService) {
+		this.users = new Map();
+	}
 	@WebSocketServer()
 	server;
+	users;
 
 
 	// @SubscribeMessage('newChat') 
@@ -43,7 +46,11 @@ export class ChatGateway {
 
 	@SubscribeMessage('joinChat')
 	async handleJoinRoom(client: Socket, data: UserChangeChatStatus) {
+		console.log(this.users);
 		if (this.chatService.isUserChatMember(data.chatId, data.userId) ) {
+			if (this.users.has(data.userId) == false) {
+				this.users.set(data.userId, client.id);
+			}
 			const messages = await this.messageService.findChatMessages(data.chatId);
 			client.join(data.chatId);
 			client.emit("joinChatStatus", messages);
@@ -75,15 +82,34 @@ export class ChatGateway {
 	}
   }
 
-//   @SubscribeMessage('kickUser')
-//   handleKickUser(admin: Socket, data) {
-// 	try {
-// 		this.chatService.deleteUserOfChat(data.userId, data.chatId);
-// 		// client.leave(data.chatId);
+  @SubscribeMessage('kickUser')
+  handleKickUser(admin: Socket, data) {
+	try {
+		const userToKick = this.server.sockets.get(data.userId);
+		this.chatService.deleteUserOfChat(data.userId, data.chatId);
+		if (userToKick) {
+			userToKick.leave(data.chatId);
+			userToKick.emit("noOneLovesYou", data.chatId);
+		}
+	} catch (e) {
+		console.log(e);
+	}
+  }
+  
+  @SubscribeMessage('banUser')
+  handleBanUser(admin: Socket, data) {
+	try {
+		const userToKick = this.server.sockets.get(data.userId);
 
-// 	} catch (e) {
-// 		console.log(e);
-// 	}
-//   }
+		this.chatService.deleteUserOfChat(data.userId, data.chatId);
+		// service ban here
+		if (userToKick) {
+			userToKick.leave(data.chatId);
+			userToKick.emit("noOneLovesYou", data.chatId);
+		}
+	} catch (e) {
+		console.log(e);
+	}
+  }
 
 }
