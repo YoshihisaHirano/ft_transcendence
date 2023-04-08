@@ -1,8 +1,9 @@
 <script lang="ts">
+	import { appState } from "$lib/store/appState";
 	import type { Message } from "$lib/types/types";
 
     export let message: Message;
-    let areYouAuthor = message.authorUsername === 'You';
+    $: areYouAuthor = message.authorId === $appState.user?.id;
 </script>
 
 <div class="message-container" class:mirrored={areYouAuthor}>

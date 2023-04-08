@@ -11,7 +11,7 @@ export async function GET({ cookies, params }) {
         throw redirect(303, '/404');
     }
     if (chat.privacyMode === 'protected') {
-        throw redirect(308, 'protected/' + id);
+        throw redirect(308, '/chatrooms/invite/protected/' + id);
     } else {
         await chatService.addMembers([userId], id);
         throw redirect(308, '/chatrooms');

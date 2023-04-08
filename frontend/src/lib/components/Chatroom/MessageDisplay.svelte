@@ -1,9 +1,10 @@
 <script lang="ts">
-	import type { Message } from '$lib/types/types';
 	import ChatMessage from './ChatMessage.svelte';
 	import { afterUpdate, beforeUpdate } from 'svelte';
+	import { messagesState } from '$lib/store/messagesState';
+	import { selectedChatId } from '$lib/store/chatState';
 
-	export let messages: Message[];
+	$: messages = ($selectedChatId ? $messagesState[$selectedChatId] : []) || [];
 	let windowDiv: HTMLDivElement, autoscroll: boolean;
 
 	beforeUpdate(() => {

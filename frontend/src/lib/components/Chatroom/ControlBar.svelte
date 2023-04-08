@@ -38,7 +38,7 @@
 
 	function copyLink() {
 		const base = import.meta.env.VITE_FRONTEND_URL;
-		const link = base + 'chatrooms/invite/' + chatId;
+		const link = base + 'chat/invite/' + chatId;
 		navigator.clipboard.writeText(link);
 		copySuccessText = 'Copied to clipboard';
 		setTimeout(() => {

@@ -15,12 +15,14 @@
 
 	async function checkPassword(e: Event) {
 		e.preventDefault();
-		const isPasswordCoorrect = await chatService.checkChatPassword(password);
+		const chatId = $page.params.slug;
+		const isPasswordCoorrect = await chatService.checkChatPassword(password, chatId);
+		// console.log(isPasswordCoorrect);
 		password = '';
 		if (!isPasswordCoorrect) {
 			error = 'Wrong password!';
 		} else {
-			await chatService.addMembers([id], $page.params.slug);
+			await chatService.addMembers([id], chatId);
 			goto('/chatrooms');
 		}
 	}

@@ -1,4 +1,4 @@
-import { newDMChat, newGroupChat } from '$lib/mockData/mockData';
+import { newGroupChat } from '$lib/mockData/mockData';
 import type { Chat, ChatSettings, NewChat } from '$lib/types/types';
 import { addContentType, baseUrl } from './settings';
 
@@ -90,8 +90,19 @@ export default {
 	},
 
 	getChatById: async (chatId: string): Promise<Chat | null> => {
-		// return userChats.find(item => item.chatId === chatId) || null;
-		return null;
+		const baseIdUrl = new URL('chatbyid/', baseUrlWithEndpoint);
+		try {
+			const res = await fetch(new URL(chatId, baseIdUrl));
+			const parsed = await res.text();
+			if (!parsed.length) {
+				return null;
+			} else {
+				return JSON.parse(parsed);
+			}
+		} catch (error) {
+			console.error(error);
+			return null;
+		}
 	},
 
 	deleteChat: async (chatId: string): Promise<void> => {
