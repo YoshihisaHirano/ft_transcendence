@@ -17,7 +17,7 @@ export class ChatService {
       createChatDto.password = await bcrypt.hash(createChatDto.password, 10);
     }
     const newChat = this.chatRepository.create(createChatDto);
-    newChat.muteList = [];
+    newChat.banList = [];
     return this.chatRepository.save(newChat);
   }
   getAllChats() {
@@ -66,25 +66,25 @@ export class ChatService {
     }
     return this.chatRepository.save(chat);
   }
-  async muteUser(chatId: string, userId: string) {
+  async banUser(chatId: string, userId: string) {
     const chat = await this.chatRepository.findOne({
       where: { chatId: chatId },
     });
-    chat.muteList.push(userId);
+    chat.banList.push(userId);
     return this.chatRepository.save(chat);
   }
-  async unmuteUser(chatId: string, userId: string) {
+  async unbanUser(chatId: string, userId: string) {
     const chat = await this.chatRepository.findOne({
       where: { chatId: chatId },
     });
-    chat.muteList = chat.muteList.filter((id) => id != userId);
+    chat.banList = chat.banList.filter((id) => id != userId);
     return this.chatRepository.save(chat);
   }
-  async checkMute(chatId: string, userId: string) {
+  async checkBan(chatId: string, userId: string) {
     const chat = await this.chatRepository.findOne({
       where: { chatId: chatId },
     });
-    return chat.muteList.includes(userId);
+    return chat.banList.includes(userId);
   }
   async findDirectChat(userOneId: string, userTwoId: string) {
     return this.chatRepository

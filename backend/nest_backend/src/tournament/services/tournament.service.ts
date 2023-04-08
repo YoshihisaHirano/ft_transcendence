@@ -5,6 +5,7 @@ import { Tournament } from 'src/entities/tournament.entity';
 import { User } from 'src/entities';
 import { StatsDto } from 'src/dtos/stats.dto';
 import { TournamentDto } from 'src/dtos/tournament.dto';
+import { Achievement } from 'src/dtos/responseUser.dto';
 
 @Injectable()
 export class TournamentService {
@@ -79,5 +80,20 @@ export class TournamentService {
       losses: userStats.losses,
       ladderLevel: ladderLevel,
     };
+  }
+  async getAchievements(userId: string) {
+    const userStats = await this.tournamentRepository.findOne({
+      where: { playerId: userId },
+    });
+    const matches = userStats.wins + userStats.losses;
+    if (matches >= 10) {
+      return Achievement.MASTER;
+    } else if (matches >= 5) {
+      return Achievement.EXPERIENCED;
+    } else if (matches >= 1) {
+      return Achievement.BEGINNER;
+    } else {
+      return Achievement.NONE;
+    }
   }
 }

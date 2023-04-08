@@ -28,7 +28,7 @@ export class Chat {
   @Column({ nullable: true })
   password: string;
   @Column('text', { array: true })
-  muteList: string[];
+  banList: string[];
   @Column()
   isDirect: boolean;
   @CreateDateColumn()
