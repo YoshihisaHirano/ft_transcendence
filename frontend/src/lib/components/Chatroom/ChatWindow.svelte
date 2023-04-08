@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Button from '$lib/components/Button/Button.svelte';
-	import type { Chat, Message } from '$lib/types/types';
+	import type { Message } from '$lib/types/types';
 	import MessageDisplay from './MessageDisplay.svelte';
 	import ControlBar from './ControlBar.svelte';
 	import { chatState, selectedChatId } from '$lib/store/chatState';
@@ -10,20 +10,20 @@
 	import { onMount } from 'svelte';
 	import frog from '$lib/images/frog_friend.svg';
 
-	export let chat: Chat | null;
-	$: reactiveChat = $chatState.find((item) => item.chatId === chat?.chatId) || null;
+	$: reactiveChat = $chatState.find((item) => item.chatId === $selectedChatId) || null;
 	$: messageText = '';
 
 	onMount(() => {
 		chatIo.on('newMessage', (data) => {
-			const chatId = chat?.chatId;
+			const chatId = reactiveChat?.chatId;
+			console.log(data);
 			if (chatId) {
 				messagesState.update((val) => {
 					const chatMsg = val[chatId].slice();
 					chatMsg.push(data);
 					return {
 						...val,
-						[chatId]: [...chatMsg]
+						[data.chatId]: [...chatMsg]
 					};
 				});
 			}
@@ -34,9 +34,10 @@
 
 	function sendMessage() {
 		const user = $appState.user;
-		if (messageText && chat?.chatId && user) {
+		if (messageText && reactiveChat?.chatId && user) {
+			console.log('send msg', reactiveChat.chatname);
 			const newMessage: Message = {
-				chatId: chat.chatId,
+				chatId: reactiveChat.chatId,
 				authorUsername: user.username,
 				authorId: user.id,
 				text: messageText
@@ -56,8 +57,9 @@
 			chatMembers={reactiveChat.members}
 			chatname={reactiveChat.chatname}
 			chatId={reactiveChat.chatId}
+			isDirect={reactiveChat.isDirect}
 		/>
-		<MessageDisplay messages={$messagesState[reactiveChat.chatId] || []} />
+		<MessageDisplay messages={$messagesState[$selectedChatId] || []} />
 		<div class="input-area">
 			<textarea bind:value={messageText} name="chat-message" id="chat-message" cols="45" rows="2" />
 			<Button

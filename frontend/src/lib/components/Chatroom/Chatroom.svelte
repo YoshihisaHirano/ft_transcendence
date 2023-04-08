@@ -1,5 +1,4 @@
 <script lang="ts">
-	import type { Chat, Message, MessagesState } from '$lib/types/types';
 	import ChatWindow from './ChatWindow.svelte';
 	import privateIcon from '$lib/images/locked_icon.svg';
 	import protectedIcon from '$lib/images/key_icon.svg';
@@ -13,12 +12,7 @@
 	import { messagesState } from '$lib/store/messagesState';
 
 	$: userChats = $chatState;
-	$: selectedChat = null as Chat | null;
 	$: isModalOpen = false;
-
-	function updateSelectedChat(e: Event) {
-		selectedChatId.update(() => selectedChat?.chatId || null);
-	}
 
 	onMount(() => {
 		const userId = $appState.user?.id;
@@ -56,10 +50,9 @@
 				type="radio"
 				name="group"
 				id={chat.chatId}
-				bind:group={selectedChat}
-				value={chat}
+				bind:group={$selectedChatId}
+				value={chat.chatId}
 				class="visually-hidden"
-				on:change={updateSelectedChat}
 			/>
 			<label for={chat.chatId}>
 				{chat.chatname}
@@ -71,7 +64,7 @@
 			</label>
 		{/each}
 	</div>
-	<ChatWindow chat={selectedChat} />
+	<ChatWindow />
 </div>
 
 {#if isModalOpen}

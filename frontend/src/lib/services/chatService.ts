@@ -98,8 +98,8 @@ export default {
 		const baseRouteUrl = new URL('deletechat/', baseUrlWithEndpoint);
 		try {
 			await fetch(new URL(chatId, baseRouteUrl), {
-				method: "DELETE"
-			})
+				method: 'DELETE'
+			});
 		} catch (error) {
 			console.error(error);
 		}
@@ -113,6 +113,27 @@ export default {
 		} catch (error) {
 			console.error(error);
 			return [];
+		}
+	},
+
+	findDirectChat: async (userOneId: string, userTwoId: string): Promise<Chat | null> => {
+		try {
+			const res = await fetch(new URL('direct', baseUrlWithEndpoint), {
+				headers: {
+					...addContentType()
+				},
+				method: 'POST',
+				body: JSON.stringify({ userOneId, userTwoId })
+			});
+			const parsed = await res.text();
+			if (!parsed.length) {
+				return null;
+			} else {
+				return JSON.parse(parsed);
+			}
+		} catch (error) {
+			console.error(error);
+			return null;
 		}
 	}
 };

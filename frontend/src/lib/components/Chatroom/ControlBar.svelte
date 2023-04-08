@@ -16,7 +16,8 @@
 		chatname: string,
 		chatId: string,
 		privacyMode: PrivacyMode,
-		password: string | undefined;
+		password: string | undefined,
+		isDirect: boolean;
 
 	$: userId = getFromStorage('userId') || '';
 	$: isAdmin = userId === adminId;
@@ -58,7 +59,7 @@
 		chatService.deleteChat(chatId);
 		selectedChatId.set(null);
 		const updatedChats = $chatState.filter((item) => item.chatId !== chatId);
-		chatState.update(() => [ ...updatedChats ]);
+		chatState.update(() => [...updatedChats]);
 	}
 </script>
 
@@ -79,9 +80,11 @@
 				bind:this={btnRef}
 				on:click={toggleDropdown}>▼</button
 			>
-			<button title="Leave the chat" class="leave-btn" on:click={leaveChat}>
-				<img src={doorIcon} alt="leave the chat" />
-			</button>
+			{#if !isDirect}
+				<button title="Leave the chat" class="leave-btn" on:click={leaveChat}>
+					<img src={doorIcon} alt="leave the chat" />
+				</button>
+			{/if}
 			<div class="members-dropdown" style="left: {offsetLeft}px">
 				{#each chatMembers as member}
 					<div class="chat-member">
@@ -91,7 +94,7 @@
 						</div>
 						<div class="chat-member-controls">
 							<button title="Invite to a game" id="invite-{member.id}">🏓</button>
-							{#if isAdmin}
+							{#if isAdmin && !isDirect}
 								<button title="Mute" id="mute-{member.id}">🔇</button>
 								<button
 									title="Delete from the chat"
@@ -104,7 +107,7 @@
 				{/each}
 			</div>
 		</div>
-		{#if isAdmin}
+		{#if isAdmin && !isDirect}
 			<button class="chat-settings-btn" on:click={toggleModal}>
 				<CogIcon />
 			</button>

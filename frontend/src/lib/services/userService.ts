@@ -69,6 +69,7 @@ export default {
 					method: "POST",
 					body: JSON.stringify({ userId, friendId, methodEndpoint })
 				});
+				// console.log(res);
 				if (res.status === 401) {
 					await this.logout();
 					return;

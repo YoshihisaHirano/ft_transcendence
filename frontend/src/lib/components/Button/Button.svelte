@@ -29,4 +29,7 @@
 	button[data-variant="warning"] {
 		background-color: #FBD000;
 	}
+	button[data-variant="chat"] {
+		background-color: #c202c2;
+	}
 </style>

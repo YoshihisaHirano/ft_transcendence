@@ -1,9 +1,9 @@
 <script lang="ts">
-	import type { User } from '$lib/types/types';
+	import type { ShortUser } from '$lib/types/types';
 	import OnlineIndicator from '$lib/components/OnlineIndicator/OnlineIndicator.svelte';
 	import UserRecord from './UserRecord.svelte';
 
-	export let friends: User[], currentId: string;
+	export let friends: ShortUser[], currentId: string;
 </script>
 
 <div class="friends-board-container simple-shadow">

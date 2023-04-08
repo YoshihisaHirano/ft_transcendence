@@ -13,12 +13,18 @@ export interface GameStats {
 	userTwoScore: number;
 }
 
+export interface ShortUser {
+    id: string;
+    username: string;
+    isOnline: boolean;
+}
+
 export interface User {
 	id: string;
 	image: string;
 	username: string;
 	isOnline: boolean;
-	friends: User[];
+	friends: ShortUser[];
 	tournamentStats: {
 		wins: number;
 		losses: number;
