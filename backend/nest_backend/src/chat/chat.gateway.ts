@@ -52,9 +52,7 @@ export class ChatGateway {
 	@SubscribeMessage('joinChat')
 	async handleJoinRoom(client: Socket, data: UserChangeChatStatus) {
 		if (this.chatService.isUserChatMember(data.chatId, data.userId) ) {
-			if (this.users.has(data.userId) == false) {
-				this.users.set(data.userId, client.id);
-			}
+			this.users.set(data.userId, client.id);
 			const messages = await this.messageService.findChatMessages(data.chatId);
 			client.join(data.chatId);
 			client.emit("joinChatStatus", messages);
@@ -94,10 +92,11 @@ export class ChatGateway {
   async handleKickUser(admin: Socket, data: UserChangeChatStatus) {
 	try {
 		const userToKick = this.server.sockets.get(data.userId);
+		const chat = this.chatService.findById(data.chatId);
 		await this.chatService.deleteUserOfChat(data.userId, data.chatId);
 		if (userToKick) {
 			userToKick.leave(data.chatId);
-			userToKick.emit("youKicked", data.chatId);
+			userToKick.emit("youKicked", chat);
 		}
 	} catch (e) {
 		console.log(e);
@@ -108,26 +107,13 @@ export class ChatGateway {
   async handleBanUser(admin: Socket, data: UserChangeChatStatus) {
 	try {
 		const userToBan = this.server.sockets.get(data.userId);
+		const chat = this.chatService.findById(data.chatId);
+
 		await this.chatService.deleteUserOfChat(data.userId, data.chatId);
 		await this.chatService.banUser(data.chatId, data.userId);
 		if (userToBan) {
 			userToBan.leave(data.chatId);
-			userToBan.emit("youBanned", data.chatId);
-		}
-	} catch (e) {
-		console.log(e);
-	}
-  }
-
-  @SubscribeMessage('unbanUser')
-  async handleUnbanUser(admin: Socket, data: UserChangeChatStatus) {
-	try {
-		const userToUnban = this.server.sockets.get(data.userId);
-		await this.chatService.unbanUser(data.userId, data.chatId);
-		await this.chatService.addUsersToChat([data.userId], data.chatId);
-		// user has to reload page
-		if (userToUnban) { // TODO need? 
-			userToUnban.join(data.chatId);
+			userToBan.emit("youBanned", chat);
 		}
 	} catch (e) {
 		console.log(e);
@@ -139,16 +125,6 @@ export class ChatGateway {
 	try {
 		// const userToKick = this.server.sockets.get(data.userId);
 		await this.muteService.addToMuteList(data.userId, data.chatId);
-	} catch (e) {
-		console.log(e);
-	}
-  }
-
-  @SubscribeMessage('unmuteUser')
-  async handleUnmuteUser(admin: Socket, data: UserChangeChatStatus) {
-	try {
-		// const userToKick = this.server.sockets.get(data.userId);
-		await this.muteService.deleteFromMuteList(data.userId, data.chatId);
 	} catch (e) {
 		console.log(e);
 	}
