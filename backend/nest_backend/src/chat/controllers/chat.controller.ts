@@ -14,12 +14,14 @@ import { UserService } from 'src/user/services/user/user.service';
 import { ShortResponseUserDto } from 'src/dtos/shortResponseUser.dto';
 import { ResponseChatDto } from 'src/dtos/responseChat.dto';
 import { Chat } from 'src/entities';
+import { MuteService } from '../services/mute.service';
 
 @Controller('chat')
 export class ChatController {
   constructor(
     private readonly chatService: ChatService,
     private readonly userService: UserService,
+    private readonly muteService: MuteService,
   ) {}
   @Post('create')
   async createChat(
@@ -84,20 +86,20 @@ export class ChatController {
   changeSettings(@Body() updateChatDto: UpdateChatDto) {
     return this.chatService.updateSettings(updateChatDto);
   }
-  @Put('mute')
-  muteUser(@Body('chatId') chatId: string, @Body('userId') userId: string) {
-    return this.chatService.muteUser(chatId, userId);
+  @Put('ban')
+  banUser(@Body('chatId') chatId: string, @Body('userId') userId: string) {
+    return this.chatService.banUser(chatId, userId);
   }
-  @Put('unmute')
-  unmuteUser(@Body('chatId') chatId: string, @Body('userId') userId: string) {
-    return this.chatService.unmuteUser(chatId, userId);
+  @Put('unban')
+  unbanUser(@Body('chatId') chatId: string, @Body('userId') userId: string) {
+    return this.chatService.unbanUser(chatId, userId);
   }
-  @Get('ismuted/:chatId/:userId')
-  checkIfUserInMute(
+  @Get('isbanned/:chatId/:userId')
+  checkIfUserBanned(
     @Param('chatId') chatId: string,
     @Param('userId') userId: string,
   ) {
-    return this.chatService.checkMute(chatId, userId);
+    return this.chatService.checkBan(chatId, userId);
   }
   @Get('direct/:userOneId/:userTwoId')
   getDirectChat(
@@ -129,5 +131,24 @@ export class ChatController {
       privacyMode: chat.privacyMode,
       isDirect: chat.isDirect,
     };
+  }
+  @Post('mute')
+  muteUser(@Body('chatId') chatId: string, @Body('userId') userId: string) {
+    return this.muteService.addToMuteList(chatId, userId);
+  }
+  @Delete('unmute')
+  unmuteUser(@Body('chatId') chatId: string, @Body('userId') userId: string) {
+    return this.muteService.deleteFromMuteList(chatId, userId);
+  }
+  @Get('ismute/:chatId/:userId')
+  checkIsMuted(
+    @Param('chatId') chatId: string,
+    @Param('userId') userId: string,
+  ) {
+    return this.muteService.isInMuteList(chatId, userId);
+  }
+  @Get('mutelist')
+  findAllMuted() {
+    return this.muteService.getAll();
   }
 }

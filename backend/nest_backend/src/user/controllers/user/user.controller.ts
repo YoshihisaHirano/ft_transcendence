@@ -44,7 +44,7 @@ export class UserController {
     return this.userService.getUsers();
   }
 
-  //@UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Get('/id/:id')
   async getUserById(@Param('id') id: string): Promise<ResponseUserDto> {
     const stats: Stats[] = await this.statsService.getUserStats(id);
@@ -61,10 +61,11 @@ export class UserController {
       matchHistory: stats,
       friends: friends,
       tournamentStats: tournamentStats,
+      achievement: await this.tournamentService.getAchievements(user.id),
     };
   }
 
-  //@UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Post('create')
   async createUser(
     @Body() createUserDto: CreateUserDto,
@@ -89,26 +90,27 @@ export class UserController {
       matchHistory: [],
       friends: [],
       tournamentStats: tournamentStats,
+      achievement: await this.tournamentService.getAchievements(user.id),
     };
   }
 
-  //@UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Post('addfriend')
   addFriends(@Body() friendshipDto: FriendshipDto) {
     return this.userService.addFriend(friendshipDto);
   }
-  //@UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Get('friends/:id')
   //test method
   getFriends(@Param('id') id: string) {
     return this.userService.findFriends(id);
   }
-  //@UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Post('deletefriend')
   deleteFriends(@Body() friendshipDto: FriendshipDto) {
     return this.userService.deleteFriend(friendshipDto);
   }
-  //@UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Put('update')
   async updateUser(@Body('id') id: string, @Body('image') image: string) {
     const user = await this.userService.updateUserPicture(id, image);
