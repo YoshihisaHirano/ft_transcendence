@@ -9,6 +9,7 @@
 	import ChatSettings from './ChatSettings.svelte';
 	import linkIcon from '$lib/images/link_icon.svg';
 	import chatService from '$lib/services/chatService';
+	import { chatState, selectedChatId } from '$lib/store/chatState';
 
 	export let adminId: string,
 		chatMembers: User[],
@@ -51,6 +52,13 @@
 	function removeFromChat(e: Event) {
 		const target = e.target as HTMLButtonElement;
 		chatService.removeMember(target.id.replace('remove-', ''), chatId);
+	}
+
+	function deleteChat() {
+		chatService.deleteChat(chatId);
+		selectedChatId.set(null);
+		const updatedChats = $chatState.filter((item) => item.chatId !== chatId);
+		chatState.update(() => [ ...updatedChats ]);
 	}
 </script>
 
@@ -100,6 +108,7 @@
 			<button class="chat-settings-btn" on:click={toggleModal}>
 				<CogIcon />
 			</button>
+			<button title="Delete the chat" on:click={deleteChat}>X</button>
 		{/if}
 	</div>
 {/if}
@@ -117,6 +126,7 @@
 		margin: 0;
 		outline: none;
 		border: none;
+		color: var(--text-primary);
 	}
 
 	.copy-success {

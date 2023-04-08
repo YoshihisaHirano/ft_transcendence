@@ -94,6 +94,17 @@ export default {
 		return null;
 	},
 
+	deleteChat: async (chatId: string): Promise<void> => {
+		const baseRouteUrl = new URL('deletechat/', baseUrlWithEndpoint);
+		try {
+			await fetch(new URL(chatId, baseRouteUrl), {
+				method: "DELETE"
+			})
+		} catch (error) {
+			console.error(error);
+		}
+	},
+
 	getChatsByUserId: async (userId: string): Promise<Chat[]> => {
 		const baseIdUrl = new URL('userid/', baseUrlWithEndpoint);
 		try {

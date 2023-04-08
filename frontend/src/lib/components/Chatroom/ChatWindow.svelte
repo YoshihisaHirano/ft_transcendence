@@ -3,14 +3,15 @@
 	import type { Chat, Message } from '$lib/types/types';
 	import MessageDisplay from './MessageDisplay.svelte';
 	import ControlBar from './ControlBar.svelte';
-	import { chatState } from '$lib/store/chatState';
+	import { chatState, selectedChatId } from '$lib/store/chatState';
 	import { messagesState } from '$lib/store/messagesState';
 	import { chatIo } from '$lib/sockets/websocketConnection';
 	import { appState } from '$lib/store/appState';
 	import { onMount } from 'svelte';
+	import frog from '$lib/images/frog_friend.svg';
 
 	export let chat: Chat | null;
-	$: reactiveChat = $chatState.find((item) => item.chatId === chat?.chatId);
+	$: reactiveChat = $chatState.find((item) => item.chatId === chat?.chatId) || null;
 	$: messageText = '';
 
 	onMount(() => {
@@ -47,7 +48,7 @@
 </script>
 
 <div class="chat-window simple-shadow">
-	{#if reactiveChat}
+	{#if $selectedChatId && reactiveChat}
 		<ControlBar
 			privacyMode={reactiveChat.privacyMode}
 			password=""
@@ -57,11 +58,20 @@
 			chatId={reactiveChat.chatId}
 		/>
 		<MessageDisplay messages={$messagesState[reactiveChat.chatId] || []} />
+		<div class="input-area">
+			<textarea bind:value={messageText} name="chat-message" id="chat-message" cols="45" rows="2" />
+			<Button
+				disabled={messageText === ''}
+				onClick={sendMessage}
+				variant="success"
+				className="chat-btn">Send</Button
+			>
+		</div>
+	{:else}
+		<div class="fror-wrapper">
+			<img src={frog} alt="" width="100px" height="100px" />
+		</div>
 	{/if}
-	<div class="input-area">
-		<textarea bind:value={messageText} name="chat-message" id="chat-message" cols="45" rows="2" />
-		<Button disabled={messageText === ''} onClick={sendMessage} variant="success" className="chat-btn">Send</Button>
-	</div>
 </div>
 
 <style>
@@ -75,6 +85,18 @@
 	:global(.chat-btn) {
 		margin-left: 6px;
 		margin-right: 6px;
+	}
+
+	.fror-wrapper {
+		height: 100%;
+		width: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.fror-wrapper img {
+		display: block;
 	}
 
 	.input-area {

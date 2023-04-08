@@ -6,7 +6,7 @@
 	import frog from '$lib/images/frog_friend.svg';
 	import Modal from '../Modal/Modal.svelte';
 	import CreateChat from './CreateChat.svelte';
-	import { chatState } from '$lib/store/chatState';
+	import { chatState, selectedChatId } from '$lib/store/chatState';
 	import { chatIo } from '$lib/sockets/websocketConnection';
 	import { onMount } from 'svelte';
 	import { appState } from '$lib/store/appState';
@@ -15,6 +15,10 @@
 	$: userChats = $chatState;
 	$: selectedChat = null as Chat | null;
 	$: isModalOpen = false;
+
+	function updateSelectedChat(e: Event) {
+		selectedChatId.update(() => selectedChat?.chatId || null);
+	}
 
 	onMount(() => {
 		const userId = $appState.user?.id;
@@ -55,6 +59,7 @@
 				bind:group={selectedChat}
 				value={chat}
 				class="visually-hidden"
+				on:change={updateSelectedChat}
 			/>
 			<label for={chat.chatId}>
 				{chat.chatname}
