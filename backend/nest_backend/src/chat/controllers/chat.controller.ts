@@ -31,6 +31,7 @@ export class ChatController {
     const members: ShortResponseUserDto[] =
       await this.userService.getShortInfoByIds(chat.members);
     return {
+      chatId: chat.chatId,
       chatname: chat.chatname,
       members: members,
       adminId: chat.adminId,
@@ -53,6 +54,7 @@ export class ChatController {
     );
     for (const chat of chats) {
       res.push({
+        chatId: chat.chatId,
         chatname: chat.chatname,
         members: await this.userService.getShortInfoByIds(chat.members),
         adminId: chat.adminId,
@@ -127,6 +129,7 @@ export class ChatController {
     const members: ShortResponseUserDto[] =
       await this.userService.getShortInfoByIds(chat.members);
     return {
+      chatId: chat.chatId,
       chatname: chat.chatname,
       members: members,
       adminId: chat.adminId,

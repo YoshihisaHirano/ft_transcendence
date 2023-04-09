@@ -88,3 +88,8 @@ body {
 		0 -6px 0 3px var(--text-primary), 0 0 0 6px var(--text-primary);
 	margin: 12px auto;
 }
+
+.label-small {
+	font-family: monospace;
+	font-size: .85rem;
+}

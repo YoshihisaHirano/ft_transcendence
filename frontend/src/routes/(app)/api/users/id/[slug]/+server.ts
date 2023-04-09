@@ -1,24 +1,29 @@
-import { addAuthHeader, createBackendUrl, removeApiEndpoint } from '$lib/services/settings';
+import { addAuthHeader, createBackendUrl, removeApiEndpoint, unauthorizedCode } from '$lib/services/settings';
 import { redirect } from '@sveltejs/kit';
+import { error } from '@sveltejs/kit';
 
 /** @type {import('./$types').RequestHandler} */
 export async function GET({ url, cookies, fetch }) {
 	const backendEndpoint = removeApiEndpoint(url.pathname);
 	const authToken = cookies.get('user-token');
-	if (!authToken) {
-		throw redirect(303, '/login');
-	} else {
 		try {
 			const user = await fetch(createBackendUrl(backendEndpoint), {
 				headers: {
-					...addAuthHeader(authToken)
+					...addAuthHeader(authToken || '')
 				}
 			});
+			if (user.status === 401) {
+				throw new Error('401');
+			}
+			if (user.status === 500) {
+				throw new Error('500');
+			}
 			const userJSON = await user.json();
 			return new Response(JSON.stringify(userJSON));
-		} catch (error) {
-			console.error(error);
-			return new Response(null);
+		} catch (err) {
+			if (err instanceof Error && err.message === unauthorizedCode) {
+				throw error(401, unauthorizedCode);
+			}
+			return new Response(JSON.stringify(null));
 		}
 	}
-}

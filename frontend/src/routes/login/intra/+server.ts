@@ -7,11 +7,13 @@ import {
 	GET_LOGIN_URL
 } from '$env/static/private';
 import { redirect } from '@sveltejs/kit';
+import { addContentType } from '$lib/services/settings';
 
 export async function GET({ url, cookies, fetch }) {
 	const code = url.searchParams.get('code');
 	let login = '';
     let userExists = false;
+	// console.log(code);
 	if (code) {
 		try {
 			const tokenRequestUrl = new URL(GET_TOKEN_URL);
@@ -39,9 +41,14 @@ export async function GET({ url, cookies, fetch }) {
 		try {
 			const logMe = await fetch(new URL('/users/login', VITE_BACKEND_URL), {
 				method: 'POST',
-				body: JSON.stringify({ login })
+				body: JSON.stringify({ login }),
+				headers: {
+					...addContentType()
+				}
 			});
+			// console.log(JSON.stringify({ login }), 'login')
             const logMeJSON = await logMe.json();
+			// console.log(login, logMeJSON);
 			cookies.set('user-token', logMeJSON.token, {
                 path: '/'
             });

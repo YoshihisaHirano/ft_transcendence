@@ -19,4 +19,5 @@ export class ResponseUserDto {
   friends: ShortResponseUserDto[];
   tournamentStats: TournamentDto;
   achievement: Achievement;
+  blacklist: string[];
 }

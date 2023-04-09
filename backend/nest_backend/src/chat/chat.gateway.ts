@@ -13,13 +13,13 @@ import { MessageService } from './services/message.service';
 import { MuteService } from './services/mute.service';
 
 @WebSocketGateway({
-  namespace: '/chat',
-  cors: {
-    credentials: true,
-    origin: 'http://127.0.0.1:5501',
-    methods: ['GET', 'POST'],
-    transports: ['websocket'],
-  },
+	namespace: '/chat',
+	cors: {
+		credentials: true,
+		origin: "http://localhost:5176",
+		methods: ['GET', 'POST'],
+	  	transports: ['websocket'],
+	}
 })
 
 export class ChatGateway {
@@ -35,36 +35,40 @@ export class ChatGateway {
 
 	users;
 
-
-	@SubscribeMessage('newChat') 
-	async handleNewChat(client: Socket, newChatData: CreateChatDto) {
-		console.log(newChatData);
-		try {
-			const chat = await this.chatService.createChat(newChatData);
-			client.emit('newChatCreateStatus', chat);
-		} catch (e)
-		{
-			console.log(e);
-			client.emit('newChatCreateStatus', null);
-		}
-	}
-
 	updateChat(chatId: string) {
 		this.server.to(chatId).emit("updateChat", chatId);
 	}
 
-	// @SubscribeMessage('joinChat')
-	// async handleJoinRoom(client: Socket, data: UserChangeChatStatus) {
-	// 	if (this.chatService.isUserChatMember(data.chatId, data.userId) ) {
-	// 		this.users.set(data.userId, client.id);
-	// 		const messages = await this.messageService.findChatMessages(data.chatId);
-	// 		client.join(data.chatId);
-	// 		client.emit("joinChatStatus", messages);
-	// 		this.updateChat(data.chatId);
-	// 	} else {
-	// 		client.emit("joinChatStatus", null);
+	@SubscribeMessage("updateChat")
+	handleUpdateChat(Client: Socket, chatId) {
+		this.updateChat(chatId);
+	}
+
+	// @SubscribeMessage('newChat') 
+	// async handleNewChat(client: Socket, newChatData: CreateChatDto) {
+	// 	console.log(newChatData);
+	// 	try {
+	// 		const chat = await this.chatService.createChat(newChatData);
+	// 		client.emit('newChatCreateStatus', chat);
+	// 	} catch (e)
+	// 	{
+	// 		console.log(e);
+	// 		client.emit('newChatCreateStatus', null);
 	// 	}
 	// }
+
+	@SubscribeMessage('joinChat')
+	async handleJoinRoom(client: Socket, data: UserChangeChatStatus) {
+		// console.log(data.chatId);
+		if (this.chatService.isUserChatMember(data.chatId, data.userId) ) {
+			this.users.set(data.userId, client.id);
+			const messages = await this.messageService.findChatMessages(data.chatId);
+			client.join(data.chatId);
+			client.emit("joinChatStatus", { chatId: data.chatId, messages});
+		} else {
+			client.emit("joinChatStatus", null);
+		}
+	}
 
   @SubscribeMessage('leaveChat')
   async handleLeaveRoom(client: Socket, data: UserChangeChatStatus) {
@@ -83,7 +87,8 @@ export class ChatGateway {
   async handleMessage(client: Socket, data: CreateMessageDto) {
 	try {
 		if (await this.muteService.isInMuteList(data.authorId, data.chatId)) {
-			client.emit("stillInMute", null);
+			const chat = await this.chatService.findById(data.chatId);
+			client.emit("stillInMute", chat);
 			return ;
 		}
 		await this.messageService.createMessage(data);
@@ -97,8 +102,8 @@ export class ChatGateway {
   @SubscribeMessage('kickUser')
   async handleKickUser(admin: Socket, data: UserChangeChatStatus) {
 	try {
-		const userToKick = this.server.sockets.get(data.userId);
-		const chat = this.chatService.findById(data.chatId);
+		const userToKick = this.server.sockets.get(this.users.get(data.userId));
+		const chat = await this.chatService.findById(data.chatId);
 		await this.chatService.deleteUserOfChat(data.userId, data.chatId);
 		if (userToKick) {
 			userToKick.leave(data.chatId);
@@ -113,8 +118,8 @@ export class ChatGateway {
   @SubscribeMessage('banUser')
   async handleBanUser(admin: Socket, data: UserChangeChatStatus) {
 	try {
-		const userToBan = this.server.sockets.get(data.userId);
-		const chat = this.chatService.findById(data.chatId);
+		const userToBan = this.server.sockets.get(this.users.get(data.userId));
+		const chat = await this.chatService.findById(data.chatId);
 
 		await this.chatService.deleteUserOfChat(data.userId, data.chatId);
 		await this.chatService.banUser(data.chatId, data.userId);

@@ -15,8 +15,7 @@ export async function load() {
 	}
 	const id = getFromStorage('userId');
 	const user = await userService.getUserById(id as string);
-	appState.update((prevState) => ({
-		...prevState,
+	appState.update(() => ({
 		user: user || null
 	}));
 }

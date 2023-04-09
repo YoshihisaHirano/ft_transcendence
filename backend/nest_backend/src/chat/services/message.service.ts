@@ -23,7 +23,7 @@ export class MessageService {
         chatId: chatId,
       },
       order: {
-        createdDate: 'DESC',
+        createdDate: 'ASC',
       },
     });
   }
