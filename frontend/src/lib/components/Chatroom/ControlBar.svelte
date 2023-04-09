@@ -56,7 +56,9 @@
 
 	function removeFromChat(e: Event) {
 		const target = e.target as HTMLButtonElement;
-		chatService.removeMember(target.id.replace('remove-', ''), chatId);
+		const targetId = target.id.replace('remove-', '');
+		console.log(targetId);
+		chatIo.emit('kickUser', { userId: targetId, chatId });
 	}
 
 	function deleteChat() {
@@ -64,6 +66,12 @@
 		selectedChatId.set(null);
 		const updatedChats = $chatState.filter((item) => item.chatId !== chatId);
 		chatState.update(() => [...updatedChats]);
+	}
+
+	function banUser(e: Event) {
+		const target = e.target as HTMLButtonElement;
+		const targetId = target.id.replace('ban-', '');
+		chatIo.emit('banUser', { userId: targetId, chatId });
 	}
 </script>
 
@@ -107,10 +115,16 @@
 									>🔇</button
 								>
 								<button
-									title="Delete from the chat"
+									title="Kick from the chat"
 									on:click={removeFromChat}
 									disabled={userId === member.id}
 									id="remove-{member.id}">❌</button
+								>
+								<button
+									title="Ban from the chat"
+									on:click={banUser}
+									disabled={userId === member.id}
+									id="ban-{member.id}">🚫</button
 								>
 							{/if}
 						</div>

@@ -48,13 +48,27 @@
 			}
 			notificationText += kickedMsg;
 			updateChats(userId);
+			if ($selectedChatId === data.chatId) {
+				selectedChatId.set(null);
+			}
 		});
 
-
+		chatIo.on('youBanned', (data) => {
+			const bannedMsg = `You've been banned from ${data.chatname}`;
+			if (!isNotificationOpen) {
+				isNotificationOpen = true;
+			}
+			notificationText += bannedMsg;
+			updateChats(userId);
+			if ($selectedChatId === data.chatId) {
+				selectedChatId.set(null);
+			}
+		});
 
 		return () => {
 			chatIo.off('newMessage');
 			chatIo.off('youKicked');
+			chatIo.off('youBanned');
 		}
 	});
 

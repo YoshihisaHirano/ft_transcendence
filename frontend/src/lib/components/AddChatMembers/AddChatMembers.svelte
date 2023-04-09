@@ -2,8 +2,9 @@
 	import chatService from '$lib/services/chatService';
 	import Button from '$lib/components/Button/Button.svelte';
 	import type { ShortUser, User } from '$lib/types/types';
-	import { chatState } from '$lib/store/chatState';
 	import { userBanned } from '$lib/utils/utils';
+	import { appState } from '$lib/store/appState';
+	import { updateChats } from '$lib/utils/updates';
 
 	export let members: ShortUser[] = [],
 		chatId: string = '',
@@ -19,6 +20,12 @@
 			chatService.addMembers(newMembers, chatId);
 			newMembers = [];
 			isDropdownActive = false;
+		}
+		if (!newChat) {
+			const userId = $appState.user?.id;
+			if (userId) {
+				updateChats(userId);
+			}
 		}
 	}
 
