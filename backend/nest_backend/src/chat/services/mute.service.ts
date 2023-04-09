@@ -48,11 +48,23 @@ export class MuteService {
       return false;
     }
     const diff = this.getMinDiff(new Date(), muteEntity.addedTo);
-    if (diff < 3) {
+    if (diff < 10) {
       return true;
     } else {
       await this.muteRepository.remove(muteEntity);
       return false;
     }
+  }
+  async getTimeTillUnmute(chatId: string, userId: string): Promise<number> {
+    const muteEntity = await this.findInMuteList(chatId, userId);
+    if (muteEntity == null) {
+      return 0;
+    }
+    const diff = this.getMinDiff(new Date(), muteEntity.addedTo);
+    if (10 - diff < 0) {
+      await this.muteRepository.remove(muteEntity);
+      return 0;
+    }
+    return 10 - diff;
   }
 }

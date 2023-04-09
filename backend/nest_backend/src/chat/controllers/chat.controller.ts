@@ -36,6 +36,7 @@ export class ChatController {
       adminId: chat.adminId,
       privacyMode: chat.privacyMode,
       isDirect: chat.isDirect,
+      banList: chat.banList,
     };
   }
   @Get('all')
@@ -57,6 +58,7 @@ export class ChatController {
         adminId: chat.adminId,
         privacyMode: chat.privacyMode,
         isDirect: chat.isDirect,
+        banList: chat.banList,
       });
     }
     return res;
@@ -130,6 +132,7 @@ export class ChatController {
       adminId: chat.adminId,
       privacyMode: chat.privacyMode,
       isDirect: chat.isDirect,
+      banList: chat.banList,
     };
   }
   @Post('mute')
@@ -150,5 +153,12 @@ export class ChatController {
   @Get('mutelist')
   findAllMuted() {
     // return this.muteService.getAll();
+  }
+  @Get('mutetime/:chatId/:userId')
+  getTimeTillUnmute(
+    @Param('chatId') chatId: string,
+    @Param('userId') userId: string,
+  ) {
+    return this.muteService.getTimeTillUnmute(chatId, userId);
   }
 }

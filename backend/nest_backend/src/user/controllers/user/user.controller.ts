@@ -94,23 +94,23 @@ export class UserController {
     };
   }
 
-  @UseGuards(JwtAuthGuard)
+  //@UseGuards(JwtAuthGuard)
   @Post('addfriend')
   addFriends(@Body() friendshipDto: FriendshipDto) {
     return this.userService.addFriend(friendshipDto);
   }
-  @UseGuards(JwtAuthGuard)
+  //@UseGuards(JwtAuthGuard)
   @Get('friends/:id')
   //test method
   getFriends(@Param('id') id: string) {
     return this.userService.findFriends(id);
   }
-  @UseGuards(JwtAuthGuard)
+  //@UseGuards(JwtAuthGuard)
   @Post('deletefriend')
   deleteFriends(@Body() friendshipDto: FriendshipDto) {
     return this.userService.deleteFriend(friendshipDto);
   }
-  @UseGuards(JwtAuthGuard)
+  //@UseGuards(JwtAuthGuard)
   @Put('update')
   async updateUser(@Body('id') id: string, @Body('image') image: string) {
     const user = await this.userService.updateUserPicture(id, image);
