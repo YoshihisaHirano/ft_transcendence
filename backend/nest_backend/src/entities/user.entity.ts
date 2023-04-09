@@ -7,6 +7,12 @@ import {
   Unique,
 } from 'typeorm';
 
+export enum StatusMode {
+  ONLINE = 'online',
+  OFFLINE = 'offline',
+  GAME = 'game',
+}
+
 @Entity('users')
 @Unique(['username'])
 export class User {
@@ -18,8 +24,11 @@ export class User {
   username: string;
   @Column()
   login: string;
-  @Column()
-  isOnline: boolean;
+  @Column({
+    type: 'enum',
+    enum: StatusMode,
+  })
+  status: StatusMode;
 
   @ManyToMany(() => User)
   @JoinTable()
