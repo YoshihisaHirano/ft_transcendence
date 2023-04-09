@@ -62,6 +62,7 @@ export class UserController {
       friends: friends,
       tournamentStats: tournamentStats,
       achievement: await this.tournamentService.getAchievements(user.id),
+      blacklist: user.blacklist,
     };
   }
 
@@ -91,6 +92,7 @@ export class UserController {
       friends: [],
       tournamentStats: tournamentStats,
       achievement: await this.tournamentService.getAchievements(user.id),
+      blacklist: user.blacklist,
     };
   }
 

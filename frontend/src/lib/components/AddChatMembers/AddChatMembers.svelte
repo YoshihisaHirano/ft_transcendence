@@ -1,14 +1,13 @@
 <script lang="ts">
 	import chatService from '$lib/services/chatService';
 	import Button from '$lib/components/Button/Button.svelte';
-	import type { ShortUser, User } from '$lib/types/types';
+	import type { ShortUser } from '$lib/types/types';
 	import { userBanned } from '$lib/utils/utils';
-	import { appState } from '$lib/store/appState';
-	import { updateChats } from '$lib/utils/updates';
+	import { chatIo } from '$lib/sockets/websocketConnection';
 
 	export let members: ShortUser[] = [],
 		chatId: string = '',
-		friends: User[],
+		friends: ShortUser[],
 		newChat: boolean = false;
 
 	export let newMembers = [] as string[];
@@ -21,11 +20,8 @@
 			newMembers = [];
 			isDropdownActive = false;
 		}
-		if (!newChat) {
-			const userId = $appState.user?.id;
-			if (userId) {
-				updateChats(userId);
-			}
+		if (!newChat && chatId) {
+			chatIo.emit('updateChat', chatId);
 		}
 	}
 

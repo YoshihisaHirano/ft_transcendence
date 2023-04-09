@@ -6,6 +6,7 @@
 	import Button from '../Button/Button.svelte';
 	import chatService from '$lib/services/chatService';
 	import { chatState } from '$lib/store/chatState';
+	import { chatIo } from '$lib/sockets/websocketConnection';
 
 	export let toggleModal: () => void;
 
@@ -37,6 +38,7 @@
 				chatState.update((val) => ([...val, resChat]));
 				errorMsg = '';
 				toggleModal();
+				chatIo.emit('updateChat', resChat.chatId);
 			}
 		}
 	}

@@ -31,6 +31,7 @@ export interface User {
 		ladderLevel: number;
 	};
 	matchHistory: GameStats[];
+	blacklist: string[];
 }
 
 export interface NewChat {

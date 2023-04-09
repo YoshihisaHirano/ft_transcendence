@@ -1,3 +1,4 @@
+import userService from "$lib/services/userService";
 import { chatState } from "$lib/store/chatState";
 import type { Chat } from "$lib/types/types";
 
@@ -16,4 +17,21 @@ export function userBanned(id: string, chatId: string) {
         }
     }
     return false;
+}
+
+export async function userBlocked(userId: string, chat: Chat) {
+    if (!chat.isDirect) {
+        return false;
+    }
+    const chatMateId = chat.members.find(item => item.id !== userId);
+    if (!chatMateId) {
+        return false;
+    }
+    const chatMate = await userService.getUserById(chatMateId.id);
+    if (!chatMate) {
+        return false;
+    }
+
+    console.log(chatMate);
+    return chatMate.blacklist.includes(userId);
 }

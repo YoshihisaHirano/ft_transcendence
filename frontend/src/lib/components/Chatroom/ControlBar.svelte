@@ -1,9 +1,7 @@
 <script lang="ts">
-	import type { PrivacyMode, User } from '$lib/types/types';
+	import type { PrivacyMode, ShortUser } from '$lib/types/types';
 	import CogIcon from '$lib/components/CogIcon/CogIcon.svelte';
 	import { getFromStorage } from '$lib/utils/storage';
-	import UserRecord from '$lib/components/UserProfile/UserRecord.svelte';
-	import OnlineIndicator from '$lib/components/OnlineIndicator/OnlineIndicator.svelte';
 	import Modal from '$lib/components/Modal/Modal.svelte';
 	import doorIcon from '$lib/images/door_icon.svg';
 	import ChatSettings from './ChatSettings.svelte';
@@ -11,9 +9,10 @@
 	import chatService from '$lib/services/chatService';
 	import { chatState, selectedChatId } from '$lib/store/chatState';
 	import { chatIo } from '$lib/sockets/websocketConnection';
+	import MembersControl from './MembersControl.svelte';
 
 	export let adminId: string,
-		chatMembers: User[],
+		chatMembers: ShortUser[],
 		chatname: string,
 		chatId: string,
 		privacyMode: PrivacyMode,
@@ -49,16 +48,7 @@
 
 	function leaveChat() {
 		chatIo.emit('leaveChat', { userId, chatId });
-		const updatedChats = $chatState.filter(item => item.chatId !== chatId);
-		chatState.set(updatedChats);
 		selectedChatId.set(null);
-	}
-
-	function removeFromChat(e: Event) {
-		const target = e.target as HTMLButtonElement;
-		const targetId = target.id.replace('remove-', '');
-		console.log(targetId);
-		chatIo.emit('kickUser', { userId: targetId, chatId });
 	}
 
 	function deleteChat() {
@@ -66,12 +56,6 @@
 		selectedChatId.set(null);
 		const updatedChats = $chatState.filter((item) => item.chatId !== chatId);
 		chatState.update(() => [...updatedChats]);
-	}
-
-	function banUser(e: Event) {
-		const target = e.target as HTMLButtonElement;
-		const targetId = target.id.replace('ban-', '');
-		chatIo.emit('banUser', { userId: targetId, chatId });
 	}
 </script>
 
@@ -99,36 +83,7 @@
 			{/if}
 			<div class="members-dropdown" style="left: {offsetLeft}px">
 				{#each chatMembers as member}
-					<div class="chat-member">
-						<div>
-							<OnlineIndicator isOnline={member.isOnline} />
-							<UserRecord currentId={userId} username={member.username} userId={member.id} />
-						</div>
-						<div class="chat-member-controls">
-							<button
-								title="Invite to a game"
-								id="invite-{member.id}"
-								disabled={userId === member.id}>🏓</button
-							>
-							{#if isAdmin && !isDirect}
-								<button title="Mute" id="mute-{member.id}" disabled={userId === member.id}
-									>🔇</button
-								>
-								<button
-									title="Kick from the chat"
-									on:click={removeFromChat}
-									disabled={userId === member.id}
-									id="remove-{member.id}">❌</button
-								>
-								<button
-									title="Ban from the chat"
-									on:click={banUser}
-									disabled={userId === member.id}
-									id="ban-{member.id}">🚫</button
-								>
-							{/if}
-						</div>
-					</div>
+					<MembersControl {toggleDropdown} {chatId} showExtra={isAdmin && !isDirect} {member} />
 				{/each}
 			</div>
 		</div>
@@ -158,8 +113,8 @@
 	}
 
 	button:disabled {
-		filter: grayscale(.7);
-		opacity: .8;
+		filter: grayscale(0.7);
+		opacity: 0.8;
 		cursor: not-allowed;
 	}
 
@@ -198,22 +153,6 @@
 		max-height: 150px;
 		overflow-y: auto;
 		display: none;
-	}
-
-	.chat-member {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		gap: 16px;
-	}
-
-	.chat-member-controls {
-		display: flex;
-		gap: 8px;
-	}
-
-	.chat-member-controls button {
-		padding: 0;
 	}
 
 	.dropdown-btn {

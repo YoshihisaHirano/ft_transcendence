@@ -11,6 +11,7 @@
 	import frog from '$lib/images/frog_friend.svg';
 	import Notification from '../Notification/Notification.svelte';
 	import { updateChats } from '$lib/utils/updates';
+	import { userBlocked } from '$lib/utils/utils';
 
 	$: reactiveChat = $chatState.find((item) => item.chatId === $selectedChatId) || null;
 	$: messageText = '';
@@ -47,7 +48,6 @@
 				isNotificationOpen = true;
 			}
 			notificationText += kickedMsg;
-			updateChats(userId);
 			if ($selectedChatId === data.chatId) {
 				selectedChatId.set(null);
 			}
@@ -59,17 +59,22 @@
 				isNotificationOpen = true;
 			}
 			notificationText += bannedMsg;
-			updateChats(userId);
 			if ($selectedChatId === data.chatId) {
 				selectedChatId.set(null);
 			}
+		});
+
+		chatIo.on('updateChat', () => {
+			updateChats(userId);
 		});
 
 		return () => {
 			chatIo.off('newMessage');
 			chatIo.off('youKicked');
 			chatIo.off('youBanned');
-		}
+			chatIo.off('updateChat');
+			chatIo.off('stillInMute');
+		};
 	});
 
 	function sendMessage() {
@@ -99,7 +104,11 @@
 			chatId={reactiveChat.chatId}
 			isDirect={reactiveChat.isDirect}
 		/>
-		<MessageDisplay />
+		{#await userBlocked(userId, reactiveChat)}
+			<div class="messages-placeholder" />
+		{:then isBlocked}
+			<MessageDisplay {isBlocked} />
+		{/await}
 		<div class="input-area">
 			<textarea bind:value={messageText} name="chat-message" id="chat-message" cols="45" rows="2" />
 			<Button
@@ -110,7 +119,7 @@
 			>
 		</div>
 	{:else}
-		<div class="fror-wrapper">
+		<div class="frog-wrapper">
 			<img src={frog} alt="" width="100px" height="100px" />
 		</div>
 	{/if}
@@ -128,6 +137,12 @@
 		height: 65vh;
 		display: flex;
 		flex-direction: column;
+		position: relative;
+	}
+
+	.messages-placeholder {
+		flex-basis: 75%;
+		width: 100%;
 	}
 
 	:global(.chat-btn) {
@@ -135,7 +150,7 @@
 		margin-right: 6px;
 	}
 
-	.fror-wrapper {
+	.frog-wrapper {
 		height: 100%;
 		width: 100%;
 		display: flex;
@@ -143,7 +158,7 @@
 		justify-content: center;
 	}
 
-	.fror-wrapper img {
+	.frog-wrapper img {
 		display: block;
 	}
 

@@ -35,6 +35,14 @@ export class ChatGateway {
 
 	users;
 
+	updateChat(chatId: string) {
+		this.server.to(chatId).emit("updateChat", chatId);
+	}
+
+	@SubscribeMessage("updateChat")
+	handleUpdateChat(Client: Socket, chatId) {
+		this.updateChat(chatId);
+	}
 
 	// @SubscribeMessage('newChat') 
 	// async handleNewChat(client: Socket, newChatData: CreateChatDto) {
@@ -62,10 +70,6 @@ export class ChatGateway {
 		}
 	}
 
-	updateChat(chatId: string) {
-		this.server.to(chatId).emit("updateChat", chatId);
-	}
-
   @SubscribeMessage('leaveChat')
   async handleLeaveRoom(client: Socket, data: UserChangeChatStatus) {
 	try {
@@ -83,7 +87,8 @@ export class ChatGateway {
   async handleMessage(client: Socket, data: CreateMessageDto) {
 	try {
 		if (await this.muteService.isInMuteList(data.authorId, data.chatId)) {
-			client.emit("stillInMute", null);
+			const chat = await this.chatService.findById(data.chatId);
+			client.emit("stillInMute", chat);
 			return ;
 		}
 		await this.messageService.createMessage(data);
