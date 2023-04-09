@@ -36,7 +36,7 @@ export class ChatController {
       adminId: chat.adminId,
       privacyMode: chat.privacyMode,
       isDirect: chat.isDirect,
-      banList: chat.banList,
+      banList: await this.userService.getShortInfoByIds(chat.banList),
     };
   }
   @Get('all')
@@ -58,7 +58,7 @@ export class ChatController {
         adminId: chat.adminId,
         privacyMode: chat.privacyMode,
         isDirect: chat.isDirect,
-        banList: chat.banList,
+        banList: await this.userService.getShortInfoByIds(chat.banList),
       });
     }
     return res;
@@ -132,7 +132,7 @@ export class ChatController {
       adminId: chat.adminId,
       privacyMode: chat.privacyMode,
       isDirect: chat.isDirect,
-      banList: chat.banList,
+      banList: await this.userService.getShortInfoByIds(chat.banList),
     };
   }
   @Post('mute')

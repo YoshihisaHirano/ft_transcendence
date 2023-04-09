@@ -27,4 +27,8 @@ export class User {
 
   @Column('text', { array: true })
   blacklist: string[];
+  @Column()
+  twoFactorAuthIsEnabled: boolean;
+  @Column({ nullable: true })
+  twoFactorAuthSecret: string;
 }

@@ -16,6 +16,8 @@ export class UserService {
     const newUser = this.userRepository.create(createUserDto);
     newUser.isOnline = true;
     newUser.blacklist = [];
+    newUser.twoFactorAuthIsEnabled = true;
+    newUser.twoFactorAuthSecret = null;
     return this.userRepository.save(newUser).catch((e) => {
       if (/(already exists)/.test(e.detail)) {
         throw new BadRequestException(
@@ -136,5 +138,15 @@ export class UserService {
       });
     }
     return res;
+  }
+  async setTwoFactorAuthSecret(secret: string, userId: string) {
+    const user = await this.findUserById(userId);
+    user.twoFactorAuthSecret = secret;
+    return this.userRepository.save(user);
+  }
+  async turnOnTwoFactorAuth(userId: string) {
+    const user = await this.findUserById(userId);
+    user.twoFactorAuthIsEnabled = true;
+    return this.userRepository.save(user);
   }
 }
