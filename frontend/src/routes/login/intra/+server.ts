@@ -13,6 +13,7 @@ export async function GET({ url, cookies, fetch }) {
 	const code = url.searchParams.get('code');
 	let login = '';
     let userExists = false;
+	// console.log(code);
 	if (code) {
 		try {
 			const tokenRequestUrl = new URL(GET_TOKEN_URL);
