@@ -6,4 +6,5 @@ export class ResponseChatDto {
   adminId: string;
   privacyMode: PrivacyMode;
   isDirect: boolean;
+  banList: string[];
 }
