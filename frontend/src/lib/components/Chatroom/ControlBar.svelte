@@ -10,6 +10,7 @@
 	import linkIcon from '$lib/images/link_icon.svg';
 	import chatService from '$lib/services/chatService';
 	import { chatState, selectedChatId } from '$lib/store/chatState';
+	import { chatIo } from '$lib/sockets/websocketConnection';
 
 	export let adminId: string,
 		chatMembers: User[],
@@ -47,7 +48,10 @@
 	}
 
 	function leaveChat() {
-		chatService.removeMember(userId, chatId);
+		chatIo.emit('leaveChat', { userId, chatId });
+		const updatedChats = $chatState.filter(item => item.chatId !== chatId);
+		chatState.set(updatedChats);
+		selectedChatId.set(null);
 	}
 
 	function removeFromChat(e: Event) {
@@ -93,12 +97,19 @@
 							<UserRecord currentId={userId} username={member.username} userId={member.id} />
 						</div>
 						<div class="chat-member-controls">
-							<button title="Invite to a game" id="invite-{member.id}">🏓</button>
+							<button
+								title="Invite to a game"
+								id="invite-{member.id}"
+								disabled={userId === member.id}>🏓</button
+							>
 							{#if isAdmin && !isDirect}
-								<button title="Mute" id="mute-{member.id}">🔇</button>
+								<button title="Mute" id="mute-{member.id}" disabled={userId === member.id}
+									>🔇</button
+								>
 								<button
 									title="Delete from the chat"
 									on:click={removeFromChat}
+									disabled={userId === member.id}
 									id="remove-{member.id}">❌</button
 								>
 							{/if}
@@ -130,6 +141,12 @@
 		outline: none;
 		border: none;
 		color: var(--text-primary);
+	}
+
+	button:disabled {
+		filter: grayscale(.7);
+		opacity: .8;
+		cursor: not-allowed;
 	}
 
 	.copy-success {

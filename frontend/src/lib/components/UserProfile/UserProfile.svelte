@@ -10,6 +10,7 @@
 	import chatService from '$lib/services/chatService';
 	import { chatState, selectedChatId } from '$lib/store/chatState';
 	import { goto } from '$app/navigation';
+	import { updateUser } from '$lib/utils/updates';
 
 	export let userData: User, isCurrentUser: boolean;
 	$: ({ id, username, image, tournamentStats, matchHistory, friends } = userData);
@@ -22,27 +23,20 @@
 		}
 	}
 
-	async function updateUser() {
-		const user = await userService.getUserById(userId as string);
-		appState.update(() => ({
-			user: user || null
-		}));
-	}
-
 	async function befriend() {
 		await userService.toggleFriendship(userId, id, true);
 		friends = [
 			...friends,
 			{ id: userId, isOnline: true, username: $appState?.user?.username || '' }
 		];
-		await updateUser();
+		await updateUser(userId);
 		isFriend = true;
 	}
 
 	async function unfriend() {
 		await userService.toggleFriendship(userId, id, false);
 		friends = friends.filter((item) => item.id !== userId);
-		await updateUser();
+		await updateUser(userId);
 		isFriend = false;
 	}
 

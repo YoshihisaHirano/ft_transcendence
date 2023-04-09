@@ -14,9 +14,9 @@ export interface GameStats {
 }
 
 export interface ShortUser {
-    id: string;
-    username: string;
-    isOnline: boolean;
+	id: string;
+	username: string;
+	isOnline: boolean;
 }
 
 export interface User {
@@ -34,12 +34,12 @@ export interface User {
 }
 
 export interface NewChat {
-    chatname: string;
-    members: string[];
-    privacyMode: PrivacyMode;
-    password?: string | null;
-    adminId?: string;
-    isDirect: boolean;
+	chatname: string;
+	members: string[];
+	privacyMode: PrivacyMode;
+	password?: string | null;
+	adminId?: string;
+	isDirect: boolean;
 }
 
 export interface NewUser {
@@ -49,31 +49,37 @@ export interface NewUser {
 }
 
 export interface Message {
-    text: string;
-    authorUsername: string;
-    authorId: string;
-    chatId: string;
+	text: string;
+	authorUsername: string;
+	authorId: string;
+	chatId: string;
 }
 
 export interface Chat {
-    chatId: string;
-    chatname: string;
-    members: User[];
-    adminId: string;
-    privacyMode: PrivacyMode;
-    password?: string | null;
-    isDirect: boolean;
-    muteList: string[];
+	chatId: string;
+	chatname: string;
+	members: User[];
+	adminId: string;
+	privacyMode: PrivacyMode;
+	password?: string | null;
+	isDirect: boolean;
+	muteList: string[];
+    banList: string[];
 }
 
 export interface ChatSettings {
-    chatId: string;
-    chatname: string;
-    privacyMode: PrivacyMode;
-    password?: string | null;
-    adminId: string;
+	chatId: string;
+	chatname: string;
+	privacyMode: PrivacyMode;
+	password?: string | null;
+	adminId: string;
 }
 
 export interface MessagesState {
-    [chatId: string]: Message[]
+	[chatId: string]: Message[];
+}
+
+export interface ChatStatusChange {
+	userId: string;
+	chatId: string;
 }

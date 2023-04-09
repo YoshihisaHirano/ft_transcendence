@@ -3,17 +3,26 @@
 	import Modal from '../Modal/Modal.svelte';
 
 	export let onClose: () => void,
-		timeToExpire = 2000;
+		timeToExpire = 3000;
+    
+    $: modalClosed = false;
+
+    function followClose() {
+        modalClosed = true;
+        onClose();
+    }
 
 	onMount(() => {
 		const timeout = setTimeout(() => {
-			onClose();
+            if (!modalClosed) {
+                onClose();
+            }
 		}, timeToExpire);
 
         return () => clearTimeout(timeout);
 	});
 </script>
 
-<Modal {onClose}>
+<Modal onClose={followClose}>
 	<slot />
 </Modal>

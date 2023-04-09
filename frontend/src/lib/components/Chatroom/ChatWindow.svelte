@@ -9,9 +9,21 @@
 	import { appState } from '$lib/store/appState';
 	import { onMount } from 'svelte';
 	import frog from '$lib/images/frog_friend.svg';
+	import Notification from '../Notification/Notification.svelte';
+	import { updateChats } from '$lib/utils/updates';
 
 	$: reactiveChat = $chatState.find((item) => item.chatId === $selectedChatId) || null;
 	$: messageText = '';
+	$: isNotificationOpen = false;
+	$: notificationText = '';
+	$: userId = $appState.user?.id || '';
+
+	function toggleNotification() {
+		isNotificationOpen = !isNotificationOpen;
+		if (!isNotificationOpen) {
+			notificationText = '';
+		}
+	}
 
 	onMount(() => {
 		chatIo.on('newMessage', (data) => {
@@ -29,7 +41,21 @@
 			}
 		});
 
-		return () => chatIo.off('newMessage');
+		chatIo.on('youKicked', (data) => {
+			const kickedMsg = `You've been kicked from ${data.chatname}`;
+			if (!isNotificationOpen) {
+				isNotificationOpen = true;
+			}
+			notificationText += kickedMsg;
+			updateChats(userId);
+		});
+
+
+
+		return () => {
+			chatIo.off('newMessage');
+			chatIo.off('youKicked');
+		}
 	});
 
 	function sendMessage() {
@@ -75,6 +101,12 @@
 		</div>
 	{/if}
 </div>
+
+{#if isNotificationOpen}
+	<Notification onClose={toggleNotification}>
+		<p>{notificationText}</p>
+	</Notification>
+{/if}
 
 <style>
 	.chat-window {

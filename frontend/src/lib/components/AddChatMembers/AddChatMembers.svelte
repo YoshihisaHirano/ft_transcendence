@@ -1,9 +1,11 @@
 <script lang="ts">
 	import chatService from '$lib/services/chatService';
 	import Button from '$lib/components/Button/Button.svelte';
-	import type { User } from '$lib/types/types';
+	import type { ShortUser, User } from '$lib/types/types';
+	import { chatState } from '$lib/store/chatState';
+	import { userBanned } from '$lib/utils/utils';
 
-	export let members: User[] = [],
+	export let members: ShortUser[] = [],
 		chatId: string = '',
 		friends: User[],
 		newChat: boolean = false;
@@ -45,7 +47,7 @@
 		</label>
 		<div class="members-dropdown" class:active={isDropdownActive}>
 			{#each friends as { id, username }}
-				{#if !isChatMember(id)}
+				{#if !isChatMember(id) && !userBanned(id, chatId)}
 					<label for={id} class="member-option" class:chosen={newMembers.includes(id)}>
 						{username}
 						<input
