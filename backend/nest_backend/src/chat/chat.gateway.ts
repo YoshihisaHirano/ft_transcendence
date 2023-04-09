@@ -62,12 +62,17 @@ export class ChatGateway {
 		}
 	}
 
+	updateChat(chatId: string) {
+		this.server.to(chatId).emit("updateChat", chatId);
+	}
+
   @SubscribeMessage('leaveChat')
   async handleLeaveRoom(client: Socket, data: UserChangeChatStatus) {
 	try {
 		await this.chatService.deleteUserOfChat(data.userId, data.chatId);
 		client.leave(data.chatId);
 		client.emit('leaveChatStatus', data.chatId);
+		this.updateChat(data.chatId);
 	} catch (e) {
 		console.log(e);
 		client.emit('leaveChatStatus', null);
@@ -99,6 +104,7 @@ export class ChatGateway {
 			userToKick.leave(data.chatId);
 			userToKick.emit("youKicked", chat);
 		}
+		this.updateChat(data.chatId);
 	} catch (e) {
 		console.log(e);
 	}
@@ -116,6 +122,7 @@ export class ChatGateway {
 			userToBan.leave(data.chatId);
 			userToBan.emit("youBanned", chat);
 		}
+		this.updateChat(data.chatId);
 	} catch (e) {
 		console.log(e);
 	}
@@ -126,6 +133,7 @@ export class ChatGateway {
 	try {
 		// const userToKick = this.server.sockets.get(data.userId);
 		await this.muteService.addToMuteList(data.userId, data.chatId);
+		this.updateChat(data.chatId);
 	} catch (e) {
 		console.log(e);
 	}

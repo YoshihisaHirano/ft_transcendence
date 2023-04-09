@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Chat } from 'src/entities';
-import { Brackets, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { CreateChatDto } from 'src/dtos/createChat.dto';
 import * as bcrypt from 'bcrypt';
 import { UpdateChatDto } from 'src/dtos/updateChat.dto';
@@ -43,7 +43,13 @@ export class ChatService {
     });
     let membersId = chat.members;
     membersId = membersId.filter((member) => member != userId);
+    if (membersId.length == 0) {
+      return this.chatRepository.remove(chat);
+    }
     chat.members = membersId;
+    if (chat.adminId == userId) {
+      chat.adminId = membersId[0];
+    }
     return this.chatRepository.save(chat);
   }
   async checkPassword(chatId: string, password: string) {

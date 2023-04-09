@@ -153,8 +153,15 @@ export class ChatController {
   ) {
     return this.muteService.isInMuteList(chatId, userId);
   }
-  // @Get('mutelist')
-  // findAllMuted() {
-  //   return this.muteService.getAll();
-  // }
+  @Get('mutelist')
+  findAllMuted() {
+    // return this.muteService.getAll();
+  }
+  @Get('mutetime/:chatId/:userId')
+  getTimeTillUnmute(
+    @Param('chatId') chatId: string,
+    @Param('userId') userId: string,
+  ) {
+    return this.muteService.getTimeTillUnmute(chatId, userId);
+  }
 }
