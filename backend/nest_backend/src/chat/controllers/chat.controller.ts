@@ -37,6 +37,7 @@ export class ChatController {
       adminId: chat.adminId,
       privacyMode: chat.privacyMode,
       isDirect: chat.isDirect,
+      banList: chat.banList,
     };
   }
   @Get('all')
@@ -59,6 +60,7 @@ export class ChatController {
         adminId: chat.adminId,
         privacyMode: chat.privacyMode,
         isDirect: chat.isDirect,
+        banList: chat.banList,
       });
     }
     return res;
@@ -133,6 +135,7 @@ export class ChatController {
       adminId: chat.adminId,
       privacyMode: chat.privacyMode,
       isDirect: chat.isDirect,
+      banList: chat.banList,
     };
   }
   @Post('mute')

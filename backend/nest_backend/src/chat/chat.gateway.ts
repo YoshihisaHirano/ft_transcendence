@@ -92,8 +92,8 @@ export class ChatGateway {
   @SubscribeMessage('kickUser')
   async handleKickUser(admin: Socket, data: UserChangeChatStatus) {
 	try {
-		const userToKick = this.server.sockets.get(data.userId);
-		const chat = this.chatService.findById(data.chatId);
+		const userToKick = this.server.sockets.get(this.users.get(data.userId));
+		const chat = await this.chatService.findById(data.chatId);
 		await this.chatService.deleteUserOfChat(data.userId, data.chatId);
 		if (userToKick) {
 			userToKick.leave(data.chatId);
@@ -107,8 +107,8 @@ export class ChatGateway {
   @SubscribeMessage('banUser')
   async handleBanUser(admin: Socket, data: UserChangeChatStatus) {
 	try {
-		const userToBan = this.server.sockets.get(data.userId);
-		const chat = this.chatService.findById(data.chatId);
+		const userToBan = this.server.sockets.get(this.users.get(data.userId));
+		const chat = await this.chatService.findById(data.chatId);
 
 		await this.chatService.deleteUserOfChat(data.userId, data.chatId);
 		await this.chatService.banUser(data.chatId, data.userId);
