@@ -36,30 +36,35 @@ export class ChatGateway {
 	users;
 
 
-	// @SubscribeMessage('newChat') 
-	// async handleNewChat(client: Socket, newChatData: CreateChatDto) {
-	// 	console.log(newChatData);
-	// 	try {
-	// 		const chat = await this.chatService.createChat(newChatData);
-	// 		client.emit('newChatCreateStatus', chat);
-	// 	} catch (e)
-	// 	{
-	// 		console.log(e);
-	// 		client.emit('newChatCreateStatus', null);
-	// 	}
-	// }
-
-	@SubscribeMessage('joinChat')
-	async handleJoinRoom(client: Socket, data: UserChangeChatStatus) {
-		if (this.chatService.isUserChatMember(data.chatId, data.userId) ) {
-			this.users.set(data.userId, client.id);
-			const messages = await this.messageService.findChatMessages(data.chatId);
-			client.join(data.chatId);
-			client.emit("joinChatStatus", messages);
-		} else {
-			client.emit("joinChatStatus", null);
+	@SubscribeMessage('newChat') 
+	async handleNewChat(client: Socket, newChatData: CreateChatDto) {
+		console.log(newChatData);
+		try {
+			const chat = await this.chatService.createChat(newChatData);
+			client.emit('newChatCreateStatus', chat);
+		} catch (e)
+		{
+			console.log(e);
+			client.emit('newChatCreateStatus', null);
 		}
 	}
+
+	updateChat(chatId: string) {
+		this.server.to(chatId).emit("updateChat", chatId);
+	}
+
+	// @SubscribeMessage('joinChat')
+	// async handleJoinRoom(client: Socket, data: UserChangeChatStatus) {
+	// 	if (this.chatService.isUserChatMember(data.chatId, data.userId) ) {
+	// 		this.users.set(data.userId, client.id);
+	// 		const messages = await this.messageService.findChatMessages(data.chatId);
+	// 		client.join(data.chatId);
+	// 		client.emit("joinChatStatus", messages);
+	// 		this.updateChat(data.chatId);
+	// 	} else {
+	// 		client.emit("joinChatStatus", null);
+	// 	}
+	// }
 
   @SubscribeMessage('leaveChat')
   async handleLeaveRoom(client: Socket, data: UserChangeChatStatus) {
@@ -67,6 +72,7 @@ export class ChatGateway {
 		await this.chatService.deleteUserOfChat(data.userId, data.chatId);
 		client.leave(data.chatId);
 		client.emit('leaveChatStatus', data.chatId);
+		this.updateChat(data.chatId);
 	} catch (e) {
 		console.log(e);
 		client.emit('leaveChatStatus', null);
@@ -98,6 +104,7 @@ export class ChatGateway {
 			userToKick.leave(data.chatId);
 			userToKick.emit("youKicked", chat);
 		}
+		this.updateChat(data.chatId);
 	} catch (e) {
 		console.log(e);
 	}
@@ -115,6 +122,7 @@ export class ChatGateway {
 			userToBan.leave(data.chatId);
 			userToBan.emit("youBanned", chat);
 		}
+		this.updateChat(data.chatId);
 	} catch (e) {
 		console.log(e);
 	}
@@ -125,6 +133,7 @@ export class ChatGateway {
 	try {
 		// const userToKick = this.server.sockets.get(data.userId);
 		await this.muteService.addToMuteList(data.userId, data.chatId);
+		this.updateChat(data.chatId);
 	} catch (e) {
 		console.log(e);
 	}
