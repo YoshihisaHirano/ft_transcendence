@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from 'src/dtos/createUser.dto';
 import { FriendshipDto } from 'src/dtos/friendship.dto';
 import { ShortResponseUserDto } from 'src/dtos/shortResponseUser.dto';
+import { StatusMode } from 'src/entities/user.entity';
 
 @Injectable()
 export class UserService {
@@ -14,7 +15,7 @@ export class UserService {
 
   createUser(createUserDto: CreateUserDto) {
     const newUser = this.userRepository.create(createUserDto);
-    newUser.isOnline = true;
+    newUser.status = StatusMode.ONLINE;
     newUser.blacklist = [];
     newUser.twoFactorAuthIsEnabled = true;
     newUser.twoFactorAuthSecret = null;
@@ -147,6 +148,11 @@ export class UserService {
   async turnOnTwoFactorAuth(userId: string) {
     const user = await this.findUserById(userId);
     user.twoFactorAuthIsEnabled = true;
+    return this.userRepository.save(user);
+  }
+  async changeUserStatus(userId: string, status: StatusMode) {
+    const user = await this.findUserById(userId);
+    user.status = status;
     return this.userRepository.save(user);
   }
 }
