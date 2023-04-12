@@ -7,6 +7,8 @@ import { StatsModule } from 'src/stats/stats.module';
 import { TournamentModule } from 'src/tournament/tournament.module';
 import { AuthModule } from './auth/auth.module';
 import { ChatModule } from './chat/chat.module';
+import { Game } from './game/game.module';
+import { Status } from './status/status.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -29,6 +31,8 @@ import { ChatModule } from './chat/chat.module';
     TournamentModule,
     AuthModule,
     ChatModule,
+    Game,
+    Status
   ],
 })
 export class AppModule {}
