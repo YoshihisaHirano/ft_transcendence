@@ -7,8 +7,10 @@ export class GameService {
 		this.games = new Map();
 		// userid (host): enemy
 	}
-	games;
+	games; // [hostId, playerId]
 	fifo; // for mm
+
+	// users here/
 
 	newGame(hostId) {
 		this.games.set(hostId, null);

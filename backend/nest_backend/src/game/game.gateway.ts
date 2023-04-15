@@ -19,9 +19,9 @@ import { GameService } from "./game.service";
 export class GameGateway implements OnGatewayDisconnect {
 	constructor(
 		private gameService: GameService,
-		private statusService: StatusService
+		// private statusService: StatusService
 		)  {
-		this.usersById = new Map();
+		this.usersById = new Map(); // to service 
 		this.usersBySocket = new Map();
 	}
 
@@ -36,12 +36,12 @@ export class GameGateway implements OnGatewayDisconnect {
 		this.usersBySocket.set(client.id, userId);
 		client.join(userId);
 		// dev
-		this.server.emit("newGame", userId); // now host wait 
+		// this.server.emit("newGame", userId); // now host wait 
 	}
 
 	@SubscribeMessage("joinGame")
 	handleJoinGame(client: Socket, data) { // hostId, playerId
-		const host = this.server.sockets.get(this.usersById.get(data.hostId));
+		const host: Socket = this.server.sockets.get(this.usersById.get(data.hostId));
 		if (host && this.gameService.joinGame(data.hostId, data.playerId)) {
 			this.usersById.set(data.playerId, client.id);
 			this.usersBySocket.set(client.id, data.playerId);
@@ -52,29 +52,43 @@ export class GameGateway implements OnGatewayDisconnect {
 			client.emit("joinGameFail", null);
 			if (host) {
 				host.emit("gameCreateFail", null);
+				// this.deleteGame();
+				//delete all data of game
 			}
 		}
 	}
 
-	@SubscribeMessage("cancelGame")
-	handleCancelGame(client: Socket, userId) {
-		client.leave(userId);
-		this.usersById.delete(userId);
-		this.usersBySocket.set(client.id);
-		this.gameService.endGame(userId);
+	deleteGame(hostId, playerId) {
+		
 	}
+
+	// delete all data of game (fail create game, fail join)
+
+	// @SubscribeMessage("cancelGame") // no need
+	// handleCancelGame(client: Socket, userId) {
+	// 	client.leave(userId);
+	// 	this.usersById.delete(userId);
+	// 	this.usersBySocket.set(client.id);
+	// 	this.gameService.endGame(userId);
+	// }
 
 	// disconnect
 	handleDisconnect(client: Socket) {
 		// find game in games 
 		// send stop 
-		// leave room
+		// delete from users here
 	}
 
 	@SubscribeMessage("gameDataUpdate")
 	handleDataUpdate(client: Socket, data: GameData) {
 		this.server.to(data.gameId).emit(data.gamePositions);
 	}
+
+	/*
+		gameHostData (ball, host pos)
+		playerData (host pos)
+		changeScore (score data)
+	*/
 
 	// @SubscribeMessage("gameEndByHost") // only host? 
 	// handleGameEnd(client: Socket, data: GameData) {

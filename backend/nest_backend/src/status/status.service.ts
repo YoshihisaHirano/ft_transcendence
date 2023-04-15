@@ -11,6 +11,7 @@ export class StatusService {
 
 	setUserStatus(userId, socketId, status) {
 		this.users.set(userId, socketId);
+		// TODO set to db status
 	}
 
 
@@ -19,7 +20,6 @@ export class StatusService {
 
 		for (const [key, value] of this.users.entries()) {
 			if (value.localeCompare(socketId) == 0) {
-				console.log("in map: ",  key, value)
 				k = key;
 				break;
 			}

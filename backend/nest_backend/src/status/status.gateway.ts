@@ -22,29 +22,33 @@ export class StatusGateway implements OnGatewayDisconnect {
 		private statusService: StatusService,
 		private gameService: GameService
 		)  {
+
 	}
 
 	@WebSocketServer()
 	server;
-	users;
+
+	// users;
 
 	@SubscribeMessage("userConnect")
     handleUserConnect(client: Socket, userId) {
 		this.statusService.setUserStatus(userId, client.id, "online");
+
 	}
 
 	handleDisconnect(client: Socket): any { // user disconnect
 		this.statusService.deleteId(client.id)
+		// TODO set to db
 	}
 
 	@SubscribeMessage("inviteUser")
 	hansleInviteUser(host: Socket, data: GameInvite) {
-		const playerSocketId = this.statusService.getSocketIdByUser(data.playerId);
+		const playerSocketId: string = this.statusService.getSocketIdByUser(data.playerId);
 		if (playerSocketId == null) {
 			host.emit("inviteFail", "user not online");
 			return ;
 		}
-		const playerSocket = this.server.sockets.get(playerSocketId);
+		const playerSocket: Socket = this.server.sockets.get(playerSocketId);
 		if (playerSocket) {
 			this.gameService.newGame(data.gameId);
 			playerSocket.emit("inviteToGame", data.gameId);
@@ -56,9 +60,9 @@ export class StatusGateway implements OnGatewayDisconnect {
 
 	@SubscribeMessage("rejectInvite")
 	handleRejectInvite(player: Socket, gameId) {
-		const hostSocketId = this.statusService.getSocketIdByUser(gameId);
-		const hostSocket = this.server.sockets.get(hostSocketId);
-		this.gameService.endGame(gameId);
+		const hostSocketId: string = this.statusService.getSocketIdByUser(gameId);
+		const hostSocket: Socket = this.server.sockets.get(hostSocketId);
+		this.gameService.endGame(gameId); // deletes from games 
 		if (hostSocket) {
 			hostSocket.emit("rejectInvite", null);
 		}
