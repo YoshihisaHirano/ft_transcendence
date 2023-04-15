@@ -1,6 +1,7 @@
 import { OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
 import { Socket } from "socket.io";
 import { GameData } from "src/dtos/gameData.dto";
+import { GameInvite } from "src/dtos/GameInvite.dto";
 import { StatusService } from "src/status/status.service";
 import { GameService } from "./game.service";
 
@@ -19,64 +20,65 @@ import { GameService } from "./game.service";
 export class GameGateway implements OnGatewayDisconnect {
 	constructor(
 		private gameService: GameService,
-		// private statusService: StatusService
 		)  {
-		this.usersById = new Map(); // to service 
-		this.usersBySocket = new Map();
 	}
 
 	@WebSocketServer()
 	server;
-	usersById;
-	usersBySocket;
 
-	@SubscribeMessage("newGame")
-	handleNewGame(client: Socket, userId) {
-		this.usersById.set(userId, client.id);
-		this.usersBySocket.set(client.id, userId);
-		client.join(userId);
-		// dev
-		// this.server.emit("newGame", userId); // now host wait 
+
+	getUserSocket(userId) {
+		const socketId = this.gameService.getUserSocketId(userId);
+		if (socketId && this.server.sockets.has(socketId)) {
+			return this.server.sockets.get(socketId);
+		}
 	}
 
-	@SubscribeMessage("joinGame")
-	handleJoinGame(client: Socket, data) { // hostId, playerId
-		const host: Socket = this.server.sockets.get(this.usersById.get(data.hostId));
-		if (host && this.gameService.joinGame(data.hostId, data.playerId)) {
-			this.usersById.set(data.playerId, client.id);
-			this.usersBySocket.set(client.id, data.playerId);
-			client.join(data.hostId);
-			this.server.to(data.hostId).emit("gameStart", null);
-		}
-		else {
+	@SubscribeMessage("createGame")
+	handleNewGame(client: Socket, data: GameInvite) {
+		this.gameService.addUser(data.gameId, client.id);
+		this.gameService.createGame(data);
+		client.join(data.gameId);
+	}
+
+	@SubscribeMessage("playerJoinGame")
+	async handleJoinGame(client: Socket, data: GameInvite) { // hostId, playerId
+		 const joinRes =  await this.gameService.playerJoinGame(data);
+		 if (joinRes) {
+			this.gameService.addUser(data.playerId, client.id);
+			client.join(data.gameId);
+			this.server.to(data.gameId).emit("gameStart", data);
+		 } else {
 			client.emit("joinGameFail", null);
-			if (host) {
-				host.emit("gameCreateFail", null);
-				// this.deleteGame();
-				//delete all data of game
-			}
-		}
+		 }
 	}
 
-	deleteGame(hostId, playerId) {
-		
+	@SubscribeMessage("spectatorJoinGame")
+	handleSpectatorJoinGame(client: Socket, gameId) { // hostId, playerId
+		 const joinRes =  this.gameService.spectatorJoinGame(gameId);
+		 if (joinRes) {
+			client.join(gameId);
+		 } else {
+			client.emit("joinGameFail", null);
+		 }
 	}
 
-	// delete all data of game (fail create game, fail join)
-
-	// @SubscribeMessage("cancelGame") // no need
-	// handleCancelGame(client: Socket, userId) {
-	// 	client.leave(userId);
-	// 	this.usersById.delete(userId);
-	// 	this.usersBySocket.set(client.id);
-	// 	this.gameService.endGame(userId);
-	// }
-
-	// disconnect
 	handleDisconnect(client: Socket) {
-		// find game in games 
-		// send stop 
-		// delete from users here
+		const leftPlayerId = this.gameService.getUserIdBySocketId(client.id);
+		if (leftPlayerId)  { // one of players
+			const secondPlayer = this.gameService.getSecondPlayerId(leftPlayerId);
+			const gameId: string = this.gameService.getGameId(leftPlayerId, secondPlayer);
+			if (secondPlayer || this.gameService.isUserGameHost(leftPlayerId)) {
+				this.gameService.removeUser(leftPlayerId);
+				this.gameService.removeUser(secondPlayer);
+				if (gameId) {
+					this.server.to(gameId).emit("endOfGame", null);
+				}
+				this.gameService.deleteGame(gameId);
+			}
+		} else { // left spectator
+			// nothing
+		}
 	}
 
 	@SubscribeMessage("gameDataUpdate")
@@ -89,18 +91,4 @@ export class GameGateway implements OnGatewayDisconnect {
 		playerData (host pos)
 		changeScore (score data)
 	*/
-
-	// @SubscribeMessage("gameEndByHost") // only host? 
-	// handleGameEnd(client: Socket, data: GameData) {
-	// 	const player = this.gameService.endGame(data.gameId);
-	// 	const playerSocket = this.server.sockets.get(this.usersById.get(player));
-		
-	// 	this.usersById.delete(data.gameId); // host
-	// 	this.usersById.delete(player); // player
-
-	// 	this.server.to(data.gameId).emit("gameEnd", null);
-	// 	client.leave(data.gameId);
-	// 	playerSocket.leave(data.gameId);
-	// }
-
 }

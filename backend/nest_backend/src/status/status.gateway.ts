@@ -19,10 +19,8 @@ import { StatusService } from "./status.service";
 
 export class StatusGateway implements OnGatewayDisconnect {
 	constructor(
-		private statusService: StatusService,
-		private gameService: GameService
-		)  {
-
+		private statusService: StatusService
+		) {
 	}
 
 	@WebSocketServer()
@@ -42,16 +40,15 @@ export class StatusGateway implements OnGatewayDisconnect {
 		// TODO set to db
 	}
 
-	@SubscribeMessage("inviteUser")
-	hansleInviteUser(host: Socket, data: GameInvite) {
+	@SubscribeMessage("inviteUser") // from host
+	handleInviteUser(host: Socket, data: GameInvite) {
 		const playerSocketId: string = this.statusService.getSocketIdByUser(data.playerId);
 		if (playerSocketId == null) {
-			host.emit("inviteFail", "user not online");
+			host.emit("inviteFail", "user offline");
 			return ;
 		}
 		const playerSocket: Socket = this.server.sockets.get(playerSocketId);
 		if (playerSocket) {
-			this.gameService.newGame(data.gameId);
 			playerSocket.emit("inviteToGame", data.gameId);
 			host.emit("inviteSuccess", null);
 		} else {
@@ -59,13 +56,40 @@ export class StatusGateway implements OnGatewayDisconnect {
 		}
 	}
 
-	@SubscribeMessage("rejectInvite")
-	handleRejectInvite(player: Socket, gameId) {
-		const hostSocketId: string = this.statusService.getSocketIdByUser(gameId);
-		const hostSocket: Socket = this.server.sockets.get(hostSocketId);
-		this.gameService.endGame(gameId); // deletes from games 
-		if (hostSocket) {
-			hostSocket.emit("rejectInvite", null);
+	@SubscribeMessage("cancelInvite") // from host
+	handleCancelInvite(host: Socket, data: GameInvite) {
+		const playerSocket: Socket = this.getUserSocket(data.playerId);
+		if (playerSocket) {
+			playerSocket.emit("cancelInvite", data);
 		}
 	}
+
+	@SubscribeMessage("inviteAccepted") // from player
+	handleInviteAccepted(player: Socket, data: GameInvite) {
+		const hostSocket: Socket = this.getUserSocket(data.gameId);
+		if (hostSocket) {
+			hostSocket.emit("canStartGame", data);
+			player.emit("canStartGame", data);
+		} else {
+			player.emit("joinGameError", null);
+		}
+	}
+
+	@SubscribeMessage("rejectInvite") // from player
+	handleRejectInvite(player: Socket, data: GameInvite) {
+		const hostSocket: Socket = this.getUserSocket(data.gameId);
+		if (hostSocket) {
+			hostSocket.emit("inviteRejected", null);
+		}
+	}
+
+	getUserSocket(userId) {
+		const socketId: string = this.statusService.getSocketIdByUser(userId);
+		if (socketId && this.server.sockets.has(socketId)) {
+			return this.server.sockets.get(socketId);
+		}
+		return null;
+	}
+
+
 }
