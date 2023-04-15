@@ -6,6 +6,6 @@ import { StatusService } from "./status.service";
 
 
 @Module({
-	providers: [StatusGateway, StatusService, GameService]
+	providers: [StatusGateway, StatusService]
 })
 export class Status {}
