@@ -7,6 +7,7 @@ import {
   Res,
   UnauthorizedException,
   UseGuards,
+  Response
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UserService } from '../user/services/user/user.service';
@@ -22,17 +23,26 @@ export class AuthController {
   @Post('/login')
   async userLogin(@Body('login') login: string) {
     const user = await this.userService.findUserByLogin(login);
-    if (user.twoFactorAuthIsEnabled) {
-      return {
-        auth: '2fa',
-        id: user.id,
-        token: null,
-      };
+    if (user != null) {
+      if (user.twoFactorAuthIsEnabled) {
+        return {
+          auth: '2fa',
+          id: user.id,
+          token: null,
+        };
+      }
+    }
+    let userId;
+    if (user == null) {
+      userId = null;
+    }
+    else {
+      userId = user.id;
     }
     const token = await this.authService.login(login);
     return {
       auth: 'jwt',
-      id: user.id,
+      id: userId,
       token: token,
     };
   }

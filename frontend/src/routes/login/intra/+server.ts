@@ -41,7 +41,7 @@ export async function GET({ url, cookies, fetch }) {
 	}
 	if (login) {
 		try {
-			const logMe = await fetch(new URL('/users/login', VITE_BACKEND_URL), {
+			const logMe = await fetch(new URL('/2fa/login', VITE_BACKEND_URL), {
 				method: 'POST',
 				body: JSON.stringify({ login }),
 				headers: {
