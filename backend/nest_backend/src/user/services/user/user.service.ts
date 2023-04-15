@@ -73,7 +73,7 @@ export class UserService {
 
   async findFriendsDto(id: string): Promise<ShortResponseUserDto[]> {
     return await this.userRepository.query(
-      ` SELECT id, username, "isOnline"
+      ` SELECT id, username, status
         FROM users U
         WHERE U.id <> $1
           AND EXISTS(
