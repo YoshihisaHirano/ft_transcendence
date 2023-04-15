@@ -18,8 +18,9 @@ import { ShortResponseUserDto } from 'src/dtos/shortResponseUser.dto';
 import { TournamentDto } from 'src/dtos/tournament.dto';
 import { ResponseUserDto } from 'src/dtos/responseUser.dto';
 import { AuthService } from 'src/auth/auth.service';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import JwtTwoFactorGuard from 'src/auth/jwt-2fa-guard';
 
+@UseGuards(JwtTwoFactorGuard)
 @Controller('users')
 export class UserController {
   constructor(
@@ -28,23 +29,11 @@ export class UserController {
     private readonly statsService: StatsService,
     private readonly authService: AuthService,
   ) {}
-
-  @Post('/login')
-  async userLogin(@Body('login') login: string) {
-    const id = await this.userService.findUserIdByLogin(login);
-    const token = await this.authService.login(login);
-    return {
-      id: id,
-      token: token,
-    };
-  }
   @Get()
   getUsers() {
     //test method
     return this.userService.getUsers();
   }
-
-  @UseGuards(JwtAuthGuard)
   @Get('/id/:id')
   async getUserById(@Param('id') id: string): Promise<ResponseUserDto> {
     const stats: Stats[] = await this.statsService.getUserStats(id);
@@ -64,8 +53,6 @@ export class UserController {
       achievement: await this.tournamentService.getAchievements(user.id),
     };
   }
-
-  @UseGuards(JwtAuthGuard)
   @Post('create')
   async createUser(
     @Body() createUserDto: CreateUserDto,
@@ -93,24 +80,19 @@ export class UserController {
       achievement: await this.tournamentService.getAchievements(user.id),
     };
   }
-
-  //@UseGuards(JwtAuthGuard)
   @Post('addfriend')
   addFriends(@Body() friendshipDto: FriendshipDto) {
     return this.userService.addFriend(friendshipDto);
   }
-  //@UseGuards(JwtAuthGuard)
   @Get('friends/:id')
   //test method
   getFriends(@Param('id') id: string) {
     return this.userService.findFriends(id);
   }
-  //@UseGuards(JwtAuthGuard)
   @Post('deletefriend')
   deleteFriends(@Body() friendshipDto: FriendshipDto) {
     return this.userService.deleteFriend(friendshipDto);
   }
-  //@UseGuards(JwtAuthGuard)
   @Put('update')
   async updateUser(@Body('id') id: string, @Body('image') image: string) {
     const user = await this.userService.updateUserPicture(id, image);

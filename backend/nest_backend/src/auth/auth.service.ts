@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { User } from '../entities';
 import { authenticator } from 'otplib';
 import { UserService } from 'src/user/services/user/user.service';
-import { toDataURL } from 'qrcode';
+import { toDataURL, toFileStream } from 'qrcode';
 
 @Injectable()
 export class AuthService {
@@ -16,26 +15,29 @@ export class AuthService {
     const payload = { login: login };
     return this.jwtService.sign(payload);
   }
-  async generateTwoFactorAuthenticationSecret(user: User) {
-    const secret = authenticator.generateSecret();
-    const otpAuthUrl = authenticator.keyuri(
-      user.username,
-      'transcendence',
-      secret,
-    );
-    await this.userService.setTwoFactorAuthSecret(secret, user.id);
-    return {
-      secret,
-      otpAuthUrl,
+  async loginWith2fa(login: string, code: string, is2FaAuthenticated: boolean) {
+    const payload = {
+      login: login,
+      code: code,
+      is2FaAuthenticated: is2FaAuthenticated,
     };
+    return this.jwtService.sign(payload);
+  }
+  async generateTwoFactorAuthenticationSecret(login: string) {
+    const secret = authenticator.generateSecret();
+    await this.userService.setTwoFactorAuthSecret(secret, login);
+    return authenticator.keyuri(login, 'transcendence', secret);
   }
   async generateQrCodeDataURL(otpAuthUrl: string) {
     return toDataURL(otpAuthUrl);
   }
-  isTwoFactorAuthCodeValid(twoFactorAuthCode: string, user: User) {
+  public async pipeQrCodeStream(stream: Response, otpAuthUrl: string) {
+    return toFileStream(stream, otpAuthUrl);
+  }
+  isTwoFactorAuthCodeValid(twoFactorAuthCode: string, userCode: string) {
     return authenticator.verify({
       token: twoFactorAuthCode,
-      secret: user.twoFactorAuthSecret,
+      secret: userCode,
     });
   }
 }
