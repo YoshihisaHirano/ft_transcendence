@@ -1,7 +1,9 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
-import { MessageService } from '../services/message.service';
-import { CreateMessageDto } from '../../dtos/createMessage.dto';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { MessageService } from 'src/chat/services/message.service';
+import { CreateMessageDto } from 'src/dtos/createMessage.dto';
+import JwtTwoFactorGuard from 'src/auth/jwt-2fa-guard';
 
+@UseGuards(JwtTwoFactorGuard)
 @Controller('message')
 export class MessageController {
   constructor(private readonly messageService: MessageService) {}

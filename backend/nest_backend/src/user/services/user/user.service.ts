@@ -17,7 +17,7 @@ export class UserService {
     const newUser = this.userRepository.create(createUserDto);
     newUser.status = StatusMode.ONLINE;
     newUser.blacklist = [];
-    newUser.twoFactorAuthIsEnabled = true;
+    newUser.twoFactorAuthIsEnabled = false;
     newUser.twoFactorAuthSecret = null;
     return this.userRepository.save(newUser).catch((e) => {
       if (/(already exists)/.test(e.detail)) {
@@ -85,7 +85,7 @@ export class UserService {
       [id],
     );
   }
-  async findUserIdByLogin(login: string) {
+  async findUserByLogin(login: string) {
     const user = await this.userRepository
       .createQueryBuilder('user')
       .where('user.login = :login', { login: login })
@@ -93,7 +93,7 @@ export class UserService {
     if (user == null) {
       return null;
     }
-    return user.id;
+    return user;
   }
 
   async findUsernameById(id: string) {
@@ -135,18 +135,18 @@ export class UserService {
       res.push({
         id: id,
         username: await this.findUsernameById(id),
-        isOnline: true,
+        status: await this.findStatusById(id),
       });
     }
     return res;
   }
-  async setTwoFactorAuthSecret(secret: string, userId: string) {
-    const user = await this.findUserById(userId);
+  async setTwoFactorAuthSecret(secret: string, login: string) {
+    const user = await this.findUserByLogin(login);
     user.twoFactorAuthSecret = secret;
     return this.userRepository.save(user);
   }
-  async turnOnTwoFactorAuth(userId: string) {
-    const user = await this.findUserById(userId);
+  async turnOnTwoFactorAuth(login: string) {
+    const user = await this.findUserByLogin(login);
     user.twoFactorAuthIsEnabled = true;
     return this.userRepository.save(user);
   }
@@ -154,5 +154,9 @@ export class UserService {
     const user = await this.findUserById(userId);
     user.status = status;
     return this.userRepository.save(user);
+  }
+  async findStatusById(userId: string) {
+    const user = await this.findUserById(userId);
+    return user.status;
   }
 }

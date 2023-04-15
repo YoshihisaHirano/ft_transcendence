@@ -1,9 +1,9 @@
 import { Controller, Get, Param, UseGuards } from '@nestjs/common';
 import { TournamentService } from 'src/tournament/services/tournament.service';
-import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
+import JwtTwoFactorGuard from 'src/auth/jwt-2fa-guard';
 
 @Controller('tournament')
-//@UseGuards(JwtAuthGuard)
+@UseGuards(JwtTwoFactorGuard)
 export class TournamentController {
   constructor(private readonly tournamentService: TournamentService) {}
   @Get()
