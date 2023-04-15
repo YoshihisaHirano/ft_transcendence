@@ -1,5 +1,6 @@
-import { addAuthHeader, createBackendUrl, removeApiEndpoint } from '$lib/services/settings';
+import { addAuthHeader, createBackendUrl, removeApiEndpoint, unauthorizedCode } from '$lib/services/settings';
 import { redirect } from '@sveltejs/kit';
+import { error } from '@sveltejs/kit';
 
 /** @type {import('./$types').RequestHandler} */
 export async function GET({ url, cookies, fetch }) {
@@ -19,8 +20,10 @@ export async function GET({ url, cookies, fetch }) {
 			}
 			const userJSON = await user.json();
 			return new Response(JSON.stringify(userJSON));
-		} catch (error) {
-			console.error(error);
+		} catch (err) {
+			if (err instanceof Error && err.message === unauthorizedCode) {
+				throw error(401, unauthorizedCode);
+			}
 			return new Response(JSON.stringify(null));
 		}
 	}

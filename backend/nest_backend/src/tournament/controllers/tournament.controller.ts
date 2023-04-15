@@ -3,7 +3,7 @@ import { TournamentService } from 'src/tournament/services/tournament.service';
 import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
 
 @Controller('tournament')
-@UseGuards(JwtAuthGuard)
+//@UseGuards(JwtAuthGuard)
 export class TournamentController {
   constructor(private readonly tournamentService: TournamentService) {}
   @Get()

@@ -112,7 +112,7 @@ export const thirdUser: User = {
 };
 
 export const mainUser: User = {
-	id: '0e512379-be69-4aa1-b6d6-b68f5c3e134d',
+	id: '7hf57brwyu45',
 	image: '',
 	isOnline: true,
 	username: 'aalannys',
@@ -138,26 +138,29 @@ const messages: Message[] = [
 	{ author: 'guest', authorId: 'a2aaa', text: 'how are you', chatId: 'aafaf' },
 ]
 
-export const userChats: Chat[] = [
-	{ adminId: '0e512379-be69-4aa1-b6d6-b68f5c3e134d', chatId: 'gfw2yrw3e', chatname: 'chatty chat', members: [secondUser, mainUser], messages: [], privacyMode: 'public' },
-	{ adminId: '0e512379-be69-4aa1-b6d6-b68f5c3e134d', chatId: 'vgqrtfe', chatname: 'kitten chat', members: [secondUser, mainUser, thirdUser], messages: [ ...messages, ...messages ], privacyMode: 'private' },
-	{ adminId: 'h53g2ghegv', chatId: 'udq7t7qtr', chatname: 'unicorn chat', members: [mainUser, thirdUser], messages: [messages[2], messages[0]], privacyMode: 'protected' },
-]
+// export const userChats: Chat[] = [
+// 	{ adminId: 'fe1a8a4f-42b3-469e-8d02-e6e92579460c', chatId: 'gfw2yrw3e', chatname: 'chatty chat', members: [secondUser, mainUser], messages: [], privacyMode: 'public' },
+// 	{ adminId: 'fe1a8a4f-42b3-469e-8d02-e6e92579460c', chatId: 'vgqrtfe', chatname: 'kitten chat', members: [secondUser, mainUser, thirdUser], messages: [ ...messages, ...messages ], privacyMode: 'private' },
+// 	{ adminId: 'h53g2ghegv', chatId: 'udq7t7qtr', chatname: 'unicorn chat', members: [mainUser, thirdUser], messages: [messages[2], messages[0]], privacyMode: 'protected' },
+// ]
 
 export const newGroupChat: Chat = {
 	chatId: 'sfsgdh',
-	adminId: '0e512379-be69-4aa1-b6d6-b68f5c3e134d',
+	adminId: 'fe1a8a4f-42b3-469e-8d02-e6e92579460c',
 	members: [mainUser],
 	chatname: 'LOTR',
-	messages: [],
-	privacyMode: 'public'
+	// messages: [],
+	privacyMode: 'public',
+	isDirect: false,
+	muteList: []
 }
 
 export const newDMChat: Chat = {
 	chatId: 'dghdhsds',
-	adminId: '0e512379-be69-4aa1-b6d6-b68f5c3e134d',
+	adminId: '7hf57brwyu45',
 	members: [mainUser, secondUser],
 	chatname: 'Kitten chat',
 	privacyMode: 'private',
-	messages: []
+	isDirect: false,
+	muteList: []
 }

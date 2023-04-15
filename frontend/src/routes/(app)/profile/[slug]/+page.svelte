@@ -4,12 +4,13 @@
 	import UserProfile from "$lib/components/UserProfile/UserProfile.svelte";
 	import type { PageData } from "./$types";
     export let data: PageData;
+    $: userData = data.data;
 
-    if (data && !data.success) {
+    if (userData && !userData.success) {
         goto('/404');
     }
 </script>
 
-{#if data.user}
-    <UserProfile isCurrentUser={false} userData={data.user}/>
+{#if userData.user}
+    <UserProfile isCurrentUser={false} userData={userData.user}/>
 {/if}

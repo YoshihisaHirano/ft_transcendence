@@ -6,6 +6,7 @@ import entities from './entities';
 import { StatsModule } from 'src/stats/stats.module';
 import { TournamentModule } from 'src/tournament/tournament.module';
 import { AuthModule } from './auth/auth.module';
+import { ChatModule } from './chat/chat.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -14,7 +15,7 @@ import { AuthModule } from './auth/auth.module';
       useFactory: (configService: ConfigService) => ({
         type: 'postgres',
         host: configService.get('POSTGRES_HOST'),
-        port: +configService.get<number>('POSTGRES_HOST'),
+        port: +configService.get<number>('POSTGRES_PORT'),
         username: configService.get('POSTGRES_USER'),
         password: configService.get('POSTGRES_PASSWORD'),
         database: configService.get('POSTGRES_DATABASE'),
@@ -27,6 +28,7 @@ import { AuthModule } from './auth/auth.module';
     StatsModule,
     TournamentModule,
     AuthModule,
+    ChatModule,
   ],
 })
 export class AppModule {}

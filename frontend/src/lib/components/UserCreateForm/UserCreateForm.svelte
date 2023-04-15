@@ -28,7 +28,7 @@
                 return;
             }
             appState.update((prevState) => {
-				return { ...prevState, isLoggedIn: true, user: user };
+				return { ...prevState, user: user };
 			});
 			saveToStorage('userId', user.id);
 			goto('/');

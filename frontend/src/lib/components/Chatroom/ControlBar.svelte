@@ -1,21 +1,23 @@
 <script lang="ts">
-	import type { PrivacyMode, User } from '$lib/types/types';
+	import type { PrivacyMode, ShortUser } from '$lib/types/types';
 	import CogIcon from '$lib/components/CogIcon/CogIcon.svelte';
 	import { getFromStorage } from '$lib/utils/storage';
-	import UserRecord from '$lib/components/UserProfile/UserRecord.svelte';
-	import OnlineIndicator from '$lib/components/OnlineIndicator/OnlineIndicator.svelte';
 	import Modal from '$lib/components/Modal/Modal.svelte';
 	import doorIcon from '$lib/images/door_icon.svg';
 	import ChatSettings from './ChatSettings.svelte';
 	import linkIcon from '$lib/images/link_icon.svg';
 	import chatService from '$lib/services/chatService';
+	import { chatState, selectedChatId } from '$lib/store/chatState';
+	import { chatIo } from '$lib/sockets/websocketConnection';
+	import MembersControl from './MembersControl.svelte';
 
 	export let adminId: string,
-		chatMembers: User[],
+		chatMembers: ShortUser[],
 		chatname: string,
 		chatId: string,
 		privacyMode: PrivacyMode,
-		password: string | undefined;
+		password: string | undefined,
+		isDirect: boolean;
 
 	$: userId = getFromStorage('userId') || '';
 	$: isAdmin = userId === adminId;
@@ -36,7 +38,7 @@
 
 	function copyLink() {
 		const base = import.meta.env.VITE_FRONTEND_URL;
-		const link = base + 'chatrooms/invite/' + chatId;
+		const link = base + 'chat/invite/' + chatId;
 		navigator.clipboard.writeText(link);
 		copySuccessText = 'Copied to clipboard';
 		setTimeout(() => {
@@ -45,12 +47,15 @@
 	}
 
 	function leaveChat() {
-		chatService.removeMember(userId, chatId);
+		chatIo.emit('leaveChat', { userId, chatId });
+		selectedChatId.set(null);
 	}
 
-	function removeFromChat(e: Event) {
-		const target = e.target as HTMLButtonElement;
-		chatService.removeMember(target.id.replace('remove-', ''), chatId);
+	function deleteChat() {
+		chatService.deleteChat(chatId);
+		selectedChatId.set(null);
+		const updatedChats = $chatState.filter((item) => item.chatId !== chatId);
+		chatState.update(() => [...updatedChats]);
 	}
 </script>
 
@@ -71,35 +76,22 @@
 				bind:this={btnRef}
 				on:click={toggleDropdown}>▼</button
 			>
-			<button title="Leave the chat" class="leave-btn" on:click={leaveChat}>
-				<img src={doorIcon} alt="leave the chat" />
-			</button>
+			{#if !isDirect}
+				<button title="Leave the chat" class="leave-btn" on:click={leaveChat}>
+					<img src={doorIcon} alt="leave the chat" />
+				</button>
+			{/if}
 			<div class="members-dropdown" style="left: {offsetLeft}px">
 				{#each chatMembers as member}
-					<div class="chat-member">
-						<div>
-							<OnlineIndicator isOnline={member.isOnline} />
-							<UserRecord currentId={userId} username={member.username} userId={member.id} />
-						</div>
-						<div class="chat-member-controls">
-							<button title="Invite to a game" id="invite-{member.id}">🏓</button>
-							{#if isAdmin}
-								<button title="Mute" id="mute-{member.id}">🔇</button>
-								<button
-									title="Delete from the chat"
-									on:click={removeFromChat}
-									id="remove-{member.id}">❌</button
-								>
-							{/if}
-						</div>
-					</div>
+					<MembersControl {toggleDropdown} {chatId} showExtra={isAdmin && !isDirect} {member} />
 				{/each}
 			</div>
 		</div>
-		{#if isAdmin}
+		{#if isAdmin && !isDirect}
 			<button class="chat-settings-btn" on:click={toggleModal}>
 				<CogIcon />
 			</button>
+			<button title="Delete the chat" on:click={deleteChat}>X</button>
 		{/if}
 	</div>
 {/if}
@@ -117,6 +109,13 @@
 		margin: 0;
 		outline: none;
 		border: none;
+		color: var(--text-primary);
+	}
+
+	button:disabled {
+		filter: grayscale(0.7);
+		opacity: 0.8;
+		cursor: not-allowed;
 	}
 
 	.copy-success {
@@ -154,22 +153,6 @@
 		max-height: 150px;
 		overflow-y: auto;
 		display: none;
-	}
-
-	.chat-member {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		gap: 16px;
-	}
-
-	.chat-member-controls {
-		display: flex;
-		gap: 8px;
-	}
-
-	.chat-member-controls button {
-		padding: 0;
 	}
 
 	.dropdown-btn {

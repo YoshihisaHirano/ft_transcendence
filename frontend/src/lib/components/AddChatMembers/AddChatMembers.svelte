@@ -1,19 +1,27 @@
 <script lang="ts">
 	import chatService from '$lib/services/chatService';
 	import Button from '$lib/components/Button/Button.svelte';
-	import type { User } from '$lib/types/types';
+	import type { ShortUser } from '$lib/types/types';
+	import { userBanned } from '$lib/utils/utils';
+	import { chatIo } from '$lib/sockets/websocketConnection';
 
-	export let members: User[] = [],
+	export let members: ShortUser[] = [],
 		chatId: string = '',
-		friends: User[],
+		friends: ShortUser[],
 		newChat: boolean = false;
 
 	export let newMembers = [] as string[];
+	// $: console.log(newMembers, chatId);
 
 	function addMembers(e: Event) {
 		e.preventDefault();
 		if (newMembers.length) {
 			chatService.addMembers(newMembers, chatId);
+			newMembers = [];
+			isDropdownActive = false;
+		}
+		if (!newChat && chatId) {
+			chatIo.emit('updateChat', chatId);
 		}
 	}
 
@@ -42,7 +50,7 @@
 		</label>
 		<div class="members-dropdown" class:active={isDropdownActive}>
 			{#each friends as { id, username }}
-				{#if !isChatMember(id)}
+				{#if !isChatMember(id) && !userBanned(id, chatId)}
 					<label for={id} class="member-option" class:chosen={newMembers.includes(id)}>
 						{username}
 						<input

@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from 'src/dtos/createUser.dto';
 import { FriendshipDto } from 'src/dtos/friendship.dto';
 import { ShortResponseUserDto } from 'src/dtos/shortResponseUser.dto';
+import { StatusMode } from 'src/entities/user.entity';
 
 @Injectable()
 export class UserService {
@@ -14,7 +15,10 @@ export class UserService {
 
   createUser(createUserDto: CreateUserDto) {
     const newUser = this.userRepository.create(createUserDto);
-    newUser.isOnline = true;
+    newUser.status = StatusMode.ONLINE;
+    newUser.blacklist = [];
+    newUser.twoFactorAuthIsEnabled = true;
+    newUser.twoFactorAuthSecret = null;
     return this.userRepository.save(newUser).catch((e) => {
       if (/(already exists)/.test(e.detail)) {
         throw new BadRequestException(
@@ -82,15 +86,73 @@ export class UserService {
     );
   }
   async findUserIdByLogin(login: string) {
-    const user = await this.userRepository.findOne({ where: { login: login } });
+    const user = await this.userRepository
+      .createQueryBuilder('user')
+      .where('user.login = :login', { login: login })
+      .getOne();
     if (user == null) {
       return null;
     }
     return user.id;
   }
+
+  async findUsernameById(id: string) {
+    const user = await this.userRepository
+      .createQueryBuilder('user')
+      .where('user.id = :id', { id: id })
+      .getOne();
+    if (user == null) {
+      return null;
+    }
+    return user.username;
+  }
   async updateUserPicture(id: string, image: string) {
     const user = await this.findUserById(id);
     user.image = image;
+    return this.userRepository.save(user);
+  }
+  async addToBlacklist(userId: string, blackId: string) {
+    const user = await this.findUserById(userId);
+    if (!user.blacklist.includes(blackId)) {
+      user.blacklist.push(blackId);
+    }
+    return this.userRepository.save(user);
+  }
+  async deleteFromBlacklist(userId: string, blackId: string) {
+    const user = await this.findUserById(userId);
+    if (user.blacklist.includes(blackId)) {
+      user.blacklist = user.blacklist.filter((id) => id != blackId);
+    }
+    return this.userRepository.save(user);
+  }
+  async checkBlacklist(userId: string, checkId: string) {
+    const user = await this.findUserById(userId);
+    return user.blacklist.includes(checkId);
+  }
+  async getShortInfoByIds(ids: string[]) {
+    const res = [];
+    for (const id of ids) {
+      res.push({
+        id: id,
+        username: await this.findUsernameById(id),
+        isOnline: true,
+      });
+    }
+    return res;
+  }
+  async setTwoFactorAuthSecret(secret: string, userId: string) {
+    const user = await this.findUserById(userId);
+    user.twoFactorAuthSecret = secret;
+    return this.userRepository.save(user);
+  }
+  async turnOnTwoFactorAuth(userId: string) {
+    const user = await this.findUserById(userId);
+    user.twoFactorAuthIsEnabled = true;
+    return this.userRepository.save(user);
+  }
+  async changeUserStatus(userId: string, status: StatusMode) {
+    const user = await this.findUserById(userId);
+    user.status = status;
     return this.userRepository.save(user);
   }
 }

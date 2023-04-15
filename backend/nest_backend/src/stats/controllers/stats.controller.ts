@@ -4,7 +4,7 @@ import { StatsDto } from 'src/dtos/stats.dto';
 import { TournamentService } from 'src/tournament/services/tournament.service';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
-@UseGuards(JwtAuthGuard)
+//@UseGuards(JwtAuthGuard)
 @Controller('stats')
 export class StatsController {
   constructor(

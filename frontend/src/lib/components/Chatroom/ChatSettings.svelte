@@ -2,14 +2,16 @@
 	import { appState } from '$lib/store/appState';
 	import Button from '$lib/components/Button/Button.svelte';
 	import chatService from '$lib/services/chatService';
-	import type { ChatSettings, PrivacyMode, User } from '$lib/types/types';
+	import type { ChatSettings, PrivacyMode, ShortUser } from '$lib/types/types';
 	import PrivacySelect from '../PrivacySelect/PrivacySelect.svelte';
 	import AddChatMembers from '../AddChatMembers/AddChatMembers.svelte';
+	import { chatState } from '$lib/store/chatState';
+	import { chatIo } from '$lib/sockets/websocketConnection';
 
 	export let chatId: string,
 		privacyMode: PrivacyMode,
 		password: string | undefined,
-		members: User[],
+		members: ShortUser[],
 		adminId: string,
 		chatname: string;
 
@@ -31,10 +33,19 @@
 		chatSettings.adminId != adminId ||
 		chatSettings.chatname != chatname;
 
-	function updateChat(e: Event) {
+	async function updateChat(e: Event) {
 		e.preventDefault();
 		if (formRef && formRef.reportValidity()) {
-			chatService.updateChat(chatSettings);
+			const updatedChat = await chatService.updateChat(chatSettings);
+			if (!('message' in updatedChat)) {
+				chatState.update((val) => {
+					const updatedChatIdx = val.findIndex((item) => item.chatId === chatId);
+					const updatedChats = val.slice();
+					updatedChats[updatedChatIdx] = updatedChat;
+					return [ ...updatedChats ];
+				})
+				chatIo.emit('updateChat', updatedChat.chatId);
+			}
 		}
 	}
 </script>

@@ -1,14 +1,6 @@
 export type PrivacyMode = 'public' | 'private' | 'protected';
 
-type GameStatus = 'waiting' | 'in progress' | 'finished';
-
-export interface GameState {
-	status: GameStatus;
-	stats: GameStats;
-}
-
 export interface AppState {
-	isLoggedIn: boolean;
 	user: User | null;
 }
 
@@ -21,11 +13,10 @@ export interface GameStats {
 	userTwoScore: number;
 }
 
-export interface Tournament {
-	wins: number;
-	losses: number;
+export interface ShortUser {
+	id: string;
 	username: string;
-	playerId: string;
+	isOnline: boolean;
 }
 
 export interface User {
@@ -33,50 +24,63 @@ export interface User {
 	image: string;
 	username: string;
 	isOnline: boolean;
-	friends: User[];
+	friends: ShortUser[];
 	tournamentStats: {
 		wins: number;
 		losses: number;
 		ladderLevel: number;
 	};
 	matchHistory: GameStats[];
-}
-
-export interface Message {
-    text: string;
-    author: string;
-    authorId: string;
-    chatId: string;
-}
-
-export interface Chat {
-    chatId: string; // equal to roomId
-    chatname: string;
-    members: User[];
-    messages: Message[];
-    adminId: string;
-    privacyMode: PrivacyMode,
-    password?: string;
+	blacklist: string[];
 }
 
 export interface NewChat {
-    chatname: string;
-    members: string[];
-    privacyMode: PrivacyMode;
-    password?: string;
-    adminId?: string;
-}
-
-export interface ChatSettings {
-    chatId: string;
-    chatname: string;
-    privacyMode: PrivacyMode;
-    password?: string;
-    adminId: string;
+	chatname: string;
+	members: string[];
+	privacyMode: PrivacyMode;
+	password?: string | null;
+	adminId?: string;
+	isDirect: boolean;
 }
 
 export interface NewUser {
 	login: string;
 	username: string;
 	image: string;
+}
+
+export interface Message {
+	text: string;
+	authorUsername: string;
+	authorId: string;
+	chatId: string;
+}
+
+export interface Chat {
+	chatId: string;
+	chatname: string;
+	members: User[];
+	adminId: string;
+	privacyMode: PrivacyMode;
+	password?: string | null;
+	isDirect: boolean;
+	muteList: string[];
+    banList: string[];
+}
+
+export interface ChatSettings {
+	chatId: string;
+	chatname: string;
+	privacyMode: PrivacyMode;
+	password?: string | null;
+	adminId: string;
+}
+
+export interface MessagesState {
+	[chatId: string]: Message[];
+}
+
+export interface ChatStatusChange {
+	userId: string;
+	chatId: string;
 }
