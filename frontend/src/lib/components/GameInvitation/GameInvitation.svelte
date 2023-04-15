@@ -1,8 +1,9 @@
 <script lang="ts">
 	import Button from "../Button/Button.svelte";
+	import JumpingDots from "../JumpingDots/JumpingDots.svelte";
 	import Modal from "../Modal/Modal.svelte";
 
-	export let disabled: boolean,
+	export let disabled = false,
 		playerId: string,
         playerName: string,
 		className = '';
@@ -19,11 +20,13 @@
 
 </script>
 
-<button class={className} title="Invite to a game" id="invite-{playerId}" {disabled}> 🏓 </button>
+<button on:click={sendGameInvitation} class={className} title="Invite to a game" id="invite-{playerId}" {disabled}> 🏓 </button>
 
 {#if isInviteModalOpen}
     <Modal title="Game invitation for {playerName}" onClose={cancelInvitation}>
-        Waiting for their respond...
+        <p class="invitation-text">Waiting for their respond
+            <JumpingDots/>
+        </p>
         <Button variant="danger" onClick={cancelInvitation}>Cancel invitation</Button>
     </Modal>
 {/if}
@@ -43,4 +46,8 @@
 		opacity: 0.8;
 		cursor: not-allowed;
 	}
+
+    .invitation-text {
+        margin: 3rem auto;
+    }
 </style>

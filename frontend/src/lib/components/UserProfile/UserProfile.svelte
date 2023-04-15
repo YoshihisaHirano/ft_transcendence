@@ -11,9 +11,10 @@
 	import { chatState, selectedChatId } from '$lib/store/chatState';
 	import { goto } from '$app/navigation';
 	import { updateUser } from '$lib/utils/updates';
+	import GameInvitation from '../GameInvitation/GameInvitation.svelte';
 
 	export let userData: User, isCurrentUser: boolean;
-	$: ({ id, username, image, tournamentStats, matchHistory, friends } = userData);
+	$: ({ id, username, image, tournamentStats, matchHistory, friends, status } = userData);
 	const userId = $appState?.user?.id || '';
 
 	$: isFriend = false;
@@ -87,6 +88,12 @@
 		{#if isCurrentUser}
 			<Link internal target="/game" bg="#0001FC">Fancy a game?</Link>
 		{/if}
+		{#if !isCurrentUser && status == 'online'}
+			<div class="game-invitation">
+				<p>Invite to a game:</p>
+				<GameInvitation className="user-profile-invite-btn" playerId={id} playerName={username}/>
+			</div>
+		{/if}
 	</div>
 	<div class="user-profile-friends">
 		{#if isCurrentUser}
@@ -105,6 +112,20 @@
 		display: block;
 		padding: 0.75rem 0.5rem;
 		color: var(--text-primary);
+	}
+
+	:global(p ~ button.user-profile-invite-btn) {
+		border: 1px solid white;
+		border-radius: 50%;
+		padding: .35rem .45rem;
+	}
+
+	.game-invitation {
+		display: flex;
+		align-items: center;
+		width: fit-content;
+		margin-left: auto;
+		margin-right: auto;
 	}
 
 	.user-profile-container {

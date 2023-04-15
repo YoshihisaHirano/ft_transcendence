@@ -2,20 +2,19 @@
 	import { appState } from '$lib/store/appState';
 	import enigma from '$lib/images/enigma.svg';
 	import { onMount } from 'svelte';
-	import { gameState } from '$lib/store/gameState';
+	import { gameStats, gameStatus } from '$lib/store/gameState';
+	import JumpingDots from '../JumpingDots/JumpingDots.svelte';
 
 	/* imitation of getting the second player */
 	onMount(() => {
 		setTimeout(() => {
-			gameState.update((val) => {
+			gameStatus.set('in progress');
+			gameStats.update((val) => {
 				if (val) {
-					return {
-						stats: { ...val.stats, userTwoName: 'happy-noring' },
-						status: 'in progress'
-					};
+					return { ...val, userTwoName: 'happy-noring' }
 				}
 				return null;
-			});
+			})
 		}, 3000);
 	});
 </script>
@@ -35,7 +34,7 @@
 		{/if}
 		<div>
 			Waiting for someone to join the game
-			<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span>
+			<JumpingDots/>
 		</div>
 	</div>
 </div>
@@ -45,22 +44,6 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
-	}
-
-	.dot {
-		display: inline-block;
-	}
-
-	.dot:first-child {
-		animation: jumping-dot 1s ease-in 0s infinite;
-	}
-
-	.dot:nth-child(2) {
-		animation: jumping-dot 1s ease-in 0.3s infinite;
-	}
-
-	.dot:last-child {
-		animation: jumping-dot 1s ease-in 0.6s infinite;
 	}
 
 	.image-frame {
