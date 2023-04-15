@@ -1,8 +1,10 @@
 <script lang="ts">
-	export let isOnline: boolean;
+	import type { UserStatus } from "$lib/types/types";
+
+	export let userStatus: UserStatus;
 </script>
 
-<span title={isOnline ? 'online' : 'offline'} class="online-indicator" class:active={isOnline} />
+<span title={`User staus is: ${userStatus}`} class="online-indicator" data-status={userStatus} />
 
 <style>
 	.online-indicator {
@@ -14,7 +16,11 @@
 		background-color: #996611;
 	}
 
-	.online-indicator.active {
+	.online-indicator[data-status="online"] {
 		background-color: #43b047;
+	}
+
+	.online-indicator[data-status="game"] {
+		background-color: #0001fc;
 	}
 </style>

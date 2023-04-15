@@ -10,7 +10,7 @@ import { StatusService } from "./status.service";
 	namespace: '/status',
 	cors: {
 	  credentials: true,
-	  origin: 'http://127.0.0.1:5501',
+	  origin: 'http://192.168.10.1:5176',
 	  methods: ['GET', 'POST'],
 	  transports: ['websocket'],
 	},
@@ -32,6 +32,7 @@ export class StatusGateway implements OnGatewayDisconnect {
 
 	@SubscribeMessage("userConnect")
     handleUserConnect(client: Socket, userId) {
+		console.log(userId);
 		this.statusService.setUserStatus(userId, client.id, "online");
 
 	}

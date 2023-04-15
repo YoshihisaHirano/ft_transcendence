@@ -8,9 +8,9 @@
 
 <div class="friends-board-container simple-shadow">
 	{#if friends.length}
-		{#each friends as { username, isOnline, id }}
+		{#each friends as { username, status, id }}
 			<p>
-                <OnlineIndicator {isOnline} />
+                <OnlineIndicator userStatus={status} />
                 <UserRecord {username} userId={id} {currentId}  />
             </p>
 		{/each}

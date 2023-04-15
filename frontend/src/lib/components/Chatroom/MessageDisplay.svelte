@@ -3,7 +3,7 @@
 	import { afterUpdate, beforeUpdate, onMount } from 'svelte';
 	import { messagesState } from '$lib/store/messagesState';
 	import { selectedChatId } from '$lib/store/chatState';
-	import { chatIo } from '$lib/sockets/websocketConnection';
+	import { chatIo } from '$lib/sockets/chatSocket';
 
 	export let isBlocked = false;
 	$: messages = ($selectedChatId ? $messagesState[$selectedChatId] : []) || [];

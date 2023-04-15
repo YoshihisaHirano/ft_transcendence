@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { chatIo } from '$lib/sockets/websocketConnection';
+	import { chatIo } from '$lib/sockets/chatSocket';
 	import type { ShortUser } from '$lib/types/types';
 	import { getFromStorage } from '$lib/utils/storage';
 	import OnlineIndicator from '../OnlineIndicator/OnlineIndicator.svelte';
@@ -33,7 +33,7 @@
 
 <div class="chat-member">
 	<div>
-		<OnlineIndicator isOnline={member.isOnline} />
+		<OnlineIndicator userStatus={member.status} />
 		<UserRecord currentId={userId} username={member.username} userId={member.id} />
 	</div>
 	<div class="chat-member-controls">

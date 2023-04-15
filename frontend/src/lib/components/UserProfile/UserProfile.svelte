@@ -27,7 +27,7 @@
 		await userService.toggleFriendship(userId, id, true);
 		friends = [
 			...friends,
-			{ id: userId, isOnline: true, username: $appState?.user?.username || '' }
+			{ id: userId, status: $appState?.user?.status || 'offline', username: $appState?.user?.username || '' }
 		];
 		await updateUser(userId);
 		isFriend = true;

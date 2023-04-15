@@ -1,25 +1,24 @@
 <script lang="ts">
 	import GameSketch from '$lib/components/GameSketch/GameSketch.svelte';
-	import { gameState } from '$lib/store/gameState';
-	// import type { GameState } from '$lib/types/types';
+	import { gameStats, gameStatus } from '$lib/store/gameState';
 	import GameOver from './GameOver.svelte';
 	import WaitingScreen from './WaitingScreen.svelte';
 	
 </script>
 
-{#if $gameState?.status === 'waiting'}
+{#if $gameStatus === 'waiting'}
 	<WaitingScreen/>
-{:else if $gameState?.status === 'in progress'}
+{:else if $gameStatus === 'in progress'}
 	<div class="game-screen">
 		<div class="game-field-wrapper">
 			<div class="game-info">
 				<div class="game-info-right">
-					<div class="player-username">{$gameState?.stats.userOneName || 'player1'}</div>
+					<div class="player-username">{$gameStats?.userOneName || 'player1'}</div>
 					<div class="game-score" id="score1" />
 				</div>
 				<hr class="score-divider" />
 				<div class="game-info-left">
-					<div class="player-username">{$gameState?.stats.userTwoName || 'player2'}</div>
+					<div class="player-username">{$gameStats?.userTwoName || 'player2'}</div>
 					<div class="game-score" id="score2" />
 				</div>
 			</div>

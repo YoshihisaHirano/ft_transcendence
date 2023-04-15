@@ -9,7 +9,7 @@ import { GameService } from "./game.service";
 	namespace: '/game',
 	cors: {
 	  credentials: true,
-	  origin: 'http://127.0.0.1:5501',
+	  origin: 'http://192.168.10.1:5176',
 	  methods: ['GET', 'POST'],
 	  transports: ['websocket'],
 	},
