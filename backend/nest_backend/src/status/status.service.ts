@@ -14,6 +14,10 @@ export class StatusService {
 		// TODO set to db status
 	}
 
+	setUserStatusInGame(userId) {
+		
+	}
+
 
 	deleteId(socketId) {
 		let k: string;
