@@ -32,11 +32,14 @@ export class StatusGateway implements OnGatewayDisconnect {
     handleUserConnect(client: Socket, userId) {
 		console.log(userId);
 		this.statusService.setUserStatus(userId, client.id, "online");
-
+		const gameId = this.statusService.getInviteByPlayer(userId);
+		if (gameId) {
+			client.emit("inviteToGame", gameId);
+		}
 	}
 
 	handleDisconnect(client: Socket): any { // user disconnect
-		this.statusService.deleteId(client.id)
+		this.statusService.deleteId(client.id); // remove invite
 		// TODO set to db
 	}
 
@@ -49,6 +52,7 @@ export class StatusGateway implements OnGatewayDisconnect {
 		}
 		const playerSocket: Socket = this.server.sockets.get(playerSocketId);
 		if (playerSocket) {
+			this.statusService.addInvite(data);
 			playerSocket.emit("inviteToGame", data.gameId);
 			host.emit("inviteSuccess", null);
 		} else {
@@ -59,6 +63,7 @@ export class StatusGateway implements OnGatewayDisconnect {
 	@SubscribeMessage("cancelInvite") // from host
 	handleCancelInvite(host: Socket, data: GameInvite) {
 		const playerSocket: Socket = this.getUserSocket(data.playerId);
+		this.statusService.removeInvite(data.gameId);
 		if (playerSocket) {
 			playerSocket.emit("cancelInvite", data);
 		}
@@ -70,6 +75,7 @@ export class StatusGateway implements OnGatewayDisconnect {
 		if (hostSocket) {
 			hostSocket.emit("canStartGame", data);
 			player.emit("canStartGame", data);
+			this.statusService.removeInvite(data.gameId); // no need but still
 		} else {
 			player.emit("joinGameError", null);
 		}
@@ -81,6 +87,7 @@ export class StatusGateway implements OnGatewayDisconnect {
 		if (hostSocket) {
 			hostSocket.emit("inviteRejected", null);
 		}
+		this.statusService.removeInvite(data.gameId);
 	}
 
 	getUserSocket(userId) {
