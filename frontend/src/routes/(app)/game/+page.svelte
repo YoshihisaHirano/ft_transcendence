@@ -2,14 +2,14 @@
 	/** @type {import('./$types').PageData} */
 	import GameScreen from '$lib/components/GameScreen/GameScreen.svelte';
 	import Tournament from '$lib/components/Tournament/Tournament.svelte';
-	import { gameState } from '$lib/store/gameState';
+	import { currentGameId } from '$lib/store/gameState';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
 </script>
 
 <div class="game-page">
-	{#if $gameState}
+	{#if $currentGameId}
 		<GameScreen />
 	{/if}
 	<Tournament tournament={data.tournament} />

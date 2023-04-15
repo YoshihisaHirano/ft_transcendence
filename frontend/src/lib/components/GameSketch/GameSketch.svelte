@@ -3,7 +3,7 @@
 	import type { Sketch } from 'p5-svelte';
 	import { Ball } from '$lib/sketchLib/Ball';
 	import { Paddle } from '$lib/sketchLib/Paddle';
-	import { gameState } from '$lib/store/gameState';
+	import { gameStats, gameStatus } from '$lib/store/gameState';
 
 	let scores = {
 		score1: 0,
@@ -67,19 +67,14 @@
 			if (scores.score1 > 2 || scores.score2 > 2) {
 				p5.noLoop();
 				console.log('game finished', scores);
-				if ($gameState) {
-					const updatedGame = { ...$gameState };
-					updatedGame.stats.userOneScore = scores.score1;
-					updatedGame.stats.userTwoScore = scores.score2;
-					updatedGame.status = 'finished';
-					gameState.update((val) => {
-						return val
-							? {
-									status: 'finished',
-									stats: { ...val.stats, userOneScore: scores.score1, userTwoScore: scores.score2 }
-							  }
-							: null;
-					});
+				gameStatus.set('finished')
+				if ($gameStats) {
+					gameStats.update((val) => {
+						if (val) return {
+							...val, userOneScore: scores.score1, userTwoScore: scores.score2
+						}
+						return null;
+					})
 				}
 				scores.score1 = 0;
 				scores.score2 = 0;

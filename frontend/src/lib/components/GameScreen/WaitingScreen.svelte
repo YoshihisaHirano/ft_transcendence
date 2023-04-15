@@ -7,28 +7,30 @@
 
 	/* imitation of getting the second player */
 	onMount(() => {
-		setTimeout(() => {
-			gameStatus.set('in progress');
-			gameStats.update((val) => {
-				if (val) {
-					return { ...val, userTwoName: 'happy-noring' }
-				}
-				return null;
-			})
-		}, 3000);
+		// setTimeout(() => {
+		// 	gameStatus.set('in progress');
+		// 	gameStats.update((val) => {
+		// 		if (val) {
+		// 			return { ...val, userTwoName: 'happy-noring' }
+		// 		}
+		// 		return null;
+		// 	})
+		// }, 3000);
 	});
 </script>
 
 <div class="waiting-wrapper game-screen">
 	<div>
-		{#if $appState.user}
+		{#if $appState.user && $gameStats}
 			<div class="versus-wrapper">
 				<div class="image-frame">
-					<img src={$appState.user.image} alt="player one pic" />
+					<img src={enigma} alt="player one pic" />
+					<p class="player-name">{$gameStats.userOneName}</p>
 				</div>
 				<p>VS</p>
 				<div class="image-frame">
 					<img src={enigma} alt="question mark" />
+					<p class="player-name">{$gameStats.userTwoName}</p>
 				</div>
 			</div>
 		{/if}
@@ -65,10 +67,15 @@
 		justify-content: center;
 		gap: 0.5rem;
 		margin-bottom: 3rem;
+		height: fit-content;
 	}
 
 	.versus-wrapper p {
 		font-size: 3rem;
 		padding: 0 2rem;
+	}
+
+	p.player-name {
+		font-size: 1rem;
 	}
 </style>

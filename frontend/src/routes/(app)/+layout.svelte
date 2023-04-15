@@ -17,31 +17,38 @@
 	$: activeGameInvitation = false;
 	$: secondPlayerName = '';
 	$: newGameId = '';
+	$: myId = $appState.user?.id || '';
+	$: inviteData = {
+		gameId: newGameId,
+		playerId: myId
+	} as GameInvite;
 
-	statusIo.on('inviteToGame', async (data: GameInvite) => {
-		if (!($page.url.pathname.includes('game'))) {
-			newGameId = data.gameId;
-			const user = await userService.getUserById(data.gameId);
+	statusIo.on('inviteToGame', async (gameId: string) => {
+		console.log('AN INITATION RECEIVED', gameId);
+		if (!$page.url.pathname.includes('game')) {
+			newGameId = gameId;
+			const user = await userService.getUserById(gameId);
 			if (user) {
 				secondPlayerName = user.username;
 				activeGameInvitation = true;
 			}
 		}
-	})
+	});
 
 	function rejectGame() {
-		statusIo.emit('rejectInvite', newGameId);
+		statusIo.emit('rejectInvite', inviteData);
 		activeGameInvitation = false;
 		secondPlayerName = '';
 		newGameId = '';
 	}
 
 	function acceptGame() {
-		statusIo.emit('inviteAccepted', newGameId);
+		statusIo.emit('inviteAccepted', inviteData);
+		activeGameInvitation = false;
 		// set to [...game-loading]
 	}
 
-	statusIo.on("canStartGame", ({ gameId, playerId }: GameInvite) => {
+	statusIo.on('canStartGame', ({ gameId, playerId }: GameInvite) => {
 		if ($appState?.user) {
 			const meHost = $appState.user.id === gameId;
 			isGameHost.set(meHost);
@@ -53,23 +60,33 @@
 				userTwoId: playerId,
 				userTwoName: !meHost ? $appState.user.username : secondPlayerName,
 				userTwoScore: 0
-			})
+			});
 			goto('/game');
 		}
+	});
+
+	statusIo.on('cancelInvite', () => {
+		activeGameInvitation = false;
+		secondPlayerName = '';
+		newGameId = '';
 	})
 </script>
 
 <svelte:head>
-    <title>FT_Transcendence</title>
+	<title>FT_Transcendence</title>
 </svelte:head>
 <AuthLayout>
 	<Header />
 	<main>
 		<slot />
 		{#if activeGameInvitation}
-			<Modal title="Game invitation from {secondPlayerName || 'a friend'}" showCloseBtn={false} onClose={rejectGame}>
+			<Modal
+				title="Game invitation from {secondPlayerName || 'a friend'}"
+				showCloseBtn={false}
+				onClose={rejectGame}
+			>
 				<p>Do you want to join?</p>
-				<div>
+				<div class="button-wrapper">
 					<Button onClick={acceptGame} variant="success">Accept</Button>
 					<Button onClick={rejectGame} variant="danger">Reject</Button>
 				</div>
@@ -83,5 +100,9 @@
 		padding: 9rem 0 4rem;
 		max-width: 95vw;
 		margin: 0 auto;
+	}
+
+	.button-wrapper {
+		margin-top: 2rem;
 	}
 </style>
