@@ -4,6 +4,8 @@ export interface AppState {
 	user: User | null;
 }
 
+type GameStatus = 'waiting' | 'in progress' | 'finished';
+
 export interface GameStats {
 	userOneId: string;
 	userOneName: string;
@@ -11,6 +13,17 @@ export interface GameStats {
 	userTwoId: string;
 	userTwoName: string;
 	userTwoScore: number;
+}
+export interface GameState {
+	status: GameStatus;
+	stats: GameStats;
+}
+
+export interface Tournament {
+	wins: number;
+	losses: number;
+	username: string;
+	playerId: string;
 }
 
 export interface ShortUser {

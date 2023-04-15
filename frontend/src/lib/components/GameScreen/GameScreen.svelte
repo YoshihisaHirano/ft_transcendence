@@ -1,7 +1,7 @@
 <script lang="ts">
 	import GameSketch from '$lib/components/GameSketch/GameSketch.svelte';
 	import { gameState } from '$lib/store/gameState';
-	import type { GameState } from '$lib/types/types';
+	// import type { GameState } from '$lib/types/types';
 	import GameOver from './GameOver.svelte';
 	import WaitingScreen from './WaitingScreen.svelte';
 	

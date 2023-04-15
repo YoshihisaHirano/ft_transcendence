@@ -26,6 +26,7 @@ export class Ball {
         let angle = this._p5.random(-this._p5.PI/4, this._p5.PI/4);
         this.xspeed = 5 * Math.cos(angle);
         this.yspeed = 5 * Math.sin(angle);
+        // send new ball position to socket
         
         if (this._p5.random(1) < 0.5) {
             this.xspeed *= -1;
@@ -39,11 +40,13 @@ export class Ball {
         
         if (this.x - this.r > this._p5.width) {
             scores.score1 += 1;
+            //send new score to socket
             this.reset();
         }
         
         if (this.x + this.r < 0) {
             scores.score2 += 1;
+            //send new score to socket
             this.reset();
         }
     }
@@ -55,6 +58,7 @@ export class Ball {
 
     show() {
         this._p5.fill(255);
+        // send new ball position to socket
         this._p5.ellipse(this.x, this.y, this.r*2);
     }
 
