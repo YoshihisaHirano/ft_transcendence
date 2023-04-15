@@ -135,7 +135,7 @@ export class UserService {
       res.push({
         id: id,
         username: await this.findUsernameById(id),
-        isOnline: true,
+        status: await this.findStatusById(id),
       });
     }
     return res;
@@ -154,5 +154,9 @@ export class UserService {
     const user = await this.findUserById(userId);
     user.status = status;
     return this.userRepository.save(user);
+  }
+  async findStatusById(userId: string) {
+    const user = await this.findUserById(userId);
+    return user.status;
   }
 }

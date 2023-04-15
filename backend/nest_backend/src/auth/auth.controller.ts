@@ -23,10 +23,15 @@ export class AuthController {
   async userLogin(@Body('login') login: string) {
     const user = await this.userService.findUserByLogin(login);
     if (user.twoFactorAuthIsEnabled) {
-      return null;
+      return {
+        auth: '2fa',
+        id: user.id,
+        token: null,
+      };
     }
     const token = await this.authService.login(login);
     return {
+      auth: 'jwt',
       id: user.id,
       token: token,
     };
