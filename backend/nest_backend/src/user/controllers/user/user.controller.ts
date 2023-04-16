@@ -19,6 +19,7 @@ import { TournamentDto } from 'src/dtos/tournament.dto';
 import { ResponseUserDto } from 'src/dtos/responseUser.dto';
 import { AuthService } from 'src/auth/auth.service';
 import JwtTwoFactorGuard from 'src/auth/jwt-2fa-guard';
+import { GameMode } from '../../../entities/user.entity';
 
 @UseGuards(JwtTwoFactorGuard)
 @Controller('users')
@@ -123,5 +124,12 @@ export class UserController {
     @Param('checkId') checkId: string,
   ) {
     return this.userService.checkBlacklist(userId, checkId);
+  }
+  @Put('changemode')
+  changeGameMode(
+    @Body('userId') userId: string,
+    @Body('mode') mode: GameMode,
+  ) {
+    return this.userService.changeGameMode(userId, mode);
   }
 }
