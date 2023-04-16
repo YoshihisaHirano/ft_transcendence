@@ -1,5 +1,6 @@
 import type P5 from 'p5';
 import type { Paddle } from './Paddle';
+import { DEFAULT_FIELD_WIDTH, DEFAULT_FIELD_HEIGHT } from '$lib/utils/constants';
 
 export class Ball {
     _p5: P5;
@@ -11,8 +12,8 @@ export class Ball {
 
     constructor(p5: P5, x?: number, y?: number, xspeed?: number, yspeed?: number) {
         this._p5 = p5;
-        this.x = x || this._p5.width / 2;
-        this.y = y || this._p5.height / 2;
+        this.x = x || DEFAULT_FIELD_WIDTH / 2;
+        this.y = y || DEFAULT_FIELD_HEIGHT / 2;
         this.xspeed = xspeed || 0;
         this.yspeed = yspeed || 0;
         this.r = 12;
@@ -23,8 +24,8 @@ export class Ball {
     }
 
     reset() {
-        this.x = this._p5.width/2;
-        this.y = this._p5.height/2;
+        this.x = DEFAULT_FIELD_WIDTH/2;
+        this.y = DEFAULT_FIELD_HEIGHT/2;
         let angle = this._p5.random(-this._p5.PI/4, this._p5.PI/4);
         this.xspeed = 5 * Math.cos(angle);
         this.yspeed = 5 * Math.sin(angle);
@@ -36,11 +37,11 @@ export class Ball {
     }
 
     edges(scores: { score1: number, score2: number }) {
-        if (this.y < 0 || this.y > this._p5.height) {
+        if (this.y < 0 || this.y > DEFAULT_FIELD_HEIGHT) {
             this.yspeed *= -1;
         }
         
-        if (this.x - this.r > this._p5.width) {
+        if (this.x - this.r > DEFAULT_FIELD_WIDTH) {
             scores.score1 += 1;
             //send new score to socket
             this.reset();

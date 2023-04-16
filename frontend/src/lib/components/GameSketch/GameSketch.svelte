@@ -6,11 +6,19 @@
 	import { currentGameId, gameStats, gameStatus, isGameHost } from '$lib/store/gameState';
 	import { gameIo } from '$lib/sockets/gameSocket';
 	import type { BallPosition } from '$lib/types/types';
+	import { DEFAULT_FIELD_WIDTH } from '$lib/utils/constants';
 
 	let scores = {
 		score1: 0,
 		score2: 0
 	};
+
+	function findScaleCoefficient(canvasWidth: number) {
+		return canvasWidth / DEFAULT_FIELD_WIDTH;
+	}
+
+	let canvasWidth: number = 0;
+	let canvasHeight: number = 0;
 
 	const sketch: Sketch = (p5) => {
 		let ball: Ball;
@@ -22,12 +30,16 @@
 		const score2Div = document.getElementById('score2');
 
 		p5.setup = () => {
-			p5.createCanvas(Math.min(p5.windowWidth * 0.8, 800), Math.min(p5.windowHeight * 0.8, 400));
+			canvasWidth = Math.min(p5.windowWidth * 0.8, 800);
+			canvasHeight = canvasWidth / 2;
+			p5.createCanvas(canvasWidth, canvasHeight);
+			const scaleCoefficient = findScaleCoefficient(canvasWidth);
+
 			// p5.frameRate(40);
 			ball = new Ball(p5);
-			left = new Paddle(p5, true);
-			right = new Paddle(p5, false);
-			ballShadow = new Ball(p5);
+			left = new Paddle(p5, true, scaleCoefficient);
+			right = new Paddle(p5, false, scaleCoefficient);
+			ballShadow = new Ball(p5, canvasWidth / 2, canvasHeight / 2);
 
 			gameIo.on('endOfGame', () => {
 				p5.noLoop();
@@ -72,21 +84,25 @@
 
 			if ($isGameHost) {
 				gameIo.on('rightPaddleUpdate', (data) => {
-					// console.log(data, 'rightPaddleUpdate');
-					right = new Paddle(p5, false, data.paddleY);
+					right = new Paddle(p5, false, scaleCoefficient, data.paddleY);
 					showFrame();
 				});
 			} else {
 				gameIo.on('leftPaddleUpdate', (data) => {
-					// console.log(data, 'leftPaddleUpdate');
-					left = new Paddle(p5, true, data.paddleY);
+					left = new Paddle(p5, true, scaleCoefficient, data.paddleY);
 					showFrame();
 				});
 			}
 			gameIo.on('ballPositionUpdate', (data) => {
 				const { ballPos } = data;
 				const { x, y, xspeed, yspeed } = ballPos;
-				ballShadow = new Ball(p5, x, y, xspeed, yspeed);
+				ballShadow = new Ball(
+					p5,
+					x * scaleCoefficient,
+					y * scaleCoefficient,
+					xspeed * scaleCoefficient,
+					yspeed * scaleCoefficient
+				);
 				showFrame();
 			});
 		};
@@ -177,6 +193,8 @@
 							gameId: $gameStats.userOneId,
 							playerId: $gameStats.userTwoId
 						});
+					// await gameService.sendStats($gameStats);
+					// { ...$gameStats, userOneScore: scores.score1, userTwoScore: scores.score2 }
 					}
 					scores.score1 = 0;
 					scores.score2 = 0;
