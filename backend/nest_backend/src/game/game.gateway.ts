@@ -58,10 +58,17 @@ export class GameGateway implements OnGatewayDisconnect {
 		 const joinRes =  this.gameService.spectatorJoinGame(gameId);
 		 if (joinRes) {
 			client.join(gameId);
+			client.emit("spectatorJoinGame", gameId);
 		 } else {
 			client.emit("joinGameFail", null);
 		 }
 	}
+
+	@SubscribeMessage("finishGame")
+	handleFinishGame(client: Socket, data: GameInvite) {
+		this.gameService.deleteGame(data.gameId);
+	}
+
 
 	handleDisconnect(client: Socket) {
 		const leftPlayerId = this.gameService.getUserIdBySocketId(client.id);
