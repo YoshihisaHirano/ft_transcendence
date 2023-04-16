@@ -14,6 +14,7 @@
 	import { goto } from '$app/navigation';
 	import type { GameInvite } from '$lib/types/types';
 	import { onMount } from 'svelte';
+	import { resetGame } from '$lib/utils/updates';
 
 	$: activeGameInvitation = false;
 	$: secondPlayerName = '';
@@ -81,6 +82,10 @@
 		statusIo.emit('inviteAccepted', inviteData);
 		activeGameInvitation = false;
 		// set to [...game-loading] ?
+	}
+
+	$: if($gameStatus && !$page.url.pathname.includes('game')) {
+		resetGame();
 	}
 </script>
 

@@ -1,24 +1,7 @@
 <script lang="ts">
-	import { appState } from '$lib/store/appState';
-	import { currentGameId, gameStats, gameStatus, isGameHost } from '$lib/store/gameState';
-	import Button from '../Button/Button.svelte';
+	import { gameStats } from '$lib/store/gameState';
+	import StartNewGame from '../StartNewGame/StartNewGame.svelte';
 
-	function startNewGame() {
-		const user = $appState.user;
-		if (user) {
-			gameStatus.set('waiting');
-			isGameHost.set(true);
-			gameStats.set({
-				userOneId: user.id,
-				userOneName: user.username,
-				userOneScore: 0,
-				userTwoScore: 0,
-				userTwoId: '',
-				userTwoName: ''
-			});
-			currentGameId.set(user.id);
-		}
-	}
 </script>
 
 <div class="game-screen game-over">
@@ -41,7 +24,7 @@
 			</div>
 		{/if}
 		<p>GAME OVER</p>
-		<Button onClick={startNewGame} variant="success">START NEW GAME</Button>
+		<StartNewGame />
 	</div>
 </div>
 

@@ -68,6 +68,7 @@ export class GameGateway implements OnGatewayDisconnect {
 	@SubscribeMessage("finishGame")
 	handleFinishGame(client: Socket, data: GameInvite) {
 		this.gameService.deleteGame(data.gameId);
+		this.server.to(data.gameId).emit("finishGame", data);
 	}
 
 

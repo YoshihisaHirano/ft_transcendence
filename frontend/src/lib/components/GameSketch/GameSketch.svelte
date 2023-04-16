@@ -24,6 +24,10 @@
 			ball = new Ball(p5);
 			left = new Paddle(p5, true);
 			right = new Paddle(p5, false);
+
+			gameIo.on('endOfGame', () => {
+				p5.noLoop();
+			});
 		};
 
 		p5.keyReleased = () => {

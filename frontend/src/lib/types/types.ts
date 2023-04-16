@@ -4,7 +4,7 @@ export interface AppState {
 	user: User | null;
 }
 
-export type GameStatus = 'matchmaking' | 'waiting' | 'in progress' | 'finished';
+export type GameStatus = 'matchmaking' | 'waiting' | 'in progress' | 'finished' | 'failed';
 export type UserStatus = 'online' | 'offline' | 'game';
 
 export interface GameStats {

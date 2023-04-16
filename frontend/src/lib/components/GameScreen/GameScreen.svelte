@@ -1,38 +1,39 @@
 <script lang="ts">
 	import GameSketch from '$lib/components/GameSketch/GameSketch.svelte';
-	import { currentGameId, gameStats, gameStatus, isGameHost } from '$lib/store/gameState';
+	import { gameStats, gameStatus } from '$lib/store/gameState';
 	import { onMount } from 'svelte';
 	import GameOver from './GameOver.svelte';
 	import WaitingScreen from './WaitingScreen.svelte';
 	import { gameIo } from '$lib/sockets/gameSocket';
 	import MatchmakingScreen from './MatchmakingScreen.svelte';
-
-	$: gameFailed = false;
+	import { resetGame } from '$lib/utils/updates';
+	import GameFailed from './GameFailed.svelte';
+	import StartNewGame from '../StartNewGame/StartNewGame.svelte';
 
 	onMount(() => {
 		gameIo.on('joinGameFail', () => {
 			console.log('JOIN GAME FAILED');
-			gameFailed = true;
+			$gameStatus = 'failed';
 		});
 
 		gameIo.on('endOfGame', () => {
+			$gameStatus = 'failed';
+		})
+
+		gameIo.on('finishGame', () => {
 			gameStatus.set('finished');
 		});
 
 		return () => {
 			gameIo.off('joinGameFail');
 			gameIo.off('endOfGame');
-			gameFailed = false;
-			$gameStatus = 'waiting';
-			$gameStats = null;
-			$isGameHost = false;
-			$currentGameId = null;
+			resetGame();
 		};
 	});
 </script>
 
-{#if gameFailed}
-	<div>SORRY BUT GAME FAILED :'(</div>
+{#if $gameStatus === 'failed'}
+	<GameFailed/>
 {:else if $gameStatus === 'matchmaking'}
 	<MatchmakingScreen />
 {:else if $gameStatus === 'waiting'}
@@ -58,6 +59,8 @@
 	</div>
 {:else if $gameStatus === 'finished'}
 	<GameOver />
+{:else}
+	<StartNewGame/>
 {/if}
 
 <style>

@@ -6,37 +6,39 @@ import type { AppState, GameStatus } from "$lib/types/types";
 /** @type {import('./$types').PageLoad} */
 export async function load() {
     const tournament = await gameService.getTournament();
-    let currAppState: AppState = initialState;
-    let gameId: string | null = null;
-    let currentGameStatus: GameStatus | null = null;
+    // let currAppState: AppState = initialState;
+    // let gameId: string | null = null;
+    // let currentGameStatus: GameStatus | null = null;
 
-    appState.subscribe((val) => {
-        currAppState = val;
-    })
+    // appState.subscribe((val) => {
+    //     currAppState = val;
+    // })
 
-    currentGameId.subscribe((val) => {
-        gameId = val;
-    })
+    // currentGameId.subscribe((val) => {
+    //     gameId = val;
+    // })
 
-    gameStatus.subscribe((val) => {
-        currentGameStatus = val;
-    })
+    // gameStatus.subscribe((val) => {
+    //     currentGameStatus = val;
+    // })
 
-    if (currAppState.user && !gameId) {
-        if (!currentGameStatus) {
-            gameStatus.set('matchmaking');
-        }
-        gameStats.set({
-            userOneId: currAppState.user.id,
-            userOneName: currAppState.user.username,
-            userOneScore: 0,
-            userTwoId: '',
-            userTwoName: '',
-            userTwoScore: 0
-        })
-        isGameHost.set(true);
-        currentGameId.set(currAppState.user.id);
-    }
+    // console.log(gameId, currentGameStatus, currAppState.user);
+
+    // if (currAppState.user && !gameId) {
+    //     if (!currentGameStatus) {
+    //         gameStatus.set('matchmaking');
+    //     }
+    //     gameStats.set({
+    //         userOneId: currAppState.user.id,
+    //         userOneName: currAppState.user.username,
+    //         userOneScore: 0,
+    //         userTwoId: '',
+    //         userTwoName: '',
+    //         userTwoScore: 0
+    //     })
+    //     isGameHost.set(true);
+    //     currentGameId.set(currAppState.user.id);
+    // }
 
     return {
         tournament
