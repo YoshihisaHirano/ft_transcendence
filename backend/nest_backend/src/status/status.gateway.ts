@@ -42,6 +42,29 @@ export class StatusGateway implements OnGatewayDisconnect {
 		// TODO set to db
 	}
 
+	@SubscribeMessage("matchMakingGame") // from any player 
+	handleMatchMakingGame(client: Socket, userId: string) {
+		const waitingPlayer = this.statusService.getPlayerMM();
+		if (waitingPlayer) { // can start
+			const hostSocket = this.getUserSocket(waitingPlayer);
+			if (hostSocket) {
+				const data = {
+					gameId: waitingPlayer,
+					playerId: userId
+				}
+				hostSocket.emit("canStartGame", data);
+				client.emit("canStartGame", data);
+			} else { // host disconnect
+				this.statusService.addPlayerMM(userId);
+				client.emit("waitInQueue", null); // ?
+			}
+		} else { // add to queue
+			this.statusService.addPlayerMM(userId);
+			client.emit("waitInQueue", null); // ?
+		}
+
+	}
+
 	@SubscribeMessage("inviteUser") // from host
 	handleInviteUser(host: Socket, data: GameInvite) {
 		const playerSocketId: string = this.statusService.getSocketIdByUser(data.playerId);
