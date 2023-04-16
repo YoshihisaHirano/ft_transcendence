@@ -103,3 +103,10 @@ export interface ChatStatusChange {
 	userId: string;
 	chatId: string;
 }
+
+export interface BallPosition {
+	x: number;
+	y: number;
+	xspeed: number;
+	yspeed: number;
+}

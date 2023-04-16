@@ -90,9 +90,24 @@ export class GameGateway implements OnGatewayDisconnect {
 		}
 	}
 
-	@SubscribeMessage("gameDataUpdate")
-	handleDataUpdate(client: Socket, data: GameData) {
-		this.server.to(data.gameId).emit(data.gamePositions);
+	@SubscribeMessage("ballPositionUpdate")
+	handleBallUpdate(client: Socket, data: GameData) {
+		this.server.to(data.gameId).emit('ballPositionUpdate', data);
+	}
+
+	@SubscribeMessage("leftPaddleUpdate")
+	handleLeftPaddleUpdate(client: Socket, data: GameData) {
+		this.server.to(data.gameId).emit('leftPaddleUpdate', data);
+	}
+
+	@SubscribeMessage("rightPaddleUpdate")
+	handleRightPaddleUpdate(client: Socket, data: GameData) {
+		this.server.to(data.gameId).emit('rightPaddleUpdate', data);
+	}
+
+	@SubscribeMessage("scoreUpdate")
+	handlescoreUpdate(client: Socket, data: GameData) {
+		this.server.to(data.gameId).emit('scoreUpdate', data);
 	}
 
 	/*

@@ -8,9 +8,9 @@ export class Paddle {
     h: number;
     ychange: number;
 
-    constructor(p5: P5, isLeft: boolean) {
+    constructor(p5: P5, isLeft: boolean, y?: number) {
         this._p5 = p5;
-        this.y = this._p5.height / 2;
+        this.y = y || this._p5.height / 2;
         this.w = 20;
         this.h = this._p5.height / 3;
         this.ychange = 0;
@@ -26,16 +26,22 @@ export class Paddle {
         this.y += this.ychange;
         this.y = this._p5.constrain(this.y, this.h/2, this._p5.height-this.h/2);
     }
+
+    updatePosition(newY: number) {
+        this.y == newY;
+        // console.log('showing paddle', newY , this.x, this.h, this.w);
+        // this.show();
+    }
     
     move(steps: number) {
         this.ychange = steps;
     }
     
     show() {
-        // console.log(this.x, this.y, this.w, this.h)
+        // console.log(this.x == this.w ? 'HOST ' : 'PLAYER ', this.y);
         this._p5.fill(255);
         this._p5.rectMode(this._p5.CENTER);
-        // this._p5.rect(this.x, this.y, 100, 100);
+        // this._p5.rect(this.x, this.y, 100, 100); 
         this._p5.rect(this.x, this.y, this.w, this.h);
     }
 }

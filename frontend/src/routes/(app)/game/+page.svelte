@@ -39,7 +39,7 @@
 	{#if $currentGameId}
 		<GameScreen />
 	{/if}
-	<Tournament tournament={data.tournament} />
+	<!-- <Tournament tournament={data.tournament} /> -->
 </div>
 
 <style>
