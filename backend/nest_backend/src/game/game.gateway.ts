@@ -111,15 +111,15 @@ export class GameGateway implements OnGatewayDisconnect {
 		this.server.to(data.gameId).emit('scoreUpdate', data);
 	}
 
-
+// debug
 	@SubscribeMessage("test")
-	handleTest(client: Socket, data) {
+	handleTest(client, id) {
 		this.gameService.createGame({
-			gameId: data,
-			playerId: "string"
-		});
+			gameId: id,
+			playerId: "sdfsdf",
+			mode: 'easy'
+		})
 	}
-
 
 	/*
 		gameHostData (ball, host pos)

@@ -8,11 +8,13 @@ export class StatusService {
 	constructor() {
 		this.users = new Map(); // [userId: socketId]
 		this.pendingInvites = new Map(); // [userId: socketId]
-		this.mmQueue = new Array(); // [userId]
+		this.mmQueue = new Array(); // [userId] TODO add mode 
 	}
 	users;
 	pendingInvites;
 	mmQueue;
+	
+	mmGame;
 
 	setUserStatus(userId, socketId, status) {
 		this.users.set(userId, socketId);

@@ -1,13 +1,15 @@
 import { Injectable } from "@nestjs/common";
 import { OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
 import { Socket } from "socket.io";
-import { GameData } from "src/dtos/gameData.dto";
 import { GameInvite } from "src/dtos/GameInvite.dto";
 import { GameService } from "src/game/game.service";
 import { StatusService } from "./status.service";
 import { Observable, Subject } from 'rxjs';
+import { GameDataFull } from "./types/GameData";
 
 import { Subscription } from "rxjs";
+import { UserService } from "src/user/services/user/user.service";
+import { GameSettings } from "src/game/types/GameSettings";
 
 
 @WebSocketGateway({
@@ -26,7 +28,8 @@ export class StatusGateway implements OnGatewayDisconnect {
 
 	constructor(
 		private statusService: StatusService,
-		private gameService: GameService
+		private gameService: GameService,
+		private userService: UserService
 		) {
 			this.gameService.getMyMapChanges().subscribe((games) => {
 				this.sendGameList(games);
@@ -126,7 +129,29 @@ export class StatusGateway implements OnGatewayDisconnect {
 		return null;
 	}
 
-	sendGameList(games: Map<string, string>) {
-		// gameId, playerId, hostName, playerName, gameMode
+	async sendGameList(games: Map<string, GameSettings>) {
+		const gameArr = new Array<GameDataFull>();
+		for (const [gameId, gameSetting] of games.entries()) {
+			try {
+				// const hostName = await this.userService.findUsernameById(gameId);
+				// const playerName = await this.userService.findUsernameById(gameSetting.playerId);
+				// if (hostName && playerName) {
+					const curData = new GameDataFull();
+					curData.gameId = gameId;
+					curData.playerId = gameSetting.playerId;
+					curData.hostName = "hostName";
+					curData.playerName = "playerName";
+					curData.gameMode = gameSetting.gameMode;
+					gameArr.push({...curData});
+				// }
+			} catch (e) {
+				console.log(e);
+			}
+			
+		}
+		console.log(gameArr);
+		if (gameArr.length > 0) {
+			this.server.emit("updateGameList", gameArr);
+		}
 	}
 }

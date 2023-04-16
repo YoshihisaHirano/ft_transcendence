@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { GameInvite } from "src/dtos/GameInvite.dto";
 
 import { Observable, Subject } from 'rxjs';
+import { GameSettings } from "./types/GameSettings";
 
 
 @Injectable()
@@ -9,20 +10,19 @@ export class GameService {
 	games; // [hostId, playerId]
 	users;
 
-	myGameSubject = new Subject<Map<string, string>>();
+	myGameSubject = new Subject<Map<string, GameSettings>>();
 
 	constructor() {
-		this.games = new Map<string, string>();
+		this.games = new Map<string, GameSettings>();
 		this.users = new Map();
 	}
 
 	createGame(data: GameInvite) { // for status
-		this.games.set(data.gameId, data.playerId);
+		this.games.set(data.gameId, {
+			playerId: data.playerId,
+			gameMode: data.mode
+		});
 		this.myGameSubject.next(this.games);
-	}
-
-	get() {
-		return this.games;
 	}
 
 	deleteGame(gameId) {
@@ -32,7 +32,7 @@ export class GameService {
 		}
 	}
 
-	getMyMapChanges(): Observable<Map<string, string>> {
+	getMyMapChanges(): Observable<Map<string, GameSettings>> {
 		return this.myGameSubject.asObservable();
 	}
 	
@@ -73,8 +73,8 @@ export class GameService {
 		if (this.games.has(leftUserId)) { // host left
 			return this.games.get(leftUserId); // return id player
 		} else {
-			for (const [key, value] of this.games.entries()) {
-				if (value.localeCompare(leftUserId) == 0) {
+			for (const [key, gameSets] of this.games.entries()) {
+				if (gameSets.playerId.localeCompare(leftUserId) == 0) {
 					return key; // return id host
 				}
 			}
