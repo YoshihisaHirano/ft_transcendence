@@ -52,7 +52,7 @@
 					userTwoScore: 0
 				}
 				gameStats.set(resetGameStats);
-				console.log(resetGameStats);
+				console.log(resetGameStats, 'GAME STARTED');
 				goto('/game');
 			}
 		});

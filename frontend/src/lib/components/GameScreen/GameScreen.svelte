@@ -5,6 +5,7 @@
 	import GameOver from './GameOver.svelte';
 	import WaitingScreen from './WaitingScreen.svelte';
 	import { gameIo } from '$lib/sockets/gameSocket';
+	import MatchmakingScreen from './MatchmakingScreen.svelte';
 
 	$: gameFailed = false;
 
@@ -12,11 +13,11 @@
 		gameIo.on('joinGameFail', () => {
 			console.log('JOIN GAME FAILED');
 			gameFailed = true;
-		})
+		});
 
 		gameIo.on('endOfGame', () => {
 			gameStatus.set('finished');
-		})
+		});
 
 		return () => {
 			gameIo.off('joinGameFail');
@@ -26,15 +27,16 @@
 			$gameStats = null;
 			$isGameHost = false;
 			$currentGameId = null;
-		}
-	})
+		};
+	});
 </script>
-
 
 {#if gameFailed}
 	<div>SORRY BUT GAME FAILED :'(</div>
+{:else if $gameStatus === 'matchmaking'}
+	<MatchmakingScreen />
 {:else if $gameStatus === 'waiting'}
-	<WaitingScreen/>
+	<WaitingScreen />
 {:else if $gameStatus === 'in progress'}
 	<div class="game-screen">
 		<div class="game-field-wrapper">
@@ -55,7 +57,7 @@
 		</div>
 	</div>
 {:else if $gameStatus === 'finished'}
-	<GameOver/>
+	<GameOver />
 {/if}
 
 <style>
