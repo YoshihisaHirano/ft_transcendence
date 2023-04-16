@@ -5,7 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from 'src/dtos/createUser.dto';
 import { FriendshipDto } from 'src/dtos/friendship.dto';
 import { ShortResponseUserDto } from 'src/dtos/shortResponseUser.dto';
-import { StatusMode } from 'src/entities/user.entity';
+import { GameMode, StatusMode } from 'src/entities/user.entity';
 
 @Injectable()
 export class UserService {
@@ -158,5 +158,10 @@ export class UserService {
   async findStatusById(userId: string) {
     const user = await this.findUserById(userId);
     return user.status;
+  }
+  async changeGameMode(userId: string, mode: GameMode) {
+    const user = await this.findUserById(userId);
+    user.preferredGameMode = mode;
+    return this.userRepository.save(user);
   }
 }

@@ -5,17 +5,17 @@ export class Stats {
   @PrimaryGeneratedColumn('uuid')
   id: string;
   @Column()
-  playerOneId: string;
+  userOneId: string;
   @Column()
-  usernameOne: string;
+  userOneName: string;
   @Column()
-  scoreOne: number;
+  userOneScore: number;
   @Column()
-  playerTwoId: string;
+  userTwoId: string;
   @Column()
-  usernameTwo: string;
+  userTwoName: string;
   @Column()
-  scoreTwo: number;
+  userTwoScore: number;
   @CreateDateColumn()
   createdDate: Date;
 }
