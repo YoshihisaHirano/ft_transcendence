@@ -44,23 +44,24 @@ export class StatusGateway implements OnGatewayDisconnect {
 	}
 
 	@SubscribeMessage("matchMakingGame") // from any player 
-	handleMatchMakingGame(client: Socket, userId: string) {
+	handleMatchMakingGame(client: Socket, clientData) {
 		const waitingPlayer = this.statusService.getPlayerMM();
 		if (waitingPlayer) { // can start
 			const hostSocket = this.getUserSocket(waitingPlayer);
 			if (hostSocket) {
 				const data = {
 					gameId: waitingPlayer,
-					playerId: userId
+					playerId: clientData.userId,
+					mode: clientData.mode
 				}
 				hostSocket.emit("canStartGame", data);
 				client.emit("canStartGame", data);
 			} else { // host disconnect
-				this.statusService.addPlayerMM(userId);
+				this.statusService.addPlayerMM(clientData.userId);
 				client.emit("waitInQueue", null); // ?
 			}
 		} else { // add to queue
-			this.statusService.addPlayerMM(userId);
+			this.statusService.addPlayerMM(clientData.userId);
 			client.emit("waitInQueue", null); // ?
 		}
 
@@ -76,7 +77,7 @@ export class StatusGateway implements OnGatewayDisconnect {
 		const playerSocket: Socket = this.server.sockets.get(playerSocketId);
 		if (playerSocket) {
 			this.statusService.addInvite(data);
-			playerSocket.emit("inviteToGame", data.gameId);
+			playerSocket.emit("inviteToGame", data);
 			host.emit("inviteSuccess", null);
 		} else {
 			host.emit("inviteFail", "some internal error");

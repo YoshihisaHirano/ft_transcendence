@@ -20,12 +20,6 @@ export interface GameState {
 	status: GameStatus;
 	stats: GameStats;
 }
-
-export interface GameInvite {
-	gameId: string;
-	playerId: string;
-}
-
 export interface Tournament {
 	wins: number;
 	losses: number;
@@ -112,3 +106,18 @@ export interface BallPosition {
 	xspeed: number;
 	yspeed: number;
 }
+
+export type GameMode = 'easy' | 'default' | 'hard';
+
+export interface GameSettings {
+	bgCol: string;
+	paddleLength: number;
+	ballSize: number;
+}
+
+export interface GameInvite {
+	gameId: string;
+	playerId: string;
+	mode: GameMode;
+}
+

@@ -13,6 +13,7 @@
 	import { updateUser } from '$lib/utils/updates';
 	import GameInvitation from '../GameInvitation/GameInvitation.svelte';
 	import StarsAchievement from "$lib/components/UserProfile/StarsAchievement.svelte";
+	import GameModeBar from '../GameModeBar/GameModeBar.svelte';
 
 	export let userData: User, isCurrentUser: boolean;
 	$: ({ id, username, image, tournamentStats, matchHistory, friends, status, achievement } = userData);
@@ -44,8 +45,6 @@
 			stars = 3;
 			break;
 	}
-	console.log(achievement);
-	console.log(stars);
 
 	async function befriend() {
 		await userService.toggleFriendship(userId, id, true);
@@ -125,6 +124,9 @@
 		{/if}
 	</div>
 	<div class="user-profile-games">
+		{#if isCurrentUser}
+			<GameModeBar/>
+		{/if}
 		<GameBoard
 			wins={tournamentStats.wins}
 			loses={tournamentStats.losses}
