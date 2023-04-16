@@ -42,6 +42,9 @@ export class UserController {
     const tournamentStats: TournamentDto =
       await this.tournamentService.getTournamentStats(id);
     const user = await this.userService.findUserById(id);
+    if (user == null) {
+      return null;
+    }
     return {
       id: user.id,
       image: user.image,

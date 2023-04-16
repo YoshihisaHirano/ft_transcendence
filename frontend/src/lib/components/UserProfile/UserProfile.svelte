@@ -163,7 +163,7 @@
 	:global(p ~ button.user-profile-invite-btn) {
 		border: 1px solid white;
 		border-radius: 50%;
-		padding: .35rem .45rem;
+		padding: .35rem .45rem .4rem;
 	}
 
 	.game-invitation {

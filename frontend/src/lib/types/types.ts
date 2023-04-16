@@ -4,7 +4,7 @@ export interface AppState {
 	user: User | null;
 }
 
-export type GameStatus = 'waiting' | 'in progress' | 'finished';
+export type GameStatus = 'matchmaking' | 'waiting' | 'in progress' | 'finished' | 'failed';
 export type UserStatus = 'online' | 'offline' | 'game';
 export type UserAchievement = 'none' | 'beginner' | 'experienced' | 'master'
 
@@ -104,4 +104,11 @@ export interface MessagesState {
 export interface ChatStatusChange {
 	userId: string;
 	chatId: string;
+}
+
+export interface BallPosition {
+	x: number;
+	y: number;
+	xspeed: number;
+	yspeed: number;
 }
