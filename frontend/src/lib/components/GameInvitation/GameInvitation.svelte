@@ -5,6 +5,7 @@
 	import Modal from '../Modal/Modal.svelte';
 	import type { GameInvite } from '$lib/types/types';
 	import { appState } from '$lib/store/appState';
+	import { gameMode } from '$lib/store/gameState';
 
 	export let disabled = false,
 		playerId: string,
@@ -14,7 +15,8 @@
 	$: isInviteModalOpen = false;
 	$: inviteData = {
 		playerId,
-		gameId: $appState.user?.id || ''
+		gameId: $appState.user?.id || '',
+		mode: $gameMode
 	} as GameInvite;
 	$: inviteFailedMsg = '';
 

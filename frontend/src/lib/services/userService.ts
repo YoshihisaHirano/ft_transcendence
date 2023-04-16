@@ -80,6 +80,34 @@ export default {
 		}
 	},
 
+	async toggleBlacklist (
+		userId: string,
+		blackId: string,
+		add: boolean
+	): Promise<void> {
+		const method = add ? 'PUT' : 'DELETE';
+		try {
+			const res = await fetch(new URL('blacklist', baseUrlWithEndpoint), {
+				headers: {
+					...addContentType()
+				},
+				method: 'POST',
+				body: JSON.stringify({ userId, blackId, method })
+			});
+			// console.log(res);
+			if (res.status === 401) {
+				await this.logout();
+				return;
+			}
+		} catch (err) {
+			return;
+		}
+	},
+
+	async savePreferredMode(mode: string): Promise<void> {
+		return ;
+	},
+
 	async logout (): Promise<void> {
 		try {
 			await fetch(new URL('logout/', baseUrlWithEndpoint), {

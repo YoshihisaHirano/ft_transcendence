@@ -6,6 +6,7 @@ export interface AppState {
 
 export type GameStatus = 'matchmaking' | 'waiting' | 'in progress' | 'finished' | 'failed';
 export type UserStatus = 'online' | 'offline' | 'game';
+export type UserAchievement = 'none' | 'beginner' | 'experienced' | 'master'
 
 export interface GameStats {
 	userOneId: string;
@@ -19,12 +20,6 @@ export interface GameState {
 	status: GameStatus;
 	stats: GameStats;
 }
-
-export interface GameInvite {
-	gameId: string;
-	playerId: string;
-}
-
 export interface Tournament {
 	wins: number;
 	losses: number;
@@ -51,6 +46,7 @@ export interface User {
 	};
 	matchHistory: GameStats[];
 	blacklist: string[];
+	achievement: UserAchievement
 }
 
 export interface NewChat {
@@ -110,3 +106,18 @@ export interface BallPosition {
 	xspeed: number;
 	yspeed: number;
 }
+
+export type GameMode = 'easy' | 'default' | 'hard';
+
+export interface GameSettings {
+	bgCol: string;
+	paddleLength: number;
+	ballSize: number;
+}
+
+export interface GameInvite {
+	gameId: string;
+	playerId: string;
+	mode: GameMode;
+}
+

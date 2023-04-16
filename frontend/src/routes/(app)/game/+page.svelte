@@ -32,14 +32,14 @@
 			currentGameId.set(userId);
 		}
 	});
-	$: console.log($gameStatus);
+	// $: console.log($gameStatus);
 </script>
 
 <div class="game-page">
 	{#if $currentGameId}
 		<GameScreen />
 	{/if}
-	<!-- <Tournament tournament={data.tournament} /> -->
+	<Tournament tournament={data.tournament} />
 </div>
 
 <style>
@@ -47,6 +47,13 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: flex-start;
+	}
+
+	@media screen and (max-width: 800px) {
+		.game-page {
+			flex-direction: column;
+			gap: 4rem;
+		}
 	}
 
 	:global(.game-page .game-screen) {

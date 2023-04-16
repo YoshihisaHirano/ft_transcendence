@@ -5,7 +5,7 @@ import {
   Get,
   Param,
   Post,
-  Put,
+  Put, UseGuards,
 } from '@nestjs/common';
 import { ChatService } from 'src/chat/services/chat.service';
 import { CreateChatDto } from 'src/dtos/createChat.dto';
@@ -15,7 +15,9 @@ import { ShortResponseUserDto } from 'src/dtos/shortResponseUser.dto';
 import { ResponseChatDto } from 'src/dtos/responseChat.dto';
 import { Chat } from 'src/entities';
 import { MuteService } from '../services/mute.service';
+import JwtTwoFactorGuard from 'src/auth/jwt-2fa-guard';
 
+@UseGuards(JwtTwoFactorGuard)
 @Controller('chat')
 export class ChatController {
   constructor(
