@@ -1,12 +1,39 @@
 <script lang="ts">
 	import GameSketch from '$lib/components/GameSketch/GameSketch.svelte';
-	import { gameStats, gameStatus } from '$lib/store/gameState';
+	import { currentGameId, gameStats, gameStatus, isGameHost } from '$lib/store/gameState';
+	import { onMount } from 'svelte';
 	import GameOver from './GameOver.svelte';
 	import WaitingScreen from './WaitingScreen.svelte';
-	
+	import { gameIo } from '$lib/sockets/gameSocket';
+
+	$: gameFailed = false;
+
+	onMount(() => {
+		gameIo.on('joinGameFail', () => {
+			console.log('JOIN GAME FAILED');
+			gameFailed = true;
+		})
+
+		gameIo.on('endOfGame', () => {
+			gameStatus.set('finished');
+		})
+
+		return () => {
+			gameIo.off('joinGameFail');
+			gameIo.off('endOfGame');
+			gameFailed = false;
+			$gameStatus = 'waiting';
+			$gameStats = null;
+			$isGameHost = false;
+			$currentGameId = null;
+		}
+	})
 </script>
 
-{#if $gameStatus === 'waiting'}
+
+{#if gameFailed}
+	<div>SORRY BUT GAME FAILED :'(</div>
+{:else if $gameStatus === 'waiting'}
 	<WaitingScreen/>
 {:else if $gameStatus === 'in progress'}
 	<div class="game-screen">
@@ -27,7 +54,7 @@
 			</div>
 		</div>
 	</div>
-{:else}
+{:else if $gameStatus === 'finished'}
 	<GameOver/>
 {/if}
 

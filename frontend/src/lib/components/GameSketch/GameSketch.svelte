@@ -4,6 +4,7 @@
 	import { Ball } from '$lib/sketchLib/Ball';
 	import { Paddle } from '$lib/sketchLib/Paddle';
 	import { gameStats, gameStatus } from '$lib/store/gameState';
+	import { gameIo } from '$lib/sockets/gameSocket';
 
 	let scores = {
 		score1: 0,
@@ -67,17 +68,24 @@
 			if (scores.score1 > 2 || scores.score2 > 2) {
 				p5.noLoop();
 				console.log('game finished', scores);
-				gameStatus.set('finished')
 				if ($gameStats) {
 					gameStats.update((val) => {
-						if (val) return {
-							...val, userOneScore: scores.score1, userTwoScore: scores.score2
-						}
+						if (val)
+							return {
+								...val,
+								userOneScore: scores.score1,
+								userTwoScore: scores.score2
+							};
 						return null;
-					})
+					});
+					gameIo.emit('finishGame', {
+						gameId: $gameStats.userOneId,
+						playerId: $gameStats.userTwoId
+					});
 				}
 				scores.score1 = 0;
 				scores.score2 = 0;
+				gameStatus.set('finished');
 			}
 		};
 	};

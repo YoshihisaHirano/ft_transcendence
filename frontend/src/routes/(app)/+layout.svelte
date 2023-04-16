@@ -10,9 +10,10 @@
 	import { page } from '$app/stores';
 	import userService from '$lib/services/userService';
 	import { appState } from '$lib/store/appState';
-	import { isGameHost, currentGameId, gameStats } from '$lib/store/gameState';
+	import { isGameHost, currentGameId, gameStats, gameStatus } from '$lib/store/gameState';
 	import { goto } from '$app/navigation';
 	import type { GameInvite } from '$lib/types/types';
+	import { onMount } from 'svelte';
 
 	$: activeGameInvitation = false;
 	$: secondPlayerName = '';
@@ -23,15 +24,49 @@
 		playerId: myId
 	} as GameInvite;
 
-	statusIo.on('inviteToGame', async (gameId: string) => {
-		console.log('AN INITATION RECEIVED', gameId);
-		if (!$page.url.pathname.includes('game')) {
-			newGameId = gameId;
-			const user = await userService.getUserById(gameId);
-			if (user) {
-				secondPlayerName = user.username;
-				activeGameInvitation = true;
+	onMount(() => {
+		statusIo.on('inviteToGame', async (gameId: string) => {
+			if (!$page.url.pathname.includes('game')) {
+				console.log(gameId);
+				newGameId = gameId;
+				const user = await userService.getUserById(gameId);
+				if (user) {
+					secondPlayerName = user.username;
+					activeGameInvitation = true;
+				}
 			}
+		});
+
+		statusIo.on('canStartGame', ({ gameId, playerId }: GameInvite) => {
+			if ($appState?.user) {
+				const meHost = $appState.user.id === gameId;
+				isGameHost.set(meHost);
+				currentGameId.set(gameId);
+				gameStatus.set('waiting');
+				const resetGameStats = {
+					userOneId: gameId,
+					userOneName: meHost ? $appState.user.username : secondPlayerName,
+					userOneScore: 0,
+					userTwoId: playerId,
+					userTwoName: !meHost ? $appState.user.username : secondPlayerName,
+					userTwoScore: 0
+				}
+				gameStats.set(resetGameStats);
+				console.log(resetGameStats);
+				goto('/game');
+			}
+		});
+
+		statusIo.on('cancelInvite', () => {
+			activeGameInvitation = false;
+			secondPlayerName = '';
+			newGameId = '';
+		});
+
+		return () => {
+			statusIo.off('cancelInvite');
+			statusIo.off('canStartGame');
+			statusIo.off('inviteToGame');
 		}
 	});
 
@@ -45,31 +80,8 @@
 	function acceptGame() {
 		statusIo.emit('inviteAccepted', inviteData);
 		activeGameInvitation = false;
-		// set to [...game-loading]
+		// set to [...game-loading] ?
 	}
-
-	statusIo.on('canStartGame', ({ gameId, playerId }: GameInvite) => {
-		if ($appState?.user) {
-			const meHost = $appState.user.id === gameId;
-			isGameHost.set(meHost);
-			currentGameId.set(gameId);
-			gameStats.set({
-				userOneId: gameId,
-				userOneName: meHost ? $appState.user.username : secondPlayerName,
-				userOneScore: 0,
-				userTwoId: playerId,
-				userTwoName: !meHost ? $appState.user.username : secondPlayerName,
-				userTwoScore: 0
-			});
-			goto('/game');
-		}
-	});
-
-	statusIo.on('cancelInvite', () => {
-		activeGameInvitation = false;
-		secondPlayerName = '';
-		newGameId = '';
-	})
 </script>
 
 <svelte:head>

@@ -43,7 +43,8 @@ export class GameGateway implements OnGatewayDisconnect {
 
 	@SubscribeMessage("playerJoinGame")
 	async handleJoinGame(client: Socket, data: GameInvite) { // hostId, playerId
-		 const joinRes =  await this.gameService.playerJoinGame(data);
+		const joinRes =  await this.gameService.playerJoinGame(data);
+		console.log(data, client.id, joinRes);
 		 if (joinRes) {
 			this.gameService.addUser(data.playerId, client.id);
 			client.join(data.gameId);

@@ -2,20 +2,37 @@
 	import { appState } from '$lib/store/appState';
 	import enigma from '$lib/images/enigma.svg';
 	import { onMount } from 'svelte';
-	import { gameStats, gameStatus } from '$lib/store/gameState';
+	import { currentGameId, gameStats, gameStatus, isGameHost } from '$lib/store/gameState';
 	import JumpingDots from '../JumpingDots/JumpingDots.svelte';
+	import { gameIo } from '$lib/sockets/gameSocket';
+	import { statusIo } from '$lib/sockets/statusSocket';
 
-	/* imitation of getting the second player */
 	onMount(() => {
-		// setTimeout(() => {
-		// 	gameStatus.set('in progress');
-		// 	gameStats.update((val) => {
-		// 		if (val) {
-		// 			return { ...val, userTwoName: 'happy-noring' }
-		// 		}
-		// 		return null;
-		// 	})
-		// }, 3000);
+		if (!($currentGameId) || !($gameStats)) {
+			return;
+		}
+		if (!($gameStats.userTwoId)) {
+			statusIo.emit('matchMakingGame', $currentGameId)
+		} else if ($isGameHost) {
+			gameIo.emit('createGame', {
+				gameId: $currentGameId,
+				playerId: $gameStats.userTwoId
+			})
+		} else {
+			gameIo.emit('playerJoinGame', {
+				gameId: $currentGameId,
+				playerId: $gameStats.userTwoId
+			})
+		}
+
+		gameIo.on('gameStart', () => {
+			console.log('GAME STARTED')
+			gameStatus.set('in progress');
+		});
+
+		return () => {
+			gameIo.off('gameStart');
+		}
 	});
 </script>
 
