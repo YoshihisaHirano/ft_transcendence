@@ -1,0 +1,2 @@
+export const DEFAULT_FIELD_HEIGHT = 400;
+export const DEFAULT_FIELD_WIDTH = 800;
