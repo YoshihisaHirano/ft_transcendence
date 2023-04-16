@@ -9,15 +9,17 @@ export class Ball {
     yspeed: number;
     r: number;
 
-    constructor(p5: P5) {
+    constructor(p5: P5, x?: number, y?: number, xspeed?: number, yspeed?: number) {
         this._p5 = p5;
-        this.x = this._p5.width / 2;
-        this.y = this._p5.height / 2;
-        this.xspeed = 0;
-        this.yspeed = 0;
+        this.x = x || this._p5.width / 2;
+        this.y = y || this._p5.height / 2;
+        this.xspeed = xspeed || 0;
+        this.yspeed = yspeed || 0;
         this.r = 12;
 
-        this.reset();
+        if (!x && !y && !xspeed && !yspeed) {
+            this.reset();
+        }
     }
 
     reset() {
@@ -42,13 +44,17 @@ export class Ball {
             scores.score1 += 1;
             //send new score to socket
             this.reset();
+            return { scoreChanged: true, scores }
         }
         
         if (this.x + this.r < 0) {
             scores.score2 += 1;
             //send new score to socket
             this.reset();
+            return { scoreChanged: true, scores }
         }
+
+        return { scoreChanged: false, scores: null }
     }
 
     update() {
