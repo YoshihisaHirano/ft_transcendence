@@ -8,15 +8,17 @@ export class Ball {
     y: number;
     xspeed: number;
     yspeed: number;
+    ballSpeed: number;
     r: number;
 
-    constructor(p5: P5, x?: number, y?: number, xspeed?: number, yspeed?: number) {
+    constructor(p5: P5, scaleCoef: number, ballRadius: number, ballSpeed: number, x?: number, y?: number, xspeed?: number, yspeed?: number) {
         this._p5 = p5;
         this.x = x || DEFAULT_FIELD_WIDTH / 2;
         this.y = y || DEFAULT_FIELD_HEIGHT / 2;
         this.xspeed = xspeed || 0;
         this.yspeed = yspeed || 0;
-        this.r = 12;
+        this.r = ballRadius * scaleCoef;
+        this.ballSpeed = ballSpeed;
 
         if (!x && !y && !xspeed && !yspeed) {
             this.reset();
@@ -27,8 +29,8 @@ export class Ball {
         this.x = DEFAULT_FIELD_WIDTH/2;
         this.y = DEFAULT_FIELD_HEIGHT/2;
         let angle = this._p5.random(-this._p5.PI/4, this._p5.PI/4);
-        this.xspeed = 5 * Math.cos(angle);
-        this.yspeed = 5 * Math.sin(angle);
+        this.xspeed = this.ballSpeed * Math.cos(angle);
+        this.yspeed = this.ballSpeed * Math.sin(angle);
         // send new ball position to socket
         
         if (this._p5.random(1) < 0.5) {
@@ -78,8 +80,8 @@ export class Ball {
                 let diff = this.y - (p.y - p.h/2);
                 let rad = this._p5.radians(45);
                 let angle = this._p5.map(diff, 0, p.h, -rad, rad);
-                this.xspeed = 5 * this._p5.cos(angle);
-                this.yspeed = 5 * this._p5.sin(angle);
+                this.xspeed = this.ballSpeed * this._p5.cos(angle);
+                this.yspeed = this.ballSpeed * this._p5.sin(angle);
                 this.x = p.x + p.w/2 + this.r;
             }
             
@@ -94,8 +96,8 @@ export class Ball {
             if (this.x < p.x) {
                 let diff = this.y - (p.y - p.h/2);
                 let angle = this._p5.map(diff, 0, p.h, this._p5.radians(225), this._p5.radians(135));
-                this.xspeed = 5 * this._p5.cos(angle);
-                this.yspeed = 5 * this._p5.sin(angle);
+                this.xspeed = this.ballSpeed * this._p5.cos(angle);
+                this.yspeed = this.ballSpeed * this._p5.sin(angle);
                 this.x = p.x - p.w/2 - this.r;
             }
         }

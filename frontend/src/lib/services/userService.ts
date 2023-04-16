@@ -104,6 +104,10 @@ export default {
 		}
 	},
 
+	async savePreferredMode(mode: string): Promise<void> {
+		return ;
+	},
+
 	async logout (): Promise<void> {
 		try {
 			await fetch(new URL('logout/', baseUrlWithEndpoint), {

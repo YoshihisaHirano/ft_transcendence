@@ -10,7 +10,7 @@
 	import { page } from '$app/stores';
 	import userService from '$lib/services/userService';
 	import { appState } from '$lib/store/appState';
-	import { isGameHost, currentGameId, gameStats, gameStatus } from '$lib/store/gameState';
+	import { isGameHost, currentGameId, gameStats, gameStatus, gameMode } from '$lib/store/gameState';
 	import { goto } from '$app/navigation';
 	import type { GameInvite } from '$lib/types/types';
 	import { onMount } from 'svelte';
@@ -22,15 +22,17 @@
 	$: myId = $appState.user?.id || '';
 	$: inviteData = {
 		gameId: newGameId,
-		playerId: myId
+		playerId: myId,
+		mode: $gameMode
 	} as GameInvite;
 
 	onMount(() => {
-		statusIo.on('inviteToGame', async (gameId: string) => {
+		statusIo.on('inviteToGame', async (data: GameInvite) => {
 			if (!$page.url.pathname.includes('game')) {
-				console.log(gameId);
-				newGameId = gameId;
-				const user = await userService.getUserById(gameId);
+				// console.log(gameId);
+				newGameId = data.gameId;
+				const user = await userService.getUserById(data.gameId);
+				inviteData = { ...inviteData, gameId: data.gameId, mode: data.mode };
 				if (user) {
 					secondPlayerName = user.username;
 					activeGameInvitation = true;
@@ -38,9 +40,11 @@
 			}
 		});
 
-		statusIo.on('canStartGame', ({ gameId, playerId }: GameInvite) => {
+		statusIo.on('canStartGame', ({ gameId, playerId, mode }: GameInvite) => {
 			if ($appState?.user) {
+				console.log(mode, gameId)
 				const meHost = $appState.user.id === gameId;
+				gameMode.set(mode);
 				isGameHost.set(meHost);
 				currentGameId.set(gameId);
 				gameStatus.set('waiting');
@@ -53,7 +57,7 @@
 					userTwoScore: 0
 				}
 				gameStats.set(resetGameStats);
-				console.log(resetGameStats, 'GAME STARTED');
+				// console.log(resetGameStats, 'GAME STARTED');
 				goto('/game');
 			}
 		});

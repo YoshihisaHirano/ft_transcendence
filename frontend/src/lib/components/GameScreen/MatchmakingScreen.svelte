@@ -1,13 +1,13 @@
 <script lang="ts">
 	import { appState } from '$lib/store/appState';
-	import { currentGameId, gameStats } from '$lib/store/gameState';
+	import { currentGameId, gameStats, gameMode } from '$lib/store/gameState';
 	import JumpingDots from '../JumpingDots/JumpingDots.svelte';
 	import enigma from '$lib/images/enigma.svg';
 	import { onMount } from 'svelte';
 	import { statusIo } from '$lib/sockets/statusSocket';
 
 	onMount(() => {
-		statusIo.emit('matchMakingGame', $currentGameId);
+		statusIo.emit('matchMakingGame', { userId: $currentGameId, mode: $gameMode });
 	});
 </script>
 

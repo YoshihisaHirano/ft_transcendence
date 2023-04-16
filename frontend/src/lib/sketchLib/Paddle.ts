@@ -10,11 +10,11 @@ export class Paddle {
     ychange: number;
     coef: number;
 
-    constructor(p5: P5, isLeft: boolean, scaleCoef: number, y?: number) {
+    constructor(p5: P5, paddleLength: number, isLeft: boolean, scaleCoef: number, y?: number) {
         this._p5 = p5;
         this.y = y || DEFAULT_FIELD_HEIGHT / 2;
         this.w = 20;
-        this.h = DEFAULT_FIELD_HEIGHT / 3;
+        this.h = DEFAULT_FIELD_HEIGHT / paddleLength;
         this.ychange = 0;
         this.coef = scaleCoef;
 
