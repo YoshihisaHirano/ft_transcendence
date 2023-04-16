@@ -6,7 +6,7 @@
 	import Button from '../Button/Button.svelte';
 	import chatService from '$lib/services/chatService';
 	import { chatState } from '$lib/store/chatState';
-	import { chatIo } from '$lib/sockets/websocketConnection';
+	import { chatIo } from '$lib/sockets/chatSocket';
 
 	export let toggleModal: () => void;
 

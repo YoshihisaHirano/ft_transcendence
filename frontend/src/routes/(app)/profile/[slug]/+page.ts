@@ -6,9 +6,7 @@ export const load: PageLoad = async ({ params }) => {
 	const id = params.slug;
 	const user = await userService.getUserById(id);
 	return {
-		data: {
-			success: !!user,
-			user: user
-		}
+		success: !!user,
+		user: user
 	};
 };

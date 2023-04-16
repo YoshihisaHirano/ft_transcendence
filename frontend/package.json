@@ -3,7 +3,7 @@
 	"version": "0.0.1",
 	"private": true,
 	"scripts": {
-		"dev": "vite dev --port 5176 --host",
+		"dev": "vite dev --port 5176",
 		"build": "vite build",
 		"preview": "vite preview",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
@@ -19,6 +19,7 @@
 		"eslint": "^8.28.0",
 		"eslint-config-prettier": "^8.5.0",
 		"eslint-plugin-svelte3": "^4.0.0",
+		"p5": "^1.6.0",
 		"prettier": "^2.8.0",
 		"prettier-plugin-svelte": "^2.8.1",
 		"svelte": "^3.54.0",
@@ -29,7 +30,10 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@types/p5": "^1.5.0",
+		"p5-svelte": "^3.1.2",
 		"socket.io": "^4.6.1",
-		"socket.io-client": "^4.6.1"
+		"socket.io-client": "^4.6.1",
+		"svelte-portal": "^2.2.0"
 	}
 }

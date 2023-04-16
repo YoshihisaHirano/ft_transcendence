@@ -8,7 +8,7 @@
 	import linkIcon from '$lib/images/link_icon.svg';
 	import chatService from '$lib/services/chatService';
 	import { chatState, selectedChatId } from '$lib/store/chatState';
-	import { chatIo } from '$lib/sockets/websocketConnection';
+	import { chatIo } from '$lib/sockets/chatSocket';
 	import MembersControl from './MembersControl.svelte';
 
 	export let adminId: string,

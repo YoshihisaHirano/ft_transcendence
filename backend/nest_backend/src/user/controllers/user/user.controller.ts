@@ -20,7 +20,7 @@ import { ResponseUserDto } from 'src/dtos/responseUser.dto';
 import { AuthService } from 'src/auth/auth.service';
 import JwtTwoFactorGuard from 'src/auth/jwt-2fa-guard';
 
-@UseGuards(JwtTwoFactorGuard)
+//@UseGuards(JwtTwoFactorGuard)
 @Controller('users')
 export class UserController {
   constructor(
@@ -42,6 +42,9 @@ export class UserController {
     const tournamentStats: TournamentDto =
       await this.tournamentService.getTournamentStats(id);
     const user = await this.userService.findUserById(id);
+    if (user == null) {
+      return null;
+    }
     return {
       id: user.id,
       image: user.image,

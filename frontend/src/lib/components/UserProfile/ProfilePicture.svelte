@@ -6,7 +6,8 @@
 	$: uploadVisible = false;
 
 	function setUploadVisibility(val: boolean) {
-		uploadVisible = val;
+		// change to val when allow to change profile pic
+		uploadVisible = false;
 	}
 </script>
 

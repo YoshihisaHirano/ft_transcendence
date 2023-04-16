@@ -5,7 +5,7 @@
 	import ControlBar from './ControlBar.svelte';
 	import { chatState, selectedChatId } from '$lib/store/chatState';
 	import { messagesState } from '$lib/store/messagesState';
-	import { chatIo } from '$lib/sockets/websocketConnection';
+	import { chatIo } from '$lib/sockets/chatSocket';
 	import { appState } from '$lib/store/appState';
 	import { onMount } from 'svelte';
 	import frog from '$lib/images/frog_friend.svg';

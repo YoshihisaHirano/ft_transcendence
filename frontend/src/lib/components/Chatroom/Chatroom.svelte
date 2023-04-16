@@ -6,7 +6,7 @@
 	import Modal from '../Modal/Modal.svelte';
 	import CreateChat from './CreateChat.svelte';
 	import { chatState, selectedChatId } from '$lib/store/chatState';
-	import { chatIo } from '$lib/sockets/websocketConnection';
+	import { chatIo } from '$lib/sockets/chatSocket';
 	import { onMount } from 'svelte';
 	import { appState } from '$lib/store/appState';
 	import { messagesState } from '$lib/store/messagesState';

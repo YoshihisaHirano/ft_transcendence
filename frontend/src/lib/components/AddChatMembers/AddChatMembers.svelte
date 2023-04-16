@@ -3,7 +3,7 @@
 	import Button from '$lib/components/Button/Button.svelte';
 	import type { ShortUser } from '$lib/types/types';
 	import { userBanned } from '$lib/utils/utils';
-	import { chatIo } from '$lib/sockets/websocketConnection';
+	import { chatIo } from '$lib/sockets/chatSocket';
 
 	export let members: ShortUser[] = [],
 		chatId: string = '',

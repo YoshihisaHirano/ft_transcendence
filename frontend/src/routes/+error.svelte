@@ -1,4 +1,5 @@
 <script>
+	import Link from '$lib/components/Link/Link.svelte';
 	import '/src/styles/colors.css'
     import '/src/styles/global.css'
 </script>
@@ -8,6 +9,7 @@
 </svelte:head>
 <div>
     404
+    <Link target="/" internal>Back to home</Link>
 </div>
 
 <style>

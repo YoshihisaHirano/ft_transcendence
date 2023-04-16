@@ -1,13 +1,15 @@
 <script lang="ts">
-	import { chatIo } from '$lib/sockets/websocketConnection';
+	import { chatIo } from '$lib/sockets/chatSocket';
 	import type { ShortUser } from '$lib/types/types';
 	import { getFromStorage } from '$lib/utils/storage';
+	import GameInvitation from '../GameInvitation/GameInvitation.svelte';
 	import OnlineIndicator from '../OnlineIndicator/OnlineIndicator.svelte';
 	import UserRecord from '../UserProfile/UserRecord.svelte';
 
 	export let showExtra: boolean, member: ShortUser, chatId: string, toggleDropdown: () => void;
 
 	$: userId = getFromStorage('userId') || '';
+	$: console.log(member);
 
 	function removeFromChat(e: Event) {
 		const target = e.target as HTMLButtonElement;
@@ -33,13 +35,11 @@
 
 <div class="chat-member">
 	<div>
-		<OnlineIndicator isOnline={member.isOnline} />
+		<OnlineIndicator userStatus={member.status} />
 		<UserRecord currentId={userId} username={member.username} userId={member.id} />
 	</div>
 	<div class="chat-member-controls">
-		<button title="Invite to a game" id="invite-{member.id}" disabled={userId === member.id}
-			>🏓</button
-		>
+		<GameInvitation playerId={member.id} playerName={member.username} disabled={userId === member.id || member.status !== 'online'}/>
 		{#if showExtra}
 			<button on:click={muteUser} title="Mute" id="mute-{member.id}" disabled={userId === member.id}
 				>🔇</button

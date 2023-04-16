@@ -4,6 +4,9 @@ export interface AppState {
 	user: User | null;
 }
 
+export type GameStatus = 'waiting' | 'in progress' | 'finished';
+export type UserStatus = 'online' | 'offline' | 'game';
+
 export interface GameStats {
 	userOneId: string;
 	userOneName: string;
@@ -12,18 +15,34 @@ export interface GameStats {
 	userTwoName: string;
 	userTwoScore: number;
 }
+export interface GameState {
+	status: GameStatus;
+	stats: GameStats;
+}
+
+export interface GameInvite {
+	gameId: string;
+	playerId: string;
+}
+
+export interface Tournament {
+	wins: number;
+	losses: number;
+	username: string;
+	playerId: string;
+}
 
 export interface ShortUser {
 	id: string;
 	username: string;
-	isOnline: boolean;
+	status: UserStatus;
 }
 
 export interface User {
 	id: string;
 	image: string;
 	username: string;
-	isOnline: boolean;
+	status: UserStatus;
 	friends: ShortUser[];
 	tournamentStats: {
 		wins: number;
@@ -65,7 +84,7 @@ export interface Chat {
 	password?: string | null;
 	isDirect: boolean;
 	muteList: string[];
-    banList: string[];
+	banList: string[];
 }
 
 export interface ChatSettings {

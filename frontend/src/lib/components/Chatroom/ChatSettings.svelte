@@ -6,7 +6,7 @@
 	import PrivacySelect from '../PrivacySelect/PrivacySelect.svelte';
 	import AddChatMembers from '../AddChatMembers/AddChatMembers.svelte';
 	import { chatState } from '$lib/store/chatState';
-	import { chatIo } from '$lib/sockets/websocketConnection';
+	import { chatIo } from '$lib/sockets/chatSocket';
 
 	export let chatId: string,
 		privacyMode: PrivacyMode,

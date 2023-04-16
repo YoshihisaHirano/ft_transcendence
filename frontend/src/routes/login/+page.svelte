@@ -31,6 +31,16 @@
 			intraLogin = data.login;
 			renderCreateForm = true;
 		}
+		if (data.userId) {
+			saveToStorage('userId' ,data.userId);
+			appState.update((val) => ({
+				...val, isLoggedIn: true
+			}));
+			goto('/');
+		} else {
+			intraLogin = data.login;
+			renderCreateForm = true;
+		}
 	});
 </script>
 
