@@ -6,6 +6,7 @@ export interface AppState {
 
 export type GameStatus = 'matchmaking' | 'waiting' | 'in progress' | 'finished' | 'failed';
 export type UserStatus = 'online' | 'offline' | 'game';
+export type UserAchievement = 'none' | 'beginner' | 'experienced' | 'master'
 
 export interface GameStats {
 	userOneId: string;
@@ -51,6 +52,7 @@ export interface User {
 	};
 	matchHistory: GameStats[];
 	blacklist: string[];
+	achievement: UserAchievement
 }
 
 export interface NewChat {

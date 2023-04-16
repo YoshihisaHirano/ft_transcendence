@@ -12,9 +12,10 @@
 	import { goto } from '$app/navigation';
 	import { updateUser } from '$lib/utils/updates';
 	import GameInvitation from '../GameInvitation/GameInvitation.svelte';
+	import StarsAchievement from "$lib/components/UserProfile/StarsAchievement.svelte";
 
 	export let userData: User, isCurrentUser: boolean;
-	$: ({ id, username, image, tournamentStats, matchHistory, friends, status } = userData);
+	$: ({ id, username, image, tournamentStats, matchHistory, friends, status, achievement } = userData);
 	const userId = $appState?.user?.id || '';
 
 	$: isFriend = false;
@@ -23,6 +24,28 @@
 			isFriend = $appState.user.friends.findIndex((item) => item.id === id) != -1;
 		}
 	}
+
+	$: isInBlacklist = false;
+	$: if (!isCurrentUser) {
+		if ($appState?.user?.blacklist) {
+			isInBlacklist = $appState.user.blacklist.findIndex((item) => item === id) != -1;
+		}
+	}
+
+	$: stars = 0;
+	$: switch (achievement) {
+		case 'beginner':
+			stars = 1;
+			break;
+		case 'experienced':
+			stars = 2;
+			break;
+		case 'master':
+			stars = 3;
+			break;
+	}
+	console.log(achievement);
+	console.log(stars);
 
 	async function befriend() {
 		await userService.toggleFriendship(userId, id, true);
@@ -39,6 +62,18 @@
 		friends = friends.filter((item) => item.id !== userId);
 		await updateUser(userId);
 		isFriend = false;
+	}
+
+	async function addToBlacklist() {
+		await userService.toggleBlacklist(userId, id, true);
+		await updateUser(userId);
+		isInBlacklist = true;
+	}
+
+	async function deleteFromBlacklist() {
+		await userService.toggleBlacklist(userId, id, false);
+		await updateUser(userId);
+		isInBlacklist = false;
 	}
 
 	async function startConversation() {
@@ -67,6 +102,10 @@
 
 <div class="user-profile-container">
 	<div class="user-profile-info">
+		<p>Rank: {achievement}</p>
+		<div>
+			<StarsAchievement numStars={stars} />
+		</div>
 		<ProfilePicture imageSrc={image} {isCurrentUser} />
 		<p>{username}</p>
 		<p>{tournamentStats.ladderLevel} place</p>
@@ -75,6 +114,13 @@
 				<Button className="friendship-btn" variant="danger" onClick={unfriend}>Unfriend</Button>
 			{:else}
 				<Button className="friendship-btn" variant="success" onClick={befriend}>Befriend</Button>
+			{/if}
+		{/if}
+		{#if !isCurrentUser}
+			{#if isInBlacklist}
+				<Button className="blacklist-btn" variant="success" onClick={deleteFromBlacklist}>Delete from blacklist</Button>
+			{:else}
+				<Button className="blacklist-btn" variant="danger" onClick={addToBlacklist}>Add to blacklist</Button>
 			{/if}
 		{/if}
 	</div>
