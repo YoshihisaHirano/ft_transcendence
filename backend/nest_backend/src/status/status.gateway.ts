@@ -1,36 +1,44 @@
+import { Injectable } from "@nestjs/common";
 import { OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
 import { Socket } from "socket.io";
-import { GameData } from "src/dtos/gameData.dto";
 import { GameInvite } from "src/dtos/GameInvite.dto";
 import { GameService } from "src/game/game.service";
 import { StatusService } from "./status.service";
+import { Observable, Subject } from 'rxjs';
+import { GameDataFull } from "./types/GameData";
+
+import { Subscription } from "rxjs";
+import { UserService } from "src/user/services/user/user.service";
+import { GameSettings } from "src/game/types/GameSettings";
 
 
 @WebSocketGateway({
 	namespace: '/status',
 	cors: {
 	  credentials: true,
-	  origin: 'http://localhost:5176',
+	  origin: 'http://localhost:5501',
 	  methods: ['GET', 'POST'],
 	  transports: ['websocket'],
 	},
   }
 )
-
 export class StatusGateway implements OnGatewayDisconnect {
-	constructor(
-		private statusService: StatusService
-		) {
-	}
-
 	@WebSocketServer()
 	server;
 
-	// users;
+	constructor(
+		private statusService: StatusService,
+		private gameService: GameService,
+		private userService: UserService
+		) {
+			this.gameService.getMyMapChanges().subscribe((games) => {
+				this.sendGameList(games);
+			});
+
+	}
 
 	@SubscribeMessage("userConnect")
     handleUserConnect(client: Socket, userId) {
-		console.log(userId);
 		this.statusService.setUserStatus(userId, client.id, "online");
 		const gameId = this.statusService.getInviteByPlayer(userId);
 		if (gameId) {
@@ -55,7 +63,7 @@ export class StatusGateway implements OnGatewayDisconnect {
 					mode: clientData.mode
 				}
 				hostSocket.emit("canStartGame", data);
-				client.emit("canStartGame", data);
+				client.emit("canStartGame", data); // TODO add player names 
 			} else { // host disconnect
 				this.statusService.addPlayerMM(clientData.userId);
 				client.emit("waitInQueue", null); // ?
@@ -64,7 +72,6 @@ export class StatusGateway implements OnGatewayDisconnect {
 			this.statusService.addPlayerMM(clientData.userId);
 			client.emit("waitInQueue", null); // ?
 		}
-
 	}
 
 	@SubscribeMessage("inviteUser") // from host
@@ -122,5 +129,29 @@ export class StatusGateway implements OnGatewayDisconnect {
 		return null;
 	}
 
-
+	async sendGameList(games: Map<string, GameSettings>) {
+		const gameArr = new Array<GameDataFull>();
+		for (const [gameId, gameSetting] of games.entries()) {
+			try {
+				// const hostName = await this.userService.findUsernameById(gameId);
+				// const playerName = await this.userService.findUsernameById(gameSetting.playerId);
+				// if (hostName && playerName) {
+					const curData = new GameDataFull();
+					curData.gameId = gameId;
+					curData.playerId = gameSetting.playerId;
+					curData.hostName = "hostName";
+					curData.playerName = "playerName";
+					curData.gameMode = gameSetting.gameMode;
+					gameArr.push({...curData});
+				// }
+			} catch (e) {
+				console.log(e);
+			}
+			
+		}
+		console.log(gameArr);
+		if (gameArr.length > 0) {
+			this.server.emit("updateGameList", gameArr);
+		}
+	}
 }
