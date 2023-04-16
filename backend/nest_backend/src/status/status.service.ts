@@ -8,9 +8,11 @@ export class StatusService {
 	constructor() {
 		this.users = new Map(); // [userId: socketId]
 		this.pendingInvites = new Map(); // [userId: socketId]
+		this.mmQueue = new Array(); // [userId]
 	}
 	users;
 	pendingInvites;
+	mmQueue;
 
 	setUserStatus(userId, socketId, status) {
 		this.users.set(userId, socketId);
@@ -38,15 +40,20 @@ export class StatusService {
 
 	deleteId(socketId) {
 		let userId: string;
+		let mmIndex: Number;
 		for (const [key, value] of this.users.entries()) {
 			if (value.localeCompare(socketId) == 0) {
 				userId = key;
 				break;
 			}
 		}
-		this.users.delete(userId);
+		this.users.delete(userId); // invites
 		if (this.pendingInvites.has(userId)) {
 			this.pendingInvites.delete(userId);
+		}
+		mmIndex = this.mmQueue.indexOf(userId); // mm
+		if (this.mmQueue != -1) {
+			this.mmQueue.splice(mmIndex, 1);
 		}
 	}
 
@@ -57,5 +64,15 @@ export class StatusService {
 		return null;
 	}
 
+	getPlayerMM() {
+		if (this.mmQueue.length > 0) {
+			return this.mmQueue.shift();
+		}
+		return null;
+	}
+
+	addPlayerMM(userId) {
+		this.mmQueue.push(userId);
+	}
 
 }
