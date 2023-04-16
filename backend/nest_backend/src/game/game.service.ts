@@ -1,16 +1,40 @@
 import { Injectable } from "@nestjs/common";
 import { GameInvite } from "src/dtos/GameInvite.dto";
 
+import { Observable, Subject } from 'rxjs';
+
 
 @Injectable()
 export class GameService {
-	constructor() {
-		this.games = new Map();
-		this.users = new Map();
-		// userid (host): enemy
-	}
 	games; // [hostId, playerId]
 	users;
+
+	myGameSubject = new Subject<Map<string, string>>();
+
+	constructor() {
+		this.games = new Map<string, string>();
+		this.users = new Map();
+	}
+
+	createGame(data: GameInvite) { // for status
+		this.games.set(data.gameId, data.playerId);
+		this.myGameSubject.next(this.games);
+	}
+
+	get() {
+		return this.games;
+	}
+
+	deleteGame(gameId) {
+		if (this.games.has(gameId)) {
+			this.games.delete(gameId);
+			this.myGameSubject.next(this.games);
+		}
+	}
+
+	getMyMapChanges(): Observable<Map<string, string>> {
+		return this.myGameSubject.asObservable();
+	}
 	
 	// fifo; // for mm
 	// users here/
@@ -67,16 +91,7 @@ export class GameService {
 		return null;
 	}
 
-	createGame(data: GameInvite) { // for status
-		this.games.set(data.gameId, data.playerId);
-		console.log("create game: ", data, this.games);
-	}
 
-	deleteGame(gameId) {
-		if (this.games.has(gameId)) {
-			this.games.delete(gameId);
-		}
-	}
 
 	async playerJoinGame(data: GameInvite) : Promise<boolean> {
 		let count = 0;

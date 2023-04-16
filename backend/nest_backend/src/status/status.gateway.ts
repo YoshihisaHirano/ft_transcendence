@@ -1,36 +1,41 @@
+import { Injectable } from "@nestjs/common";
 import { OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
 import { Socket } from "socket.io";
 import { GameData } from "src/dtos/gameData.dto";
 import { GameInvite } from "src/dtos/GameInvite.dto";
 import { GameService } from "src/game/game.service";
 import { StatusService } from "./status.service";
+import { Observable, Subject } from 'rxjs';
+
+import { Subscription } from "rxjs";
 
 
 @WebSocketGateway({
 	namespace: '/status',
 	cors: {
 	  credentials: true,
-	  origin: 'http://localhost:5176',
+	  origin: 'http://localhost:5501',
 	  methods: ['GET', 'POST'],
 	  transports: ['websocket'],
 	},
   }
 )
-
 export class StatusGateway implements OnGatewayDisconnect {
-	constructor(
-		private statusService: StatusService
-		) {
-	}
-
 	@WebSocketServer()
 	server;
 
-	// users;
+	constructor(
+		private statusService: StatusService,
+		private gameService: GameService
+		) {
+			this.gameService.getMyMapChanges().subscribe((games) => {
+				this.sendGameList(games);
+			});
+
+	}
 
 	@SubscribeMessage("userConnect")
     handleUserConnect(client: Socket, userId) {
-		console.log(userId);
 		this.statusService.setUserStatus(userId, client.id, "online");
 		const gameId = this.statusService.getInviteByPlayer(userId);
 		if (gameId) {
@@ -54,7 +59,7 @@ export class StatusGateway implements OnGatewayDisconnect {
 					playerId: userId
 				}
 				hostSocket.emit("canStartGame", data);
-				client.emit("canStartGame", data);
+				client.emit("canStartGame", data); // TODO add player names 
 			} else { // host disconnect
 				this.statusService.addPlayerMM(userId);
 				client.emit("waitInQueue", null); // ?
@@ -63,7 +68,6 @@ export class StatusGateway implements OnGatewayDisconnect {
 			this.statusService.addPlayerMM(userId);
 			client.emit("waitInQueue", null); // ?
 		}
-
 	}
 
 	@SubscribeMessage("inviteUser") // from host
@@ -121,5 +125,7 @@ export class StatusGateway implements OnGatewayDisconnect {
 		return null;
 	}
 
-
+	sendGameList(games: Map<string, string>) {
+		// gameId, playerId, hostName, playerName, gameMode
+	}
 }

@@ -21,6 +21,7 @@ export class GameGateway implements OnGatewayDisconnect {
 	constructor(
 		private gameService: GameService,
 		)  {
+			
 	}
 
 	@WebSocketServer()
@@ -109,6 +110,16 @@ export class GameGateway implements OnGatewayDisconnect {
 	handlescoreUpdate(client: Socket, data: GameData) {
 		this.server.to(data.gameId).emit('scoreUpdate', data);
 	}
+
+
+	@SubscribeMessage("test")
+	handleTest(client: Socket, data) {
+		this.gameService.createGame({
+			gameId: data,
+			playerId: "string"
+		});
+	}
+
 
 	/*
 		gameHostData (ball, host pos)
