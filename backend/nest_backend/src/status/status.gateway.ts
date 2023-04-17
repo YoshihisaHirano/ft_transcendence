@@ -133,17 +133,17 @@ export class StatusGateway implements OnGatewayDisconnect {
 		const gameArr = new Array<GameDataFull>();
 		for (const [gameId, gameSetting] of games.entries()) {
 			try {
-				// const hostName = await this.userService.findUsernameById(gameId);
-				// const playerName = await this.userService.findUsernameById(gameSetting.playerId);
-				// if (hostName && playerName) {
+				const hostName = await this.userService.findUsernameById(gameId);
+				const playerName = await this.userService.findUsernameById(gameSetting.playerId);
+				if (hostName && playerName) {
 					const curData = new GameDataFull();
 					curData.gameId = gameId;
 					curData.playerId = gameSetting.playerId;
-					curData.hostName = "hostName";
-					curData.playerName = "playerName";
+					curData.hostName = hostName;
+					curData.playerName = playerName;
 					curData.gameMode = gameSetting.gameMode;
 					gameArr.push({...curData});
-				// }
+				}
 			} catch (e) {
 				console.log(e);
 			}
