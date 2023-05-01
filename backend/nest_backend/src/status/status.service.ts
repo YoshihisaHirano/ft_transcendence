@@ -9,10 +9,12 @@ export class StatusService {
 		this.users = new Map(); // [userId: socketId]
 		this.pendingInvites = new Map(); // [userId: socketId]
 		this.mmQueue = new Array(); // [userId] TODO add mode 
+		this.mmModeMap = new Map<string, string>(); // [userId, mode]
 	}
 	users;
 	pendingInvites;
 	mmQueue;
+	mmModeMap;
 	
 	mmGame;
 
@@ -53,9 +55,13 @@ export class StatusService {
 		if (this.pendingInvites.has(userId)) {
 			this.pendingInvites.delete(userId);
 		}
-		mmIndex = this.mmQueue.indexOf(userId); // mm
+		// delete from mm queue
+		mmIndex = this.mmQueue.indexOf(userId);
 		if (this.mmQueue != -1) {
 			this.mmQueue.splice(mmIndex, 1);
+		}
+		if (this.mmModeMap.has(userId)) {
+			this.mmModeMap.delete(userId);
 		}
 	}
 
@@ -66,15 +72,24 @@ export class StatusService {
 		return null;
 	}
 
+					/*  mm logic  */
 	getPlayerMM() {
 		if (this.mmQueue.length > 0) {
-			return this.mmQueue.shift();
+			const hostId = this.mmQueue.shift();
+			if (this.mmModeMap.has(hostId)) {
+				const data = {
+					hostId: hostId,
+					mode: this.mmModeMap.get(hostId)
+				}
+				return data;
+			}
 		}
 		return null;
 	}
 
-	addPlayerMM(userId) {
+	addPlayerMM(userId, gameMode) {
 		this.mmQueue.push(userId);
+		this.mmModeMap.set(userId, gameMode);
 	}
 
 }

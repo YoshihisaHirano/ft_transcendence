@@ -52,24 +52,34 @@ export class StatusGateway implements OnGatewayDisconnect {
 	}
 
 	@SubscribeMessage("matchMakingGame") // from any player 
-	handleMatchMakingGame(client: Socket, clientData) {
-		const waitingPlayer = this.statusService.getPlayerMM();
-		if (waitingPlayer) { // can start
-			const hostSocket = this.getUserSocket(waitingPlayer);
-			if (hostSocket) {
-				const data = {
-					gameId: waitingPlayer,
-					playerId: clientData.userId,
-					mode: clientData.mode
+	async handleMatchMakingGame(client: Socket, clientData) {
+		const waitingPlayerData = this.statusService.getPlayerMM();
+		if (waitingPlayerData) { // can start
+			const hostSocket = this.getUserSocket(waitingPlayerData.hostId);
+			if (hostSocket) { // good to go
+				try {
+					const hostName = await this.userService.findUsernameById(waitingPlayerData.hostId);
+					const playerName = await this.userService.findUsernameById(clientData.userId);
+					const data = {
+						gameId: waitingPlayerData.hostId,
+						playerId: clientData.userId,
+						mode: waitingPlayerData.mode,
+						hostName: hostName,
+						playerName: playerName,
+					}
+					hostSocket.emit("canStartGame", data);
+					client.emit("canStartGame", data); // TODO add player names 
+				} catch (error) {
+					console.log("can't find user's names in db.");
+					console.log(error);
 				}
-				hostSocket.emit("canStartGame", data);
-				client.emit("canStartGame", data); // TODO add player names 
-			} else { // host disconnect
-				this.statusService.addPlayerMM(clientData.userId);
+
+			} else { // host disconnect 
+				this.statusService.addPlayerMM(clientData.userId, clientData.mode);
 				client.emit("waitInQueue", null); // ?
 			}
 		} else { // add to queue
-			this.statusService.addPlayerMM(clientData.userId);
+			this.statusService.addPlayerMM(clientData.userId, clientData.mode);
 			client.emit("waitInQueue", null); // ?
 		}
 	}
@@ -101,12 +111,27 @@ export class StatusGateway implements OnGatewayDisconnect {
 	}
 
 	@SubscribeMessage("inviteAccepted") // from player
-	handleInviteAccepted(player: Socket, data: GameInvite) {
+	async handleInviteAccepted(player: Socket, data: GameInvite) {
 		const hostSocket: Socket = this.getUserSocket(data.gameId);
 		if (hostSocket) {
-			hostSocket.emit("canStartGame", data);
-			player.emit("canStartGame", data);
-			this.statusService.removeInvite(data.gameId); // no need but still
+			try {
+				const hostName = await this.userService.findUsernameById(data.gameId);
+				const playerName = await this.userService.findUsernameById(data.playerId);
+				const gameCanStartData = {
+					gameId: data.gameId,
+					playerId: data.playerId,
+					mode: data.mode,
+					hostName: hostName,
+					playerName: playerName,
+				}
+				hostSocket.emit("canStartGame", gameCanStartData);
+				player.emit("canStartGame", gameCanStartData);
+				this.statusService.removeInvite(data.gameId); // no need but still
+			} catch (error) {
+				console.log("can't find user's names in db.");
+				console.log(error);
+			}
+
 		} else {
 			player.emit("joinGameError", null);
 		}
@@ -133,17 +158,17 @@ export class StatusGateway implements OnGatewayDisconnect {
 		const gameArr = new Array<GameDataFull>();
 		for (const [gameId, gameSetting] of games.entries()) {
 			try {
-				// const hostName = await this.userService.findUsernameById(gameId);
-				// const playerName = await this.userService.findUsernameById(gameSetting.playerId);
-				// if (hostName && playerName) {
+				const hostName = await this.userService.findUsernameById(gameId);
+				const playerName = await this.userService.findUsernameById(gameSetting.playerId);
+				if (hostName && playerName) {
 					const curData = new GameDataFull();
 					curData.gameId = gameId;
 					curData.playerId = gameSetting.playerId;
-					curData.hostName = "hostName";
-					curData.playerName = "playerName";
+					curData.hostName = hostName;
+					curData.playerName = playerName;
 					curData.gameMode = gameSetting.gameMode;
 					gameArr.push({...curData});
-				// }
+				}
 			} catch (e) {
 				console.log(e);
 			}
