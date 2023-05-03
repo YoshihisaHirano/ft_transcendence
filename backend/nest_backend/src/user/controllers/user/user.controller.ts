@@ -46,6 +46,7 @@ export class UserController {
     }
     return {
       id: user.id,
+      login: user.login,
       image: user.image,
       username: user.username,
       status: user.status,
@@ -55,6 +56,7 @@ export class UserController {
       achievement: await this.tournamentService.getAchievements(user.id),
       blacklist: user.blacklist,
       gameMode: user.preferredGameMode,
+      twoFactorAuthIsEnabled: user.twoFactorAuthIsEnabled,
     };
   }
   @Post('create')
@@ -75,6 +77,7 @@ export class UserController {
     };
     return {
       id: user.id,
+      login: user.login,
       image: user.image,
       username: user.username,
       status: user.status,
@@ -84,6 +87,7 @@ export class UserController {
       achievement: await this.tournamentService.getAchievements(user.id),
       blacklist: user.blacklist,
       gameMode: user.preferredGameMode,
+      twoFactorAuthIsEnabled: user.twoFactorAuthIsEnabled,
     };
   }
   @Post('addfriend')

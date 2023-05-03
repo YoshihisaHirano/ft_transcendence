@@ -12,6 +12,7 @@ export enum Achievement {
 
 export class ResponseUserDto {
   id: string;
+  login: string;
   image: string;
   username: string;
   status: StatusMode;
@@ -21,4 +22,5 @@ export class ResponseUserDto {
   achievement: Achievement;
   blacklist: string[];
   gameMode: GameMode;
+  twoFactorAuthIsEnabled: boolean;
 }
