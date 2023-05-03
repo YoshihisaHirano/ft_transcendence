@@ -50,6 +50,7 @@ export interface User {
 	blacklist: string[];
 	achievement: UserAchievement;
 	gameMode: GameMode;
+	login: string;
 }
 
 export interface NewChat {

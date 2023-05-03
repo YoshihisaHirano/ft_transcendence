@@ -51,6 +51,7 @@
 			if ($selectedChatId === data.chatId) {
 				selectedChatId.set(null);
 			}
+			updateChats(userId);
 		});
 
 		chatIo.on('youBanned', (data) => {
@@ -62,6 +63,7 @@
 			if ($selectedChatId === data.chatId) {
 				selectedChatId.set(null);
 			}
+			updateChats(userId);
 		});
 
 		chatIo.on('updateChat', () => {
