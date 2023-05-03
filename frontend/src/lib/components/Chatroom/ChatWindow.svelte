@@ -105,6 +105,7 @@
 			chatname={reactiveChat.chatname}
 			chatId={reactiveChat.chatId}
 			isDirect={reactiveChat.isDirect}
+			banList={reactiveChat.banList}
 		/>
 		{#await userBlocked(userId, reactiveChat)}
 			<div class="messages-placeholder" />

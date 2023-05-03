@@ -115,6 +115,14 @@ export default {
 		}
 	},
 
+	async enable2faAuth(login: string): Promise<void> {
+		/* POST 2fa/generate */
+	},
+
+	async unbanUser(chatId: string, userId: string): Promise<void> {
+		/* PUT /unban */
+	},
+
 	async logout (): Promise<void> {
 		try {
 			await fetch(new URL('logout/', baseUrlWithEndpoint), {

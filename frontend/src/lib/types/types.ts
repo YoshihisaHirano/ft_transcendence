@@ -51,6 +51,7 @@ export interface User {
 	achievement: UserAchievement;
 	gameMode: GameMode;
 	login: string;
+	twoFactorAuthIsEnabled: boolean;
 }
 
 export interface NewChat {
@@ -84,7 +85,7 @@ export interface Chat {
 	password?: string | null;
 	isDirect: boolean;
 	muteList: string[];
-	banList: string[];
+	banList: ShortUser[];
 }
 
 export interface ChatSettings {

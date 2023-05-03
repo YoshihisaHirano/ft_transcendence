@@ -4,9 +4,11 @@
 	import userService from "$lib/services/userService";
 	import { onMount } from "svelte";
 
+    export let id: string;
+
     onMount(() => {
         gameMode.subscribe(async (val) => {
-            await userService.savePreferredMode(val);
+            await userService.savePreferredMode(val, id);
         })
     })
 </script>

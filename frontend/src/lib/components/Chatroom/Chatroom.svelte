@@ -16,6 +16,7 @@
 	$: isModalOpen = false;
 
 	onMount(() => {
+		console.log(userChats);
 		const userId = $appState.user?.id;
 		if (userId) {
 			userChats.forEach((chat) => {
