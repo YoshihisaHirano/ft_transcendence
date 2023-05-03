@@ -1,12 +1,12 @@
 import { ShortResponseUserDto } from 'src/dtos/shortResponseUser.dto';
 import { Stats } from 'src/entities';
 import { TournamentDto } from 'src/dtos/tournament.dto';
-import { StatusMode } from "../entities/user.entity";
+import { GameMode, StatusMode } from 'src/entities/user.entity';
 
 export enum Achievement {
   NONE = 'none',
-  BEGINNER = 'beginner',
-  EXPERIENCED = 'experienced',
+  BEGINNER = 'novice',
+  EXPERIENCED = 'expert',
   MASTER = 'master',
 }
 
@@ -16,9 +16,9 @@ export class ResponseUserDto {
   username: string;
   status: StatusMode;
   matchHistory: Stats[];
-
   friends: ShortResponseUserDto[];
   tournamentStats: TournamentDto;
   achievement: Achievement;
   blacklist: string[];
+  gameMode: GameMode;
 }
