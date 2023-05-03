@@ -1,8 +1,8 @@
 export class StatsDto {
-  playerOneId: string;
-  usernameOne: string;
-  scoreOne: number;
-  playerTwoId: string;
-  usernameTwo: string;
-  scoreTwo: number;
+  userOneId: string;
+  userOneName: string;
+  userOneScore: number;
+  userTwoId: string;
+  userTwoName: string;
+  userTwoScore: number;
 }

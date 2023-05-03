@@ -19,7 +19,7 @@ export class StatsService {
   }
   async getUserStats(userId: string) {
     const stats = await this.statsRepository.find({
-      where: [{ playerOneId: userId }, { playerTwoId: userId }],
+      where: [{ userOneId: userId }, { userTwoId: userId }],
       take: 10,
       order: { createdDate: 'DESC' },
     });

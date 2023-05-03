@@ -34,13 +34,13 @@ export class TournamentService {
   }
   async updateTournament(statsDto: StatsDto) {
     const winnerId =
-      statsDto.scoreOne > statsDto.scoreTwo
-        ? statsDto.playerOneId
-        : statsDto.playerTwoId;
+      statsDto.userOneScore > statsDto.userTwoScore
+        ? statsDto.userOneId
+        : statsDto.userTwoId;
     const loserId =
-      statsDto.scoreOne < statsDto.scoreTwo
-        ? statsDto.playerOneId
-        : statsDto.playerTwoId;
+      statsDto.userOneScore < statsDto.userTwoScore
+        ? statsDto.userOneId
+        : statsDto.userTwoId;
     const winnerTournamentStats: Tournament =
       await this.tournamentRepository.findOne({
         where: { playerId: winnerId },
