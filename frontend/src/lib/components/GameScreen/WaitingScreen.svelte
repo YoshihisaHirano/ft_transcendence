@@ -5,6 +5,7 @@
 	import { gameIo } from '$lib/sockets/gameSocket';
 	import { statusIo } from '$lib/sockets/statusSocket';
 	import JumpingDots from "../JumpingDots/JumpingDots.svelte";
+	import GameFailWarning from './GameFailWarning.svelte';
 
 	onMount(() => {
 		if (!$currentGameId || !$gameStats) {
@@ -34,8 +35,13 @@
 </script>
 
 
+<GameFailWarning/>
 <div>
 	Waiting for your partner to join <JumpingDots />
 </div>
 
-
+<style>
+	div {
+		padding-top: 5rem;
+	}
+</style>

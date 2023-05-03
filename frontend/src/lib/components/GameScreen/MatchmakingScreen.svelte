@@ -5,12 +5,14 @@
 	import enigma from '$lib/images/enigma.svg';
 	import { onMount } from 'svelte';
 	import { statusIo } from '$lib/sockets/statusSocket';
+	import GameFailWarning from './GameFailWarning.svelte';
 
 	onMount(() => {
 		statusIo.emit('matchMakingGame', { userId: $currentGameId, mode: $gameMode });
 	});
 </script>
 
+<GameFailWarning/>
 <div class="waiting-wrapper game-screen">
 	<div>
 		{#if $appState.user && $gameStats}
@@ -22,7 +24,7 @@
 				<p>VS</p>
 				<div class="image-frame">
 					<img src={enigma} alt="question mark" />
-					<p class="player-name">{$gameStats.userTwoName}</p>
+					<p class="player-name">{$gameStats.userTwoName || "???"}</p>
 				</div>
 			</div>
 		{/if}
@@ -38,6 +40,7 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
+		padding-top: 5rem;
 	}
 
 	.image-frame {
@@ -59,15 +62,17 @@
 		justify-content: center;
 		gap: 0.5rem;
 		margin-bottom: 3rem;
-		height: fit-content;
+		/* height: fit-content; */
 	}
 
-	.versus-wrapper p {
+	.versus-wrapper div + p {
 		font-size: 3rem;
 		padding: 0 2rem;
 	}
 
 	p.player-name {
 		font-size: 1rem;
+		margin-top: .5rem;
+		text-align: center;
 	}
 </style>

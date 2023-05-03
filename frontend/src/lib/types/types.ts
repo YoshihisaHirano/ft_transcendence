@@ -33,6 +33,8 @@ export interface ShortUser {
 	status: UserStatus;
 }
 
+export type GameMode = 'easy' | 'default' | 'hard';
+
 export interface User {
 	id: string;
 	image: string;
@@ -46,7 +48,8 @@ export interface User {
 	};
 	matchHistory: GameStats[];
 	blacklist: string[];
-	achievement: UserAchievement
+	achievement: UserAchievement;
+	gameMode: GameMode;
 }
 
 export interface NewChat {
@@ -106,8 +109,6 @@ export interface BallPosition {
 	xspeed: number;
 	yspeed: number;
 }
-
-export type GameMode = 'easy' | 'default' | 'hard';
 
 export interface GameSettings {
 	bgCol: string;

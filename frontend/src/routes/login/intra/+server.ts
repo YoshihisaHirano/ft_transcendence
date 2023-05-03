@@ -13,7 +13,7 @@ export async function GET({ url, cookies, fetch }) {
 	const code = url.searchParams.get('code');
 	let login = '';
     let userExists = false;
-	console.log(code);
+	//console.log(code);
 	if (code) {
 		try {
 			const tokenRequestUrl = new URL(GET_TOKEN_URL);
@@ -26,14 +26,14 @@ export async function GET({ url, cookies, fetch }) {
 				method: 'POST'
 			});
 			const json = await res.json();
-			console.log(json);
+			// console.log(json);
 			const me = await fetch(GET_LOGIN_URL, {
 				headers: {
 					Authorization: `Bearer ${json.access_token}`
 				}
 			});
 			const meJson = await me.json();
-			console.log(meJson.login);
+			//console.log(meJson.login);
 			login = meJson.login;
 		} catch (err) {
 			throw redirect(302, '/404');
