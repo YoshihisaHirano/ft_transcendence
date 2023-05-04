@@ -7,6 +7,7 @@
 	import { gameIo } from '$lib/sockets/gameSocket';
 	import type { BallPosition } from '$lib/types/types';
 	import { DEFAULT_FIELD_WIDTH, gameModes } from '$lib/utils/constants';
+	import { appState } from '$lib/store/appState';
 
 	let scores = {
 		score1: 0,
@@ -141,8 +142,8 @@
 					ballShadow.show();
 					gameIo.emit('leftPaddleUpdate', { gameId: $currentGameId, paddleY: left.y });
 				}
-			} else {
-				// need to change to ARROW_UP & ARROW_DOWN as well
+			} else {	
+				// @TODO IMPORTANT need to change to ARROW_UP & ARROW_DOWN as well
 				if (p5.key == 'a') {
 					right.move(-30);
 					right.update();
@@ -202,6 +203,7 @@
 					}
 					scores.score1 = 0;
 					scores.score2 = 0;
+					$gameMode = $appState.user?.gameMode || $gameMode;
 					gameStatus.set('finished');
 				}
 			}

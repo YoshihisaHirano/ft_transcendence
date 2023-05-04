@@ -104,8 +104,23 @@ export default {
 		}
 	},
 
-	async savePreferredMode(mode: string): Promise<void> {
-		return ;
+	async savePreferredMode(mode: string, userId: string): Promise<void> {
+		try {
+			const url = new URL('changemode', baseUrlWithEndpoint);
+			url.searchParams.append('mode', mode);
+			url.searchParams.append('id', userId);
+			const res = await fetch(url);
+		} catch (error) {
+			return;
+		}
+	},
+
+	async enable2faAuth(login: string): Promise<void> {
+		/* POST 2fa/generate */
+	},
+
+	async unbanUser(chatId: string, userId: string): Promise<void> {
+		/* PUT /unban */
 	},
 
 	async logout (): Promise<void> {

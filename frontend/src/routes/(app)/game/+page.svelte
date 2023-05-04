@@ -49,7 +49,7 @@
 		align-items: flex-start;
 	}
 
-	@media screen and (max-width: 800px) {
+	@media screen and (max-width: 900px) {
 		.game-page {
 			flex-direction: column;
 			gap: 4rem;

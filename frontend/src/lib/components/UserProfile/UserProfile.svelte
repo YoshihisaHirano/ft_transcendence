@@ -12,11 +12,23 @@
 	import { goto } from '$app/navigation';
 	import { updateUser } from '$lib/utils/updates';
 	import GameInvitation from '../GameInvitation/GameInvitation.svelte';
-	import StarsAchievement from "$lib/components/UserProfile/StarsAchievement.svelte";
+	import StarsAchievement from '$lib/components/UserProfile/StarsAchievement.svelte';
 	import GameModeBar from '../GameModeBar/GameModeBar.svelte';
+	import TwoFactorAuthModal from '../TwoFactorAuthModal/TwoFactorAuthModal.svelte';
 
 	export let userData: User, isCurrentUser: boolean;
-	$: ({ id, username, image, tournamentStats, matchHistory, friends, status, achievement } = userData);
+	$: ({
+		id,
+		username,
+		image,
+		tournamentStats,
+		matchHistory,
+		friends,
+		status,
+		achievement,
+		twoFactorAuthIsEnabled,
+		login
+	} = userData);
 	const userId = $appState?.user?.id || '';
 
 	$: isFriend = false;
@@ -46,11 +58,31 @@
 			break;
 	}
 
+	$: twoFactorModalOpen = false;
+
+	function toggle2FaModal() {
+		twoFactorModalOpen = !twoFactorModalOpen;
+	}
+
+	function handle2Fa() {
+		if (twoFactorAuthIsEnabled) {
+			/* disable 2fa auth logic*/
+			twoFactorAuthIsEnabled = false;
+		} else {
+			twoFactorAuthIsEnabled = true;
+			twoFactorModalOpen = true;
+		}
+	}
+
 	async function befriend() {
 		await userService.toggleFriendship(userId, id, true);
 		friends = [
 			...friends,
-			{ id: userId, status: $appState?.user?.status || 'offline', username: $appState?.user?.username || '' }
+			{
+				id: userId,
+				status: $appState?.user?.status || 'offline',
+				username: $appState?.user?.username || ''
+			}
 		];
 		await updateUser(userId);
 		isFriend = true;
@@ -84,7 +116,7 @@
 				privacyMode: 'private',
 				members: [userId, id],
 				chatname: `${username} + ${$appState?.user?.username || ''}`
-			}
+			};
 			const createdChat = await chatService.createChat(newChat);
 			if (!('message' in createdChat)) {
 				const updatedChats = await chatService.getChatsByUserId(userId);
@@ -108,6 +140,11 @@
 		<ProfilePicture imageSrc={image} {isCurrentUser} />
 		<p>{username}</p>
 		<p>{tournamentStats.ladderLevel} place</p>
+		{#if isCurrentUser}
+			<button on:click={handle2Fa} class="two-factor-auth {twoFactorAuthIsEnabled && 'enabled'}">
+				<p>2FA {twoFactorAuthIsEnabled ? 'enabled' : 'disabled'}</p>
+			</button>
+		{/if}
 		{#if !isCurrentUser}
 			{#if isFriend}
 				<Button className="friendship-btn" variant="danger" onClick={unfriend}>Unfriend</Button>
@@ -117,15 +154,19 @@
 		{/if}
 		{#if !isCurrentUser}
 			{#if isInBlacklist}
-				<Button className="blacklist-btn" variant="success" onClick={deleteFromBlacklist}>Delete from blacklist</Button>
+				<Button className="blacklist-btn" variant="success" onClick={deleteFromBlacklist}
+					>Delete from blacklist</Button
+				>
 			{:else}
-				<Button className="blacklist-btn" variant="danger" onClick={addToBlacklist}>Add to blacklist</Button>
+				<Button className="blacklist-btn" variant="danger" onClick={addToBlacklist}
+					>Add to blacklist</Button
+				>
 			{/if}
 		{/if}
 	</div>
 	<div class="user-profile-games">
 		{#if isCurrentUser}
-			<GameModeBar/>
+			<GameModeBar {id} />
 		{/if}
 		<GameBoard
 			wins={tournamentStats.wins}
@@ -139,7 +180,7 @@
 		{#if !isCurrentUser && status == 'online'}
 			<div class="game-invitation">
 				<p>Invite to a game:</p>
-				<GameInvitation className="user-profile-invite-btn" playerId={id} playerName={username}/>
+				<GameInvitation className="user-profile-invite-btn" playerId={id} playerName={username} />
 			</div>
 		{/if}
 	</div>
@@ -155,6 +196,10 @@
 	</div>
 </div>
 
+{#if twoFactorModalOpen}
+	<TwoFactorAuthModal {login} onClose={toggle2FaModal}/>
+{/if}
+
 <style>
 	:global(.dm-button) {
 		display: block;
@@ -162,10 +207,19 @@
 		color: var(--text-primary);
 	}
 
+	.two-factor-auth {
+		margin-top: 0.75rem;
+		cursor: pointer;
+	}
+
+	.two-factor-auth.enabled {
+		background-color: #90EE90;
+	}
+
 	:global(p ~ button.user-profile-invite-btn) {
 		border: 1px solid white;
 		border-radius: 50%;
-		padding: .35rem .45rem .4rem;
+		padding: 0.35rem 0.45rem 0.4rem;
 	}
 
 	.game-invitation {

@@ -17,7 +17,8 @@
 		chatId: string,
 		privacyMode: PrivacyMode,
 		password: string | undefined,
-		isDirect: boolean;
+		isDirect: boolean,
+		banList: ShortUser[];
 
 	$: userId = getFromStorage('userId') || '';
 	$: isAdmin = userId === adminId;
@@ -98,7 +99,7 @@
 
 {#if modalOpen}
 	<Modal title="{chatname} settings" onClose={toggleModal}>
-		<ChatSettings {chatname} {chatId} {privacyMode} {password} {adminId} members={chatMembers} />
+		<ChatSettings {banList} {chatname} {chatId} {privacyMode} {password} {adminId} members={chatMembers} />
 	</Modal>
 {/if}
 

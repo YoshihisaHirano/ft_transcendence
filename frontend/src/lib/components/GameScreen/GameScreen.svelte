@@ -9,6 +9,7 @@
 	import { resetGame } from '$lib/utils/updates';
 	import GameFailed from './GameFailed.svelte';
 	import StartNewGame from '../StartNewGame/StartNewGame.svelte';
+	import GameFailWarning from './GameFailWarning.svelte';
 
 	onMount(() => {
 		gameIo.on('joinGameFail', () => {
@@ -39,6 +40,7 @@
 {:else if $gameStatus === 'waiting'}
 	<WaitingScreen />
 {:else if $gameStatus === 'in progress'}
+	<GameFailWarning/>
 	<div class="game-screen">
 		<div class="game-field-wrapper">
 			<div class="game-info">
@@ -66,7 +68,7 @@
 <style>
 	.game-field-wrapper {
 		width: fit-content;
-		margin: 0 auto;
+		margin: 5rem auto 0;
 	}
 
 	.canvas-wrapper {

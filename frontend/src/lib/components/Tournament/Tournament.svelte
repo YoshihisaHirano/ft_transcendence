@@ -20,6 +20,8 @@
 <style>
 	.tournament-container {
 		padding: 1rem 0.65rem;
+		margin-left: 1rem;
+		margin-right: 1rem;
 	}
 
 	ol {

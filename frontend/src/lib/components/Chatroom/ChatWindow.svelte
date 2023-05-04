@@ -51,6 +51,7 @@
 			if ($selectedChatId === data.chatId) {
 				selectedChatId.set(null);
 			}
+			updateChats(userId);
 		});
 
 		chatIo.on('youBanned', (data) => {
@@ -62,6 +63,7 @@
 			if ($selectedChatId === data.chatId) {
 				selectedChatId.set(null);
 			}
+			updateChats(userId);
 		});
 
 		chatIo.on('updateChat', () => {
@@ -103,6 +105,7 @@
 			chatname={reactiveChat.chatname}
 			chatId={reactiveChat.chatId}
 			isDirect={reactiveChat.isDirect}
+			banList={reactiveChat.banList}
 		/>
 		{#await userBlocked(userId, reactiveChat)}
 			<div class="messages-placeholder" />

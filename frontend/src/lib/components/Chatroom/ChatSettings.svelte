@@ -13,7 +13,8 @@
 		password: string | undefined,
 		members: ShortUser[],
 		adminId: string,
-		chatname: string;
+		chatname: string,
+		banList: ShortUser[];
 
 	$: friends = $appState.user?.friends || [];
 
@@ -42,8 +43,8 @@
 					const updatedChatIdx = val.findIndex((item) => item.chatId === chatId);
 					const updatedChats = val.slice();
 					updatedChats[updatedChatIdx] = updatedChat;
-					return [ ...updatedChats ];
-				})
+					return [...updatedChats];
+				});
 				chatIo.emit('updateChat', updatedChat.chatId);
 			}
 		}
@@ -75,7 +76,12 @@
 		<Button disabled={!areSettingsChanged} onClick={updateChat} variant="danger">Save</Button>
 	</fieldset>
 	{#if friends.length}
-		<AddChatMembers {friends} {members} {chatId}/>
+		<AddChatMembers {friends} {members} {chatId} />
+	{/if}
+	{#if banList.length}
+		<div class="banlist">
+			<p>Banned: {banList.length}</p>
+		</div>
 	{/if}
 </form>
 
@@ -109,5 +115,9 @@
 
 	:global(.members-add-btn) {
 		margin-right: 0;
+	}
+
+	.banlist {
+		margin-top: 1rem;
 	}
 </style>
