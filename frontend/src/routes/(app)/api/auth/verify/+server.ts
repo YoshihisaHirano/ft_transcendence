@@ -20,10 +20,16 @@ export async function POST({ request, fetch, cookies }) {
 			},
 			body: JSON.stringify({ code: bodyJson.code, login: bodyJson.login })
 		});
+		const resJson = await res.json();
+		cookies.set('user-token', resJson.token, {
+			path: '/', secure: false
+		});
+		return new Response(JSON.stringify(resJson));
 	} catch (err) {
 		if (err instanceof Error && err.message === unauthorizedCode) {
 			throw error(401, unauthorizedCode);
 		}
+		throw error(401, 'Wrong authentication code');
 	}
 	return new Response(null);
 }
