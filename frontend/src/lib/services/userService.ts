@@ -115,12 +115,23 @@ export default {
 		}
 	},
 
-	async enable2faAuth(login: string): Promise<void> {
-		/* POST 2fa/generate */
-	},
-
 	async unbanUser(chatId: string, userId: string): Promise<void> {
-		/* PUT /unban */
+		try {
+			const res = await fetch(new URL('unban', baseUrlWithEndpoint), {
+				headers: {
+					...addContentType()
+				},
+				method: 'POST',
+				body: JSON.stringify({ chatId, userId })
+			});
+			// console.log(res);
+			if (res.status === 401) {
+				await this.logout();
+				return;
+			}
+		} catch (err) {
+			return;
+		}
 	},
 
 	async logout (): Promise<void> {
