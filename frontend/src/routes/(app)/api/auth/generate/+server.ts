@@ -20,6 +20,7 @@ export async function POST({ request, fetch, cookies }) {
 			},
 			body: JSON.stringify({ login: bodyJson.login })
 		});
+		return res;
 	} catch (err) {
 		if (err instanceof Error && err.message === unauthorizedCode) {
 			throw error(401, unauthorizedCode);

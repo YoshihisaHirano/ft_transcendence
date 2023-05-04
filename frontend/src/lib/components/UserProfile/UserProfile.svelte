@@ -66,7 +66,6 @@
 
 	function handle2Fa() {
 		if (twoFactorAuthIsEnabled) {
-			/* disable 2fa auth logic*/
 			twoFactorAuthIsEnabled = false;
 		} else {
 			twoFactorAuthIsEnabled = true;
@@ -197,7 +196,7 @@
 </div>
 
 {#if twoFactorModalOpen}
-	<TwoFactorAuthModal {login} onClose={toggle2FaModal}/>
+	<TwoFactorAuthModal action={twoFactorAuthIsEnabled ? 'enable' : 'disable'} {login} onClose={toggle2FaModal}/>
 {/if}
 
 <style>

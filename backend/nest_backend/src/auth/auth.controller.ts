@@ -47,7 +47,7 @@ export class AuthController {
       token: token,
     };
   }
-  @UseGuards(JwtTwoFactorGuard)
+  // @UseGuards(JwtTwoFactorGuard)
   @Post('generate')
   async register(@Body('login') login: string, @Res() response: Response) {
     const otpAuthUrl =
@@ -61,7 +61,6 @@ export class AuthController {
     @Body('login') login: string,
   ) {
     const user = await this.userService.findUserByLogin(login);
-    const condition = user.twoFactorAuthIsEnabled ? false : true;
     const isCodeValid = this.authService.isTwoFactorAuthCodeValid(
       code,
       user.twoFactorAuthSecret,
@@ -69,9 +68,8 @@ export class AuthController {
     if (!isCodeValid) {
       throw new UnauthorizedException('Wrong authentication code');
     }
-    await this.userService.switchTwoFactorAuth(login, condition);
+    await this.userService.switchTwoFactorAuth(login, !user.twoFactorAuthIsEnabled);
   }
-  @UseGuards(JwtTwoFactorGuard)
   @Post('authenticate')
   async authenticate(@Body('code') code: string, @Body('login') login: string) {
     const user = await this.userService.findUserByLogin(login);

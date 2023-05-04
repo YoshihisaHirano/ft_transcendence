@@ -8,7 +8,7 @@ export default {
     async toggleSwitch2Fa (
 		code: string,
 		login: string,
-	): Promise<void> {
+	): Promise<any> {
 		try {
 			const res = await fetch(new URL('switch', baseUrlWithEndpoint), {
 				headers: {
@@ -21,11 +21,12 @@ export default {
 				await userService.logout();
 				return;
 			}
+			return await res.json();
 		} catch (err) {
 			return;
 		}
 	},
-    async generateQRcode (login: string): Promise<void> {
+    async generateQRcode (login: string): Promise<any> {
         try {
 			const res = await fetch(new URL('generate', baseUrlWithEndpoint), {
 				headers: {
@@ -38,6 +39,7 @@ export default {
 				await userService.logout();
 				return;
 			}
+			return res;
 		} catch (err) {
 			return;
 		}
@@ -45,7 +47,7 @@ export default {
     async verifyCode (
 		code: string,
 		login: string,
-	): Promise<void> {
+	): Promise<any> {
 		try {
 			const res = await fetch(new URL('verify', baseUrlWithEndpoint), {
 				headers: {
@@ -58,8 +60,9 @@ export default {
 				await userService.logout();
 				return;
 			}
+			return await res.json();
 		} catch (err) {
-			return;
+			return err;
 		}
 	},
 }

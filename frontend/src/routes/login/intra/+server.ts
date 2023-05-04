@@ -40,7 +40,7 @@ export async function GET({ url, cookies, fetch }) {
 		}
 	}
 	if (login) {
-		try {
+		// try {
 			const logMe = await fetch(new URL('/2fa/login', VITE_BACKEND_URL), {
 				method: 'POST',
 				body: JSON.stringify({ login }),
@@ -50,26 +50,30 @@ export async function GET({ url, cookies, fetch }) {
 			});
 			// console.log(JSON.stringify({ login }), 'login')
             const logMeJSON = await logMe.json();
-			// console.log(login, logMeJSON);
-			cookies.set('user-token', logMeJSON.token, {
-                path: '/', secure: false
-            });
+			console.log(login, logMeJSON);
 			// console.log(cookies.get('user-token'))
 			const now = new Date();
 			cookies.set('user-login', login, {
 				path: '/', secure: false,
 				expires: new Date(now.getTime() + 10*60000)
 			})
+			if (logMeJSON.auth === '2fa') {
+				throw redirect(302, `/login/2fa/${login}`);
+			}
+			cookies.set('user-token', logMeJSON.token, {
+                path: '/', secure: false
+            });
             if (logMeJSON.id) {
                 cookies.set('user-id', logMeJSON.id, {
                     path: '/', secure: false
                 });
                 userExists = true;
             }
-		} catch (error) {
-			console.error(error);
-            throw redirect(302, '/404');
-		}
+		// }
+		// catch (error) {
+		// 	console.error(error);
+        //     throw redirect(302, '/404');
+		// }
 	}
 	if (userExists) {
         throw redirect(308, '/');
