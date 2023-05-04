@@ -12,6 +12,7 @@ import {
 import { AuthService } from './auth.service';
 import { UserService } from '../user/services/user/user.service';
 import { request } from 'express';
+import JwtTwoFactorGuard from './jwt-2fa-guard';
 
 @Controller('2fa')
 export class AuthController {
@@ -46,19 +47,21 @@ export class AuthController {
       token: token,
     };
   }
+  @UseGuards(JwtTwoFactorGuard)
   @Post('generate')
   async register(@Body('login') login: string, @Res() response: Response) {
     const otpAuthUrl =
       await this.authService.generateTwoFactorAuthenticationSecret(login);
     return this.authService.pipeQrCodeStream(response, otpAuthUrl);
   }
-  @Post('turn-on')
-  async turnOnTwoFactorAuthentication(
+  @UseGuards(JwtTwoFactorGuard)
+  @Post('switch')
+  async switchTwoFactorAuthentication(
     @Body('code') code: string,
     @Body('login') login: string,
-    @Body('condition') condition: boolean
   ) {
     const user = await this.userService.findUserByLogin(login);
+    const condition = user.twoFactorAuthIsEnabled ? false : true;
     const isCodeValid = this.authService.isTwoFactorAuthCodeValid(
       code,
       user.twoFactorAuthSecret,
@@ -68,6 +71,7 @@ export class AuthController {
     }
     await this.userService.switchTwoFactorAuth(login, condition);
   }
+  @UseGuards(JwtTwoFactorGuard)
   @Post('authenticate')
   async authenticate(@Body('code') code: string, @Body('login') login: string) {
     const user = await this.userService.findUserByLogin(login);
