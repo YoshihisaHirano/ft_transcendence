@@ -145,9 +145,9 @@ export class UserService {
     user.twoFactorAuthSecret = secret;
     return this.userRepository.save(user);
   }
-  async turnOnTwoFactorAuth(login: string) {
+  async switchTwoFactorAuth(login: string, condition: boolean) {
     const user = await this.findUserByLogin(login);
-    user.twoFactorAuthIsEnabled = true;
+    user.twoFactorAuthIsEnabled = condition;
     return this.userRepository.save(user);
   }
   async changeUserStatus(userId: string, status: StatusMode) {

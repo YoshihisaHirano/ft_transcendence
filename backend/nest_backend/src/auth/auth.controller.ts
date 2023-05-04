@@ -56,6 +56,7 @@ export class AuthController {
   async turnOnTwoFactorAuthentication(
     @Body('code') code: string,
     @Body('login') login: string,
+    @Body('condition') condition: boolean
   ) {
     const user = await this.userService.findUserByLogin(login);
     const isCodeValid = this.authService.isTwoFactorAuthCodeValid(
@@ -65,7 +66,7 @@ export class AuthController {
     if (!isCodeValid) {
       throw new UnauthorizedException('Wrong authentication code');
     }
-    await this.userService.turnOnTwoFactorAuth(login);
+    await this.userService.switchTwoFactorAuth(login, condition);
   }
   @Post('authenticate')
   async authenticate(@Body('code') code: string, @Body('login') login: string) {
