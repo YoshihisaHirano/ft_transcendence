@@ -1,6 +1,7 @@
 import userService from "$lib/services/userService";
 import { chatState } from "$lib/store/chatState";
 import type { Chat } from "$lib/types/types";
+import { DEFAULT_FIELD_WIDTH } from "./constants";
 
 export function userBanned(id: string, chatId: string) {
     if (chatId) {
@@ -12,7 +13,7 @@ export function userBanned(id: string, chatId: string) {
         if (chatIdx < 0) {
             return false;
         }
-        if (chats[chatIdx].banList.includes(id)) {
+        if (chats[chatIdx].banList.find((user) => user.id === id)) {
             return true;
         }
     }
@@ -32,6 +33,10 @@ export async function userBlocked(userId: string, chat: Chat) {
         return false;
     }
 
-    console.log(chatMate);
+    // console.log(chatMate);
     return chatMate.blacklist.includes(userId);
+}
+
+export function findScaleCoefficient(canvasWidth: number) {
+    return canvasWidth / DEFAULT_FIELD_WIDTH;
 }
