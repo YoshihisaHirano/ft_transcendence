@@ -6,7 +6,7 @@ export const load: PageServerLoad = async ({ cookies }) => {
 	const userToken = cookies.get('user-token');
 	const userId = cookies.get('user-id');
 	const login = cookies.get('user-login');
-	// console.log(userToken, userId, login);
+	// //(console.log)(userToken, userId, login);
 	if (!userToken) {
 		return {
 			userId: null,

@@ -33,7 +33,7 @@ export async function userBlocked(userId: string, chat: Chat) {
         return false;
     }
 
-    // console.log(chatMate);
+    // //(console.log)(chatMate);
     return chatMate.blacklist.includes(userId);
 }
 

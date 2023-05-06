@@ -17,7 +17,7 @@
 	let canvasHeight: number = 0;
 
 	let currentGameMode = gameModes[$gameBeingShown?.gameMode || 'default'];
-    // console.log($gameBeingShown);
+    // //(console.log)($gameBeingShown);
 	const { paddleLength, ballRadius, bgCol, ballSpeed } = currentGameMode;
 	const sketch: Sketch = (p5) => {
 		let ball: Ball;
@@ -49,6 +49,8 @@
 			);
 
 			gameIo.on('endOfGame', () => {
+                p5.textAlign('center');
+                p5.text('GAME OVER', 0, 0);
 				p5.noLoop();
 			});
 
@@ -99,6 +101,7 @@
 					xspeed * scaleCoefficient,
 					yspeed * scaleCoefficient
 				);
+				// //(console.log)(data, scoresSet);
                 if (!scoresSet && score1Div && score2Div) {
                     scoresSet = true;
                     scores.score1 = data.score1;

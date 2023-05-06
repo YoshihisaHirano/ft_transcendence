@@ -24,13 +24,13 @@
 
 	async function submitCode() {
 		let res: any;
-		console.log(action);
+		//(console.log)(action);
 		if (action !== 'login') {
 			res = await authService.toggleSwitch2Fa(inputValue, login);
 		} else {
 			res = await authService.verifyCode(inputValue, login);
 		}
-		// console.log(res);
+		// //(console.log)(res);
 		if (res && 'error' in res) {
 			errMsg = res.message;
 		} else {

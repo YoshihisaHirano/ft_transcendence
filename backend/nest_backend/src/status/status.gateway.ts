@@ -16,7 +16,7 @@ import { GameSettings } from "src/game/types/GameSettings";
 	namespace: '/status',
 	cors: {
 	  credentials: true,
-	  origin: 'http://localhost:5501',
+	  origin: 'http://192.168.10.11:5176',
 	  methods: ['GET', 'POST'],
 	  transports: ['websocket'],
 	},
@@ -70,8 +70,8 @@ export class StatusGateway implements OnGatewayDisconnect {
 					hostSocket.emit("canStartGame", data);
 					client.emit("canStartGame", data); // TODO add player names 
 				} catch (error) {
-					console.log("can't find user's names in db.");
-					console.log(error);
+					//(console.log)("can't find user's names in db.");
+					//(console.log)(error);
 				}
 
 			} else { // host disconnect 
@@ -128,8 +128,8 @@ export class StatusGateway implements OnGatewayDisconnect {
 				player.emit("canStartGame", gameCanStartData);
 				this.statusService.removeInvite(data.gameId); // no need but still
 			} catch (error) {
-				console.log("can't find user's names in db.");
-				console.log(error);
+				//(console.log)("can't find user's names in db.");
+				//(console.log)(error);
 			}
 
 		} else {
@@ -170,11 +170,11 @@ export class StatusGateway implements OnGatewayDisconnect {
 					gameArr.push({...curData});
 				}
 			} catch (e) {
-				console.log(e);
+				//(console.log)(e);
 			}
 			
 		}
-		console.log(gameArr);
+		// //(console.log)(gameArr);
 		if (gameArr.length > 0) {
 			this.server.emit("updateGameList", gameArr);
 		}

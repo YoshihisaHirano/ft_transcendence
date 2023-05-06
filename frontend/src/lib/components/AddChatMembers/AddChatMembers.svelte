@@ -11,7 +11,7 @@
 		newChat: boolean = false;
 
 	export let newMembers = [] as string[];
-	// $: console.log(newMembers, chatId);
+	// $: //(console.log)(newMembers, chatId);
 
 	function addMembers(e: Event) {
 		e.preventDefault();

@@ -69,7 +69,7 @@ export default {
 					method: "POST",
 					body: JSON.stringify({ userId, friendId, methodEndpoint })
 				});
-				// console.log(res);
+				// //(console.log)(res);
 				if (res.status === 401) {
 					await this.logout();
 					return;
@@ -94,7 +94,7 @@ export default {
 				method: 'POST',
 				body: JSON.stringify({ userId, blackId, method })
 			});
-			// console.log(res);
+			// //(console.log)(res);
 			if (res.status === 401) {
 				await this.logout();
 				return;
@@ -124,7 +124,7 @@ export default {
 				method: 'POST',
 				body: JSON.stringify({ chatId, userId })
 			});
-			// console.log(res);
+			// //(console.log)(res);
 			if (res.status === 401) {
 				await this.logout();
 				return;

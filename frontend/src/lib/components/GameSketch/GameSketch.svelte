@@ -62,7 +62,7 @@
 			}
 
 			gameIo.on('scoreUpdate', (data) => {
-				// console.log(data);
+				// //(console.log)(data);
 				if (score1Div && score2Div) {
 					scores.score1 = data.scores.score1;
 					scores.score2 = data.scores.score2;
@@ -182,7 +182,7 @@
 
 				if (scores.score1 > 5 || scores.score2 > 5) {
 					p5.noLoop();
-					// console.log('game finished', scores);
+					// //(console.log)('game finished', scores);
 					if ($gameStats) {
 						gameStats.update((val) => {
 							if (val)

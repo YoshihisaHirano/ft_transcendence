@@ -10,7 +10,7 @@ import { GameService } from "./game.service";
 	namespace: '/game',
 	cors: {
 	  credentials: true,
-	  origin: 'http://localhost:5176',
+	  origin: 'http://192.168.10.11:5176',
 	  methods: ['GET', 'POST'],
 	  transports: ['websocket'],
 	},
@@ -45,7 +45,7 @@ export class GameGateway implements OnGatewayDisconnect {
 	@SubscribeMessage("playerJoinGame")
 	async handleJoinGame(client: Socket, data: GameInvite) { // hostId, playerId
 		const joinRes =  await this.gameService.playerJoinGame(data);
-		console.log(data, client.id, joinRes);
+		//(console.log)(data, client.id, joinRes);
 		 if (joinRes) {
 			this.gameService.addUser(data.playerId, client.id);
 			client.join(data.gameId);
@@ -84,8 +84,8 @@ export class GameGateway implements OnGatewayDisconnect {
 				if (gameId) {
 					this.server.to(gameId).emit("endOfGame", null);
 				}
-				this.gameService.deleteGame(gameId);
 			}
+			this.gameService.deleteGame(gameId);
 		} else { // left spectator
 			// nothing
 		}

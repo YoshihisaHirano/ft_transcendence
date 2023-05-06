@@ -13,7 +13,7 @@ export async function GET({ url, cookies, fetch }) {
 	const code = url.searchParams.get('code');
 	let login = '';
     let userExists = false;
-	//console.log(code);
+	////(console.log)(code);
 	if (code) {
 		try {
 			const tokenRequestUrl = new URL(GET_TOKEN_URL);
@@ -21,19 +21,19 @@ export async function GET({ url, cookies, fetch }) {
 			tokenRequestUrl.searchParams.append('code', code);
 			tokenRequestUrl.searchParams.append('client_id', CLIENT_UID);
 			tokenRequestUrl.searchParams.append('client_secret', CLIENT_SECRET);
-			tokenRequestUrl.searchParams.append('redirect_uri', 'http://localhost:5176/login/intra');
+			tokenRequestUrl.searchParams.append('redirect_uri', 'http://192.168.10.11:5176/login/intra');
 			const res = await fetch(tokenRequestUrl, {
 				method: 'POST'
 			});
 			const json = await res.json();
-			// console.log(json);
+			// //(console.log)(json);
 			const me = await fetch(GET_LOGIN_URL, {
 				headers: {
 					Authorization: `Bearer ${json.access_token}`
 				}
 			});
 			const meJson = await me.json();
-			//console.log(meJson.login);
+			////(console.log)(meJson.login);
 			login = meJson.login;
 		} catch (err) {
 			throw redirect(302, '/404');
@@ -50,10 +50,10 @@ export async function GET({ url, cookies, fetch }) {
 					...addContentType()
 				}
 			});
-			// console.log(JSON.stringify({ login }), 'login')
+			// //(console.log)(JSON.stringify({ login }), 'login')
             const logMeJSON = await logMe.json();
-			console.log(login, logMeJSON);
-			// console.log(cookies.get('user-token'))
+			//(console.log)(login, logMeJSON);
+			// //(console.log)(cookies.get('user-token'))
 			const now = new Date();
 			cookies.set('user-login', login, {
 				path: '/', secure: false,

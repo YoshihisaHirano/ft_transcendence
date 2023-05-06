@@ -17,7 +17,7 @@
 		e.preventDefault();
 		const chatId = $page.params.slug;
 		const isPasswordCoorrect = await chatService.checkChatPassword(password, chatId);
-		// console.log(isPasswordCoorrect);
+		// //(console.log)(isPasswordCoorrect);
 		password = '';
 		if (!isPasswordCoorrect) {
 			error = 'Wrong password!';

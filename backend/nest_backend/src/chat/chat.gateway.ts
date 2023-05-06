@@ -16,7 +16,7 @@ import { MuteService } from './services/mute.service';
 	namespace: '/chat',
 	cors: {
 		credentials: true,
-		origin: "http://localhost:5176",
+		origin: "http://192.168.10.11:5176",
 		methods: ['GET', 'POST'],
 	  	transports: ['websocket'],
 	}
@@ -46,20 +46,20 @@ export class ChatGateway {
 
 	// @SubscribeMessage('newChat') 
 	// async handleNewChat(client: Socket, newChatData: CreateChatDto) {
-	// 	console.log(newChatData);
+	// 	//(console.log)(newChatData);
 	// 	try {
 	// 		const chat = await this.chatService.createChat(newChatData);
 	// 		client.emit('newChatCreateStatus', chat);
 	// 	} catch (e)
 	// 	{
-	// 		console.log(e);
+	// 		//(console.log)(e);
 	// 		client.emit('newChatCreateStatus', null);
 	// 	}
 	// }
 
 	@SubscribeMessage('joinChat')
 	async handleJoinRoom(client: Socket, data: UserChangeChatStatus) {
-		// console.log(data.chatId);
+		// //(console.log)(data.chatId);
 		if (this.chatService.isUserChatMember(data.chatId, data.userId) ) {
 			this.users.set(data.userId, client.id);
 			const messages = await this.messageService.findChatMessages(data.chatId);
@@ -78,7 +78,7 @@ export class ChatGateway {
 		client.emit('leaveChatStatus', data.chatId);
 		this.updateChat(data.chatId);
 	} catch (e) {
-		console.log(e);
+		//(console.log)(e);
 		client.emit('leaveChatStatus', null);
 	}
   }
@@ -111,7 +111,7 @@ export class ChatGateway {
 		}
 		this.updateChat(data.chatId);
 	} catch (e) {
-		console.log(e);
+		//(console.log)(e);
 	}
   }
   
@@ -129,7 +129,7 @@ export class ChatGateway {
 		}
 		this.updateChat(data.chatId);
 	} catch (e) {
-		console.log(e);
+		//(console.log)(e);
 	}
   }
 
@@ -140,7 +140,7 @@ export class ChatGateway {
 		await this.muteService.addToMuteList(data.userId, data.chatId);
 		this.updateChat(data.chatId);
 	} catch (e) {
-		console.log(e);
+		//(console.log)(e);
 	}
   }
 }

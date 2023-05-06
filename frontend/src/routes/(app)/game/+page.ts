@@ -22,7 +22,7 @@ export async function load() {
     //     currentGameStatus = val;
     // })
 
-    // console.log(gameId, currentGameStatus, currAppState.user);
+    // //(console.log)(gameId, currentGameStatus, currAppState.user);
 
     // if (currAppState.user && !gameId) {
     //     if (!currentGameStatus) {

@@ -29,7 +29,7 @@
 	onMount(() => {
 		chatIo.on('newMessage', (data) => {
 			const chatId = reactiveChat?.chatId;
-			// console.log(data);
+			// //(console.log)(data);
 			if (chatId) {
 				messagesState.update((val) => {
 					const chatMsg = val[chatId].slice();
@@ -82,7 +82,7 @@
 	function sendMessage() {
 		const user = $appState.user;
 		if (messageText && reactiveChat?.chatId && user) {
-			// console.log('send msg', reactiveChat.chatname);
+			// //(console.log)('send msg', reactiveChat.chatname);
 			const newMessage: Message = {
 				chatId: reactiveChat.chatId,
 				authorUsername: user.username,

@@ -95,7 +95,7 @@ export class GameService {
 
 	async playerJoinGame(data: GameInvite) : Promise<boolean> {
 		let count = 0;
-		console.log("join game:", data, this.games);
+		//(console.log)("join game:", data, this.games);
 		while (this.games.has(data.gameId) == false && count < 5) {
 			await this.sleep(100);
 			count++;

@@ -6,7 +6,7 @@ export async function GET({ cookies, params }) {
     const userId = cookies.get('user-id') as string;
     
     const chat = await chatService.getChatById(id);
-    // console.log(chat, id);
+    // //(console.log)(chat, id);
     if (!chat || chat.banList.includes(userId)) {
         throw redirect(303, '/404');
     }
