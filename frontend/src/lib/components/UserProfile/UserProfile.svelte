@@ -63,14 +63,11 @@
 	function toggle2FaModal() {
 		twoFactorModalOpen = !twoFactorModalOpen;
 	}
+	
+	$: twoFactorAuthAction = $appState.user?.twoFactorAuthIsEnabled ? 'disable' : 'enable'
 
 	function handle2Fa() {
-		if (twoFactorAuthIsEnabled) {
-			twoFactorAuthIsEnabled = false;
-		} else {
-			twoFactorAuthIsEnabled = true;
-			twoFactorModalOpen = true;
-		}
+		twoFactorModalOpen = true;
 	}
 
 	async function befriend() {
@@ -196,7 +193,7 @@
 </div>
 
 {#if twoFactorModalOpen}
-	<TwoFactorAuthModal action={twoFactorAuthIsEnabled ? 'enable' : 'disable'} {login} onClose={toggle2FaModal}/>
+	<TwoFactorAuthModal action={twoFactorAuthAction} {login} onClose={toggle2FaModal}/>
 {/if}
 
 <style>
