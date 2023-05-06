@@ -16,7 +16,7 @@
 		});
 
 		//mocking
-		availableGames.set(gamesToWatch);
+		//availableGames.set(gamesToWatch);
 
 		return () => {
 			statusIo.off('updateGameList');
