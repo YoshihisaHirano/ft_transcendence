@@ -67,8 +67,11 @@ export class StatusGateway implements OnGatewayDisconnect {
 						hostName: hostName,
 						playerName: playerName,
 					}
+					console.log("start sending canStartGame");
 					hostSocket.emit("canStartGame", data);
 					client.emit("canStartGame", data); // TODO add player names 
+					console.log("end sending canStartGame");
+					return ;
 				} catch (error) {
 					//(console.log)("can't find user's names in db.");
 					//(console.log)(error);
@@ -82,6 +85,7 @@ export class StatusGateway implements OnGatewayDisconnect {
 			this.statusService.addPlayerMM(clientData.userId, clientData.mode);
 			client.emit("waitInQueue", null); // ?
 		}
+		console.log("don't send canStartGame")
 	}
 
 	@SubscribeMessage("inviteUser") // from host
@@ -175,8 +179,6 @@ export class StatusGateway implements OnGatewayDisconnect {
 			
 		}
 		// //(console.log)(gameArr);
-		if (gameArr.length > 0) {
-			this.server.emit("updateGameList", gameArr);
-		}
+		this.server.emit("updateGameList", gameArr);
 	}
 }

@@ -56,18 +56,18 @@ export async function GET({ url, cookies, fetch }) {
 			// //(console.log)(cookies.get('user-token'))
 			const now = new Date();
 			cookies.set('user-login', login, {
-				path: '/', secure: false,
+				path: '/', secure: false, httpOnly: true,
 				expires: new Date(now.getTime() + 10*60000)
 			})
 			if (logMeJSON.auth === '2fa') {
 				throw redirect(302, `/login/2fa/${login}`);
 			}
 			cookies.set('user-token', logMeJSON.token, {
-                path: '/', secure: false
+                path: '/', secure: false, httpOnly: true
             });
             if (logMeJSON.id) {
                 cookies.set('user-id', logMeJSON.id, {
-                    path: '/', secure: false
+                    path: '/', secure: false, httpOnly: true
                 });
                 userExists = true;
             }

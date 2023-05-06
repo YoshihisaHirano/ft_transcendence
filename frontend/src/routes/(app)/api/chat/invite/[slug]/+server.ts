@@ -4,10 +4,9 @@ import { redirect } from '@sveltejs/kit';
 export async function GET({ cookies, params }) {
     const id = params.slug;
     const userId = cookies.get('user-id') as string;
-    
     const chat = await chatService.getChatById(id);
-    // //(console.log)(chat, id);
-    if (!chat || chat.banList.includes(userId)) {
+    console.log(chat, id);
+    if (!chat || chat.banList.find((user) => user.id === id)) {
         throw redirect(303, '/404');
     }
     if (chat.privacyMode === 'protected') {

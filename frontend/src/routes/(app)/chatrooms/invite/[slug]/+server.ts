@@ -5,7 +5,9 @@ import { redirect } from '@sveltejs/kit';
 export async function GET({ cookies, params }) {
     const id = params.slug;
     const userId = cookies.get('user-id') as string;
-    
+    cookies.set('user-id', userId || '', {
+		path: '/', secure: false, httpOnly: true
+	});
     const chat = await chatService.getChatById(id);
     //(console.log)(chat, id);
     if (!chat) {

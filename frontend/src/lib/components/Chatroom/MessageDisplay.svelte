@@ -4,11 +4,13 @@
 	import { messagesState } from '$lib/store/messagesState';
 	import { selectedChatId } from '$lib/store/chatState';
 	import { chatIo } from '$lib/sockets/chatSocket';
+	import { appState } from '$lib/store/appState';
 
 	export let isBlocked = false;
 	$: messages = ($selectedChatId ? $messagesState[$selectedChatId] : []) || [];
 	let windowDiv: HTMLDivElement, autoscroll: boolean;
 	$: popupMsg = isBlocked ? 'You cannot send messages to this chat' : '';
+	$: blacklist = $appState.user?.blacklist || [];
 
 	beforeUpdate(() => {
 		autoscroll =
@@ -34,7 +36,10 @@
 <div class="messages-container simple-shadow" bind:this={windowDiv}>
 	{#if messages.length}
 		{#each messages as message}
+		{@const blockMsg = blacklist.includes(message.authorId)}
+		{#if !blockMsg}
 			<ChatMessage {message} />
+		{/if}
 		{/each}
 	{:else}
 		<p>nothing to display...</p>

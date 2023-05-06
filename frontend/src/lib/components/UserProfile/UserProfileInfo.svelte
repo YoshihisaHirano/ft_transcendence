@@ -109,7 +109,7 @@
 			<p>2FA {twoFactorAuthIsEnabled ? 'enabled' : 'disabled'}</p>
 		</button>
 	{/if}
-	{#if !isCurrentUser}
+	{#if !isCurrentUser && !isInBlacklist}
 		{#if isFriend}
 			<Button className="friendship-btn" variant="danger" onClick={unfriend}>Unfriend</Button>
 		{:else}
@@ -119,11 +119,11 @@
 	{#if !isCurrentUser}
 		{#if isInBlacklist}
 			<Button className="blacklist-btn" variant="success" onClick={deleteFromBlacklist}
-				>Delete from blacklist</Button
+				>Unblock</Button
 			>
 		{:else}
 			<Button className="blacklist-btn" variant="danger" onClick={addToBlacklist}
-				>Add to blacklist</Button
+				>Block</Button
 			>
 		{/if}
 	{/if}
@@ -148,5 +148,9 @@
 		display: flex;
 		flex-direction: column;
 		align-items: center;
+	}
+
+	:global(.blacklist-btn) {
+		margin-top: 1rem;
 	}
 </style>

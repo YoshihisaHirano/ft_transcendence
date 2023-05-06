@@ -201,6 +201,7 @@
 					scores.score1 = 0;
 					scores.score2 = 0;
 					$gameMode = $appState.user?.gameMode || $gameMode;
+					p5.remove();
 					gameStatus.set('finished');
 				}
 			}

@@ -11,7 +11,7 @@
 		if (!$currentGameId || !$gameStats) {
 			return;
 		}
-		if ( $isGameHost) {
+		if ($isGameHost) {
 			gameIo.emit('createGame', {
 				gameId: $currentGameId,
 				playerId: $gameStats.userTwoId

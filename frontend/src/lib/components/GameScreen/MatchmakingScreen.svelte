@@ -9,6 +9,7 @@
 
 	onMount(() => {
 		statusIo.emit('matchMakingGame', { userId: $currentGameId, mode: $gameMode });
+		console.log('matchmaking sent')
 	});
 </script>
 
