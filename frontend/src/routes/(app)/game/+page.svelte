@@ -3,7 +3,7 @@
 	import GameScreen from '$lib/components/GameScreen/GameScreen.svelte';
 	import Tournament from '$lib/components/Tournament/Tournament.svelte';
 	import { currentGameId, gameStats, gameStatus, isGameHost } from '$lib/store/gameState';
-	import { onMount } from 'svelte';
+	import { onMount, onDestroy } from 'svelte';
 	import type { PageData } from './$types';
 	import { gameIo } from '$lib/sockets/gameSocket';
 	import { appState } from '$lib/store/appState';
@@ -32,6 +32,13 @@
 			currentGameId.set(userId);
 		}
 	});
+
+	onDestroy(() => {
+		const canvases = document.querySelectorAll('.p5Canvas');
+		Array.from(canvases).forEach((canvas) => {
+			canvas.remove();
+		});
+	});
 	// $: console.log($gameStatus);
 </script>
 
@@ -47,6 +54,7 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: flex-start;
+		position: relative;
 	}
 
 	@media screen and (max-width: 900px) {

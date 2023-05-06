@@ -12,29 +12,31 @@
 	$: imageSrc = '';
 	let inputValue: string;
 	$: errMsg = '';
-    const modalTitle = action == 'login' ? 'Login using' : action;
+	const modalTitle = action == 'login' ? 'Login using' : action;
 
 	onMount(async () => {
-		const res = await authService.generateQRcode(login);
-		const blob = await res.blob();
-		imageSrc = URL.createObjectURL(blob);
+		if (action === 'enable') {
+			const res = await authService.generateQRcode(login);
+			const blob = await res.blob();
+			imageSrc = URL.createObjectURL(blob);
+		}
 	});
 
 	async function submitCode() {
 		let res: any;
-        console.log(action);
+		console.log(action);
 		if (action !== 'login') {
 			res = await authService.toggleSwitch2Fa(inputValue, login);
 		} else {
 			res = await authService.verifyCode(inputValue, login);
 		}
-        // console.log(res);
+		// console.log(res);
 		if (res && 'error' in res) {
 			errMsg = res.message;
 		} else {
 			errMsg = '';
 			if (action === 'login') {
-                saveToStorage('userId', res.id);
+				saveToStorage('userId', res.id);
 				goto('/');
 			} else {
 				appState.update((val) => {
@@ -52,12 +54,24 @@
 	}
 </script>
 
-<Modal showCloseBtn={action !== 'login'} {onClose} title={errMsg || `${modalTitle} two factor authentication`}>
+<Modal
+	showCloseBtn={action !== 'login'}
+	{onClose}
+	title={errMsg || `${modalTitle} two factor authentication`}
+>
 	<div class="modal-container" class:error={errMsg}>
-		<div class="image-frame">
-			<img src={imageSrc} alt="" />
-		</div>
-		<p>Please scan the QR code with your authentication app and insert the digits from it below.</p>
+		{#if action === 'enable'}
+			<div class="image-frame">
+				<img src={imageSrc} alt="" />
+			</div>
+		{/if}
+		<p>
+			{#if action === 'enable'}
+				Please scan the QR code with your authentication app and insert the digits from it below.
+			{:else}
+				Please enter the digits from your authentication app.
+			{/if}
+		</p>
 		<label for="2fa-code-input">
 			<input bind:value={inputValue} type="text" id="2fa-code-input" />
 		</label>

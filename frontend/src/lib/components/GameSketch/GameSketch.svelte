@@ -6,17 +6,14 @@
 	import { currentGameId, gameStats, gameStatus, isGameHost, gameMode } from '$lib/store/gameState';
 	import { gameIo } from '$lib/sockets/gameSocket';
 	import type { BallPosition } from '$lib/types/types';
-	import { DEFAULT_FIELD_WIDTH, gameModes } from '$lib/utils/constants';
+	import { gameModes } from '$lib/utils/constants';
 	import { appState } from '$lib/store/appState';
+	import { findScaleCoefficient } from '$lib/utils/utils';
 
 	let scores = {
 		score1: 0,
 		score2: 0
 	};
-
-	function findScaleCoefficient(canvasWidth: number) {
-		return canvasWidth / DEFAULT_FIELD_WIDTH;
-	}
 
 	let canvasWidth: number = 0;
 	let canvasHeight: number = 0;
@@ -36,10 +33,10 @@
 		p5.setup = () => {
 			canvasWidth = Math.min(p5.windowWidth * 0.8, 800);
 			canvasHeight = canvasWidth / 2;
-			p5.createCanvas(canvasWidth, canvasHeight);
+			const canvas = p5.createCanvas(canvasWidth, canvasHeight);
+			canvas.id('gameCanvas');
 			const scaleCoefficient = findScaleCoefficient(canvasWidth);
 
-			// p5.frameRate(40);
 			ball = new Ball(p5, scaleCoefficient, ballRadius, ballSpeed);
 			left = new Paddle(p5,paddleLength, true, scaleCoefficient);
 			right = new Paddle(p5, paddleLength, false, scaleCoefficient);
@@ -180,12 +177,12 @@
 				};
 				gameIo.emit('ballPositionUpdate', {
 					gameId: $currentGameId,
-					ballPos
+					ballPos:{...ballPos, score1: scores.score1, score2: scores.score2}
 				});
 
 				if (scores.score1 > 5 || scores.score2 > 5) {
 					p5.noLoop();
-					console.log('game finished', scores);
+					// console.log('game finished', scores);
 					if ($gameStats) {
 						gameStats.update((val) => {
 							if (val)
