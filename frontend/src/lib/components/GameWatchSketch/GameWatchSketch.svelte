@@ -7,6 +7,7 @@
 	import { findScaleCoefficient } from '$lib/utils/utils';
 	import P5 from 'p5-svelte';
 	import type { Sketch } from 'p5-svelte';
+	import Link from '../Link/Link.svelte';
 
 	let scores = {
 		score1: 0,
@@ -17,7 +18,7 @@
 	let canvasHeight: number = 0;
 
 	let currentGameMode = gameModes[$gameBeingShown?.gameMode || 'default'];
-    
+
 	const { paddleLength, ballRadius, bgCol, ballSpeed } = currentGameMode;
 	const sketch: Sketch = (p5) => {
 		let ball: Ball;
@@ -32,9 +33,8 @@
 			canvasWidth = Math.min(p5.windowWidth * 0.8, 800);
 			canvasHeight = canvasWidth / 2;
 			const canvas = p5.createCanvas(canvasWidth, canvasHeight);
-            canvas.id('gameWatchCanvas');
+			canvas.id('gameWatchCanvas');
 			const scaleCoefficient = findScaleCoefficient(canvasWidth);
-            let scoresSet = false;
 
 			ball = new Ball(p5, scaleCoefficient, ballRadius, ballSpeed);
 			left = new Paddle(p5, paddleLength, true, scaleCoefficient);
@@ -50,8 +50,8 @@
 
 			gameIo.on('endOfGame', () => {
 				p5.fill(255, 255, 255);
-                p5.textAlign('center');
-                p5.text('GAME OVER', 0, 0);
+				p5.textAlign('center');
+				p5.text('GAME OVER', 0, 0);
 				p5.noLoop();
 			});
 
@@ -102,14 +102,14 @@
 					xspeed * scaleCoefficient,
 					yspeed * scaleCoefficient
 				);
-				
-                // if (!scoresSet && score1Div && score2Div) {
-                //     scoresSet = true;
-                //     scores.score1 = data.score1;
+
+				// if (!scoresSet && score1Div && score2Div) {
+				//     scoresSet = true;
+				//     scores.score1 = data.score1;
 				// 	scores.score2 = data.score2;
 				// 	score1Div.innerHTML = scores.score1.toString();
 				// 	score2Div.innerHTML = scores.score2.toString();
-                // }
+				// }
 				showFrame();
 			});
 		};
@@ -119,3 +119,19 @@
 </script>
 
 <P5 {sketch} />
+<div class="game-over">
+	<p>
+		GAME OVER
+		<span>{$gameBeingShown?.hostName}</span>
+		VS
+		<span>{$gameBeingShown?.playerName}</span>
+	</p>
+	<Link target="/" internal>Back to home</Link>
+</div>
+
+<style>
+	.game-over {
+		text-align: center;
+		width: fit-content;
+	}
+</style>
