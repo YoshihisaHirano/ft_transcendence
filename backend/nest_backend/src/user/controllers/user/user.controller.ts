@@ -136,4 +136,8 @@ export class UserController {
   ) {
     return this.userService.changeGameMode(userId, mode);
   }
+  @Get('login/:userId')
+  getLoginById(@Param('userId') userId: string) {
+    return this.userService.findUserIdByLogin(userId);
+  }
 }
