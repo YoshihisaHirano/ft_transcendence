@@ -47,7 +47,7 @@ export class AuthController {
       token: token,
     };
   }
-  //@UseGuards(JwtTwoFactorGuard)
+  // @UseGuards(JwtTwoFactorGuard)
   @Post('generate')
   async register(@Body('login') login: string, @Res() response: Response) {
     const otpAuthUrl =

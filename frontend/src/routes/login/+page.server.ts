@@ -1,5 +1,4 @@
 /** @type {import('./$types').PageLoad} */
-import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { REDIRECT_URL } from '$env/static/private';
 

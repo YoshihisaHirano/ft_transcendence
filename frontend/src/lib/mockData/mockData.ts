@@ -1,4 +1,4 @@
-import type { Chat, GameStats, Message, User } from '$lib/types/types';
+import type { Chat, GameData, GameStats, Message, User } from '$lib/types/types';
 
 export const matchHistory: GameStats[] = [
 	{
@@ -164,3 +164,27 @@ export const newDMChat: Chat = {
 	isDirect: false,
 	muteList: []
 }
+
+export const gamesToWatch: GameData[] = [
+	{
+		gameMode: 'easy',
+		gameId: 'aaaaa',
+		hostName: 'cool guy',
+		playerId: 'bbbbbb',
+		playerName: 'lame guy'
+	},
+	{
+		gameMode: 'hard',
+		gameId: 'aaaaa',
+		hostName: 'cool guy',
+		playerId: 'bbbbbb',
+		playerName: 'lame guy'
+	},
+	{
+		gameMode: 'default',
+		gameId: 'aaaaa',
+		hostName: 'cool guy',
+		playerId: 'bbbbbb',
+		playerName: 'lame guy'
+	}
+]

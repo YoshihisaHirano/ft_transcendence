@@ -6,7 +6,7 @@ export interface AppState {
 
 export type GameStatus = 'matchmaking' | 'waiting' | 'in progress' | 'finished' | 'failed';
 export type UserStatus = 'online' | 'offline' | 'game';
-export type UserAchievement = 'none' | 'beginner' | 'experienced' | 'master'
+export type UserAchievement = 'none' | 'beginner' | 'experienced' | 'master';
 
 export interface GameStats {
 	userOneId: string;
@@ -124,3 +124,10 @@ export interface GameInvite {
 	mode: GameMode;
 }
 
+export interface GameData {
+	gameId: string;
+	playerId: string;
+	hostName: string;
+	playerName: string;
+	gameMode: GameMode;
+}
