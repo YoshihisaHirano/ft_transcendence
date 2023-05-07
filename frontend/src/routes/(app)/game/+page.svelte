@@ -7,8 +7,8 @@
 	import type { PageData } from './$types';
 	import { gameIo } from '$lib/sockets/gameSocket';
 	import { appState } from '$lib/store/appState';
+	import { tournamentState } from '$lib/store/tournamentState';
 
-	export let data: PageData;
 	onMount(() => {
 		if (!gameIo.connected) {
 			gameIo.connect();
@@ -46,7 +46,7 @@
 	{#if $currentGameId}
 		<GameScreen />
 	{/if}
-	<Tournament tournament={data.tournament} />
+	<Tournament tournament={$tournamentState} />
 </div>
 
 <style>

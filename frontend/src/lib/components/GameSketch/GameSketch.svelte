@@ -35,7 +35,6 @@
 			canvasHeight = canvasWidth / 2;
 			const canvas = p5.createCanvas(canvasWidth, canvasHeight);
 			canvas.id('gameCanvas');
-			console.log(canvasWidth, canvasHeight, p5.width, p5.height);
 			const scaleCoefficient = findScaleCoefficient(canvasWidth);
 
 			ball = new Ball(p5, scaleCoefficient, ballRadius, ballSpeed);
@@ -63,7 +62,6 @@
 			}
 
 			gameIo.on('scoreUpdate', (data) => {
-				
 				if (score1Div && score2Div) {
 					scores.score1 = data.scores.score1;
 					scores.score2 = data.scores.score2;
@@ -178,7 +176,9 @@
 				};
 				gameIo.emit('ballPositionUpdate', {
 					gameId: $currentGameId,
-					ballPos:{...ballPos, score1: scores.score1, score2: scores.score2}
+					ballPos:{...ballPos,
+						// score1: scores.score1, score2: scores.score2
+					}
 				});
 
 				if (scores.score1 > 5 || scores.score2 > 5) {

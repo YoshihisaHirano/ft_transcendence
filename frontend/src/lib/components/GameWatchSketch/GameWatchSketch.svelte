@@ -103,13 +103,13 @@
 					yspeed * scaleCoefficient
 				);
 				
-                if (!scoresSet && score1Div && score2Div) {
-                    scoresSet = true;
-                    scores.score1 = data.score1;
-					scores.score2 = data.score2;
-					score1Div.innerHTML = scores.score1.toString();
-					score2Div.innerHTML = scores.score2.toString();
-                }
+                // if (!scoresSet && score1Div && score2Div) {
+                //     scoresSet = true;
+                //     scores.score1 = data.score1;
+				// 	scores.score2 = data.score2;
+				// 	score1Div.innerHTML = scores.score1.toString();
+				// 	score2Div.innerHTML = scores.score2.toString();
+                // }
 				showFrame();
 			});
 		};

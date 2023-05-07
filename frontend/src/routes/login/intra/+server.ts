@@ -39,7 +39,7 @@ export async function GET({ url, cookies, fetch }) {
 		}
 	}
 	// for testing stuff
-	login = 'momo';
+	// login = 'momo';
 	if (login) {
 		// try {
 			const logMe = await fetch(new URL('/2fa/login', VITE_BACKEND_URL), {

@@ -41,25 +41,26 @@
 			}
 		});
 
-		statusIo.on('canStartGame', ({ gameId, playerId, mode }: GameInvite) => {
+		statusIo.on('canStartGame', (data) => {
 			if ($appState?.user) {
-				
-				const meHost = $appState.user.id === gameId;
-				gameMode.set(mode);
+				// console.log(data);
+				const meHost = $appState.user.id === data.gameId;
+				gameMode.set(data.mode);
 				isGameHost.set(meHost);
-				currentGameId.set(gameId);
+				currentGameId.set(data.gameId);
 				gameStatus.set('waiting');
 				const resetGameStats = {
-					userOneId: gameId,
-					userOneName: meHost ? $appState.user.username : secondPlayerName,
+					userOneId: data.gameId,
+					userOneName: meHost ? data.hostName : data.playerName,
 					userOneScore: 0,
-					userTwoId: playerId,
-					userTwoName: !meHost ? $appState.user.username : secondPlayerName,
+					userTwoId: data.playerId,
+					userTwoName: !meHost ? data.hostName: data.playerName,
 					userTwoScore: 0
 				}
 				gameStats.set(resetGameStats);
-				
-				goto('/game');
+				if (!$page.url.pathname.includes('game')) {
+					goto('/game');
+				}
 			}
 		});
 

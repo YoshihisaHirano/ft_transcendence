@@ -17,6 +17,7 @@
 
 		gameIo.on('endOfGame', () => {
 			$gameStatus = 'failed';
+			console.log('received end of game');
 		})
 
 		gameIo.on('finishGame', () => {

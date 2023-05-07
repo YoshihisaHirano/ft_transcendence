@@ -39,6 +39,7 @@ export class GameGateway implements OnGatewayDisconnect {
 	handleNewGame(client: Socket, data: GameInvite) {
 		this.gameService.addUser(data.gameId, client.id);
 		this.gameService.createGame(data);
+		console.log("createGame", data);
 		client.join(data.gameId);
 	}
 

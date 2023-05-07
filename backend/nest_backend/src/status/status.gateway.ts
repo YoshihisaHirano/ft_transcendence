@@ -10,6 +10,7 @@ import { GameDataFull } from "./types/GameData";
 import { Subscription } from "rxjs";
 import { UserService } from "src/user/services/user/user.service";
 import { GameSettings } from "src/game/types/GameSettings";
+import { WaitingGame } from "./types/WaitingGame";
 
 
 @WebSocketGateway({
@@ -25,21 +26,23 @@ import { GameSettings } from "src/game/types/GameSettings";
 export class StatusGateway implements OnGatewayDisconnect {
 	@WebSocketServer()
 	server;
+	gamesCopy : Array<GameDataFull>; // copy for new users.
 
 	constructor(
 		private statusService: StatusService,
 		private gameService: GameService,
 		private userService: UserService
 		) {
+			this.gamesCopy = new Array<GameDataFull>();
 			this.gameService.getMyMapChanges().subscribe((games) => {
 				this.sendGameList(games);
 			});
-
 	}
 
 	@SubscribeMessage("userConnect")
-    handleUserConnect(client: Socket, userId) {
+	handleUserConnect(client: Socket, userId) {
 		this.statusService.setUserStatus(userId, client.id, "online");
+		client.emit("updateGameList", this.gamesCopy);
 		const gameId = this.statusService.getInviteByPlayer(userId);
 		if (gameId) {
 			client.emit("inviteToGame", gameId);
@@ -48,39 +51,36 @@ export class StatusGateway implements OnGatewayDisconnect {
 
 	handleDisconnect(client: Socket): any { // user disconnect
 		this.statusService.deleteId(client.id); // remove invite
+		this.statusService.removeWaitingGame(client.id);
 		// TODO set to db
 	}
 
 	@SubscribeMessage("matchMakingGame") // from any player 
 	async handleMatchMakingGame(client: Socket, clientData) {
-		const waitingPlayerData = this.statusService.getPlayerMM();
-		if (waitingPlayerData) { // can start
-			const hostSocket = this.getUserSocket(waitingPlayerData.hostId);
-			if (hostSocket) { // good to go
-				try {
-					const hostName = await this.userService.findUsernameById(waitingPlayerData.hostId);
-					const playerName = await this.userService.findUsernameById(clientData.userId);
-					const data = {
-						gameId: waitingPlayerData.hostId,
-						playerId: clientData.userId,
-						mode: waitingPlayerData.mode,
-						hostName: hostName,
-						playerName: playerName,
-					}
-					hostSocket.emit("canStartGame", data);
-					client.emit("canStartGame", data); // TODO add player names 
-				} catch (error) {
-					console.log("can't find user's names in db.");
-					console.log(error);
-				}
-
-			} else { // host disconnect 
-				this.statusService.addPlayerMM(clientData.userId, clientData.mode);
-				client.emit("waitInQueue", null); // ?
+		const waitingGame = new WaitingGame(clientData.userId, clientData.mode, client.id);
+		const gameArr = this.statusService.addWaitingGame(waitingGame);
+		// console.log(gameArr);
+		if (gameArr  == null) return ; // no game ready
+		try { // can start game.
+			const hostName = await this.userService.findUsernameById(gameArr[0].playerId);
+			const playerName = await this.userService.findUsernameById(gameArr[1].playerId);
+			const data = {
+				gameId: gameArr[0].playerId,
+				playerId: gameArr[1].playerId,
+				mode: gameArr[0].gameMode,
+				hostName: hostName,
+				playerName: playerName,
 			}
-		} else { // add to queue
-			this.statusService.addPlayerMM(clientData.userId, clientData.mode);
-			client.emit("waitInQueue", null); // ?
+			if (this.server.sockets.has(gameArr[0].socketId) == false  || this.server.sockets.has(gameArr[1].socketId) == false) {
+					console.log("someone leave site. it's really bad. we are fucked. don't delete it!!");
+					return ;
+			}
+			this.server.sockets.get(gameArr[0].socketId).emit("canStartGame", data);
+			this.server.sockets.get(gameArr[1].socketId).emit("canStartGame", data);
+			console.log("canStartGame send");
+		} catch (e) {
+			console.log("can't find user's names in db.");
+			console.log(e);
 		}
 	}
 
@@ -154,6 +154,7 @@ export class StatusGateway implements OnGatewayDisconnect {
 		return null;
 	}
 
+
 	async sendGameList(games: Map<string, GameSettings>) {
 		const gameArr = new Array<GameDataFull>();
 		for (const [gameId, gameSetting] of games.entries()) {
@@ -172,11 +173,8 @@ export class StatusGateway implements OnGatewayDisconnect {
 			} catch (e) {
 				console.log(e);
 			}
-			
 		}
-		console.log(gameArr);
-		if (gameArr.length > 0) {
-			this.server.emit("updateGameList", gameArr);
-		}
+		this.server.emit("updateGameList", gameArr);
+		this.gamesCopy = gameArr;
 	}
 }

@@ -98,7 +98,7 @@
 
 <div class="user-profile-info">
 	<p>Rank: {achievement}</p>
-	<div>
+	<div class="stars-wrapper">
 		<StarsAchievement numStars={stars} />
 	</div>
 	<ProfilePicture imageSrc={image} {isCurrentUser} />
@@ -137,6 +137,10 @@
 	.two-factor-auth {
 		margin-top: 0.75rem;
 		cursor: pointer;
+	}
+
+	.stars-wrapper {
+		margin-bottom: .5rem;
 	}
 
 	.two-factor-auth.enabled {

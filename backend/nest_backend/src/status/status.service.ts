@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { GameInvite } from "src/dtos/GameInvite.dto";
 import { UserService } from "src/user/services/user/user.service";
+import { WaitingGame } from "./types/WaitingGame";
 
 
 @Injectable()
@@ -8,15 +9,13 @@ export class StatusService {
 	constructor() {
 		this.users = new Map(); // [userId: socketId]
 		this.pendingInvites = new Map(); // [userId: socketId]
-		this.mmQueue = new Array(); // [userId] TODO add mode 
-		this.mmModeMap = new Map<string, string>(); // [userId, mode]
+		this.mmQueue = new Array<WaitingGame>(); // [userId] TODO add mode 
 	}
 	users;
 	pendingInvites;
 	mmQueue;
-	mmModeMap;
 	
-	mmGame;
+	// mmGame;
 
 	setUserStatus(userId, socketId, status) {
 		this.users.set(userId, socketId);
@@ -51,17 +50,9 @@ export class StatusService {
 				break;
 			}
 		}
-		this.users.delete(userId); // invites
+		this.users.delete(userId); 
 		if (this.pendingInvites.has(userId)) {
 			this.pendingInvites.delete(userId);
-		}
-		// delete from mm queue
-		mmIndex = this.mmQueue.indexOf(userId);
-		if (this.mmQueue != -1) {
-			this.mmQueue.splice(mmIndex, 1);
-		}
-		if (this.mmModeMap.has(userId)) {
-			this.mmModeMap.delete(userId);
 		}
 	}
 
@@ -72,24 +63,24 @@ export class StatusService {
 		return null;
 	}
 
-					/*  mm logic  */
-	getPlayerMM() {
-		if (this.mmQueue.length > 0) {
-			const hostId = this.mmQueue.shift();
-			if (this.mmModeMap.has(hostId)) {
-				const data = {
-					hostId: hostId,
-					mode: this.mmModeMap.get(hostId)
-				}
-				return data;
-			}
-		}
+	/*  mm logic  */
+
+	addWaitingGame(data: WaitingGame): Array<WaitingGame> | null{
+		this.mmQueue.push(data);
+		if (this.mmQueue.length > 1) {
+			return this.mmQueue.splice(0, 2);
+		} 
 		return null;
 	}
 
-	addPlayerMM(userId, gameMode) {
-		this.mmQueue.push(userId);
-		this.mmModeMap.set(userId, gameMode);
+	removeWaitingGame(socketId: string) {
+		let i = 0;
+		for ( ; i < this.mmQueue.length; i++) {
+			if (this.mmQueue[i].socketId.localeCompare(socketId) == 0) {
+				this.mmQueue.splice(i, 1);
+				return ;
+			}
+		}
 	}
 
 }

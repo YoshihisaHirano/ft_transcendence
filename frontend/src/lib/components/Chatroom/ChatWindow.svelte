@@ -112,7 +112,7 @@
 			<MessageDisplay {isBlocked} />
 		{/await}
 		<div class="input-area">
-			<textarea bind:value={messageText} name="chat-message" id="chat-message" rows="2" />
+			<textarea bind:value={messageText} name="chat-message" id="chat-message" cols="30" rows="2" />
 			<Button
 				disabled={messageText === ''}
 				onClick={sendMessage}
@@ -176,6 +176,6 @@
 	textarea {
 		box-sizing: border-box;
 		max-width: 85%;
-		widows: 85%;
+		width: 85%;
 	}
 </style>
