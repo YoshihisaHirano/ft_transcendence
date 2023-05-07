@@ -14,6 +14,9 @@
 	button {
 		border: 1px solid rgba(0,0,0,.5);
 		cursor: pointer;
+		box-sizing: border-box;
+        width: fit-content;
+        max-width: 80%;
 	}
 
 	button:disabled {

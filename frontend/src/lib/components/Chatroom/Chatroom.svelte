@@ -13,6 +13,7 @@
 	import { updateChats } from '$lib/utils/updates';
 
 	$: userChats = $chatState;
+	$: console.log(userChats);
 	$: isModalOpen = false;
 
 	onMount(() => {	

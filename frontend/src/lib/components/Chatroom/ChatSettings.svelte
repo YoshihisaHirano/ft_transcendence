@@ -15,7 +15,8 @@
 		privacyMode: PrivacyMode,
 		password: string | undefined,
 		members: ShortUser[],
-		adminId: string,
+		admins: ShortUser[],
+		ownerId: string,
 		chatname: string,
 		banList: ShortUser[];
 
@@ -23,7 +24,7 @@
 
 	$: chatSettings = {
 		chatId,
-		adminId,
+		admins: admins.map((item) => item.id),
 		privacyMode,
 		password,
 		chatname
@@ -34,7 +35,7 @@
 	$: areSettingsChanged =
 		chatSettings.privacyMode != privacyMode ||
 		chatSettings.password !== password ||
-		chatSettings.adminId != adminId ||
+		// chatSettings.admins[] != admins.length ||
 		chatSettings.chatname != chatname;
 
 	async function updateChat(e: Event) {
@@ -49,7 +50,6 @@
 					return [...updatedChats];
 				});
 				chatIo.emit('updateChat', updatedChat.chatId);
-				updateChats(adminId);
 			}
 		}
 	}
@@ -60,7 +60,7 @@
 		// console.log(userId);
 		if (userId) {
 			await userService.unbanUser(chatId, userId);
-			updateChats(adminId);
+			updateChats(ownerId);
 		}
 	}
 </script>
@@ -75,14 +75,14 @@
 			</label>
 		</div>
 		<div class="settings-field">
-			<label for="admin">
+			<!-- <label for="admin">
 				<p>chat admin</p>
 				<select name="admin" id="admin" bind:value={chatSettings.adminId}>
 					{#each members as { id, username }}
 						<option value={id} selected={id === adminId}>{username}</option>
 					{/each}
 				</select>
-			</label>
+			</label> -->
 		</div>
 		<div class="settings-field">
 			<PrivacySelect bind:chatSettings />
@@ -99,7 +99,7 @@
 	<div>
 		{#each banList as user}
 		<div class="banned-user">
-			<UserRecord currentId={adminId} userId={user.id} username={user.username} />
+			<UserRecord currentId={ownerId} userId={user.id} username={user.username} />
 			<button data-user={user.id} on:click={unbanUser} title="unban">✖</button>
 		</div>
 		{/each}

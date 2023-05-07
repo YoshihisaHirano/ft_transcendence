@@ -94,7 +94,8 @@
 		<ControlBar
 			privacyMode={reactiveChat.privacyMode}
 			password=""
-			adminId={reactiveChat.adminId}
+			admins={reactiveChat.admins}
+			ownerId={reactiveChat.owner.id}
 			chatMembers={reactiveChat.members}
 			chatname={reactiveChat.chatname}
 			chatId={reactiveChat.chatId}

@@ -22,7 +22,7 @@
 		if (!directChat) {
 			const newChat: NewChat = {
 				isDirect: true,
-				adminId: userId,
+				ownerId: userId,
 				privacyMode: 'private',
 				members: [userId, id],
 				chatname: `${username} + ${$appState?.user?.username || ''}`
