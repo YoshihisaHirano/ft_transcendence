@@ -4,6 +4,7 @@
 	import type { User } from '$lib/types/types';
 	import { updateUser } from '$lib/utils/updates';
 	import Button from '../Button/Button.svelte';
+	import OnlineIndicator from '../OnlineIndicator/OnlineIndicator.svelte';
 	import TwoFactorAuthModal from '../TwoFactorAuthModal/TwoFactorAuthModal.svelte';
 	import ProfilePicture from './ProfilePicture.svelte';
 	import StarsAchievement from './StarsAchievement.svelte';
@@ -102,7 +103,12 @@
 		<StarsAchievement numStars={stars} />
 	</div>
 	<ProfilePicture imageSrc={image} {isCurrentUser} />
-	<p>{username}</p>
+	<p>
+		{#if !isCurrentUser}
+			<OnlineIndicator userStatus={status} />
+		{/if}
+		{username}
+	</p>
 	<p>{tournamentStats.ladderLevel} place</p>
 	{#if isCurrentUser}
 		<button on:click={handle2Fa} class="two-factor-auth {twoFactorAuthIsEnabled && 'enabled'}">
