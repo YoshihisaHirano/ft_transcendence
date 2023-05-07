@@ -9,7 +9,7 @@ export async function GET({ cookies, params }) {
 		path: '/', secure: false, httpOnly: true
 	});
     const chat = await chatService.getChatById(id);
-    //(console.log)(chat, id);
+    
     if (!chat) {
         throw redirect(303, '/404');
     }

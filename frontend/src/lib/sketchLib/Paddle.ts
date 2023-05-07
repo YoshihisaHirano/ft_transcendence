@@ -39,7 +39,7 @@ export class Paddle {
     }
     
     show() {
-        // //(console.log)(this.x == this.w ? 'HOST ' : 'PLAYER ', this.y);
+        
         this._p5.fill(255);
         this._p5.rectMode(this._p5.CENTER);
         // this._p5.rect(this.x, this.y, 100, 100); 

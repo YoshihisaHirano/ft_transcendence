@@ -17,7 +17,7 @@
 	let canvasHeight: number = 0;
 
 	let currentGameMode = gameModes[$gameBeingShown?.gameMode || 'default'];
-    // //(console.log)($gameBeingShown);
+    
 	const { paddleLength, ballRadius, bgCol, ballSpeed } = currentGameMode;
 	const sketch: Sketch = (p5) => {
 		let ball: Ball;
@@ -101,7 +101,7 @@
 					xspeed * scaleCoefficient,
 					yspeed * scaleCoefficient
 				);
-				// //(console.log)(data, scoresSet);
+				
                 if (!scoresSet && score1Div && score2Div) {
                     scoresSet = true;
                     scores.score1 = data.score1;

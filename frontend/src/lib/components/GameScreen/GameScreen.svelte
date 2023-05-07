@@ -12,7 +12,7 @@
 
 	onMount(() => {
 		gameIo.on('joinGameFail', () => {
-			//(console.log)('JOIN GAME FAILED');
+			
 			$gameStatus = 'failed';
 		});
 

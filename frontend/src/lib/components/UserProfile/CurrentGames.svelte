@@ -13,10 +13,10 @@
 		e.preventDefault();
 		const target = e.target as HTMLAnchorElement;
         const game = target.dataset.game;
-        // //(console.log)(game);
+        
         if (game) {
             const gameData = JSON.parse(game) as GameData;
-            // //(console.log)(gameData);
+            
             gameBeingShown.set(gameData);
             goto(target.href);
         }

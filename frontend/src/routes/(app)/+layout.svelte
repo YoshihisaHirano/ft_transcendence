@@ -30,7 +30,7 @@
 	onMount(() => {
 		statusIo.on('inviteToGame', async (data: GameInvite) => {
 			if (!$page.url.pathname.includes('game')) {
-				// //(console.log)(gameId);
+				
 				newGameId = data.gameId;
 				const user = await userService.getUserById(data.gameId);
 				inviteData = { ...inviteData, gameId: data.gameId, mode: data.mode };
@@ -43,7 +43,7 @@
 
 		statusIo.on('canStartGame', ({ gameId, playerId, mode }: GameInvite) => {
 			if ($appState?.user) {
-				//(console.log)(mode, gameId)
+				
 				const meHost = $appState.user.id === gameId;
 				gameMode.set(mode);
 				isGameHost.set(meHost);
@@ -58,7 +58,7 @@
 					userTwoScore: 0
 				}
 				gameStats.set(resetGameStats);
-				// //(console.log)(resetGameStats, 'GAME STARTED');
+				
 				goto('/game');
 			}
 		});

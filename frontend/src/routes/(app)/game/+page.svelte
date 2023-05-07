@@ -39,7 +39,7 @@
 			canvas.remove();
 		});
 	});
-	// $: //(console.log)($gameStatus);
+	
 </script>
 
 <div class="game-page">

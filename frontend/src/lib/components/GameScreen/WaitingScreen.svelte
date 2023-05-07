@@ -24,7 +24,7 @@
 		}
 
 		gameIo.on('gameStart', () => {
-			//(console.log)('GAME STARTED');
+			
 			gameStatus.set('in progress');
 		});
 

@@ -13,7 +13,7 @@
 		userTwoName: isGameWatched ? $gameBeingShown?.playerName : $gameStats?.userTwoName
 	};
 
-	// $: //(console.log)($gameBeingShown, playerNames, isGameWatched);
+	
 </script>
 
 {#if !isGameWatched}
