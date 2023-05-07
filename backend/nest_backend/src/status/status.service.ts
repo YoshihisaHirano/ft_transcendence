@@ -14,12 +14,9 @@ export class StatusService {
 	users;
 	pendingInvites;
 	mmQueue;
-	
-	// mmGame;
 
 	setUserStatus(userId, socketId, status) {
 		this.users.set(userId, socketId);
-		// TODO set to db status
 	}
 
 	addInvite(invite: GameInvite) {
@@ -54,6 +51,7 @@ export class StatusService {
 		if (this.pendingInvites.has(userId)) {
 			this.pendingInvites.delete(userId);
 		}
+		return userId;
 	}
 
 	getSocketIdByUser(userId) {

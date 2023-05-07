@@ -11,6 +11,7 @@ import { Subscription } from "rxjs";
 import { UserService } from "src/user/services/user/user.service";
 import { GameSettings } from "src/game/types/GameSettings";
 import { WaitingGame } from "./types/WaitingGame";
+import { StatusMode } from "src/entities/user.entity";
 
 
 @WebSocketGateway({
@@ -39,19 +40,34 @@ export class StatusGateway implements OnGatewayDisconnect {
 			});
 	}
 
+	async updateStatus(userId, status) {
+		try {
+			await this.userService.changeUserStatus(userId, status);
+			const data = {
+				userId: userId,
+				status: status
+			}
+			this.server.emit("userStatusUpdate", data);
+		} catch (error) {
+			console.log(error);
+		}
+	}
+
 	@SubscribeMessage("userConnect")
 	handleUserConnect(client: Socket, userId) {
 		this.statusService.setUserStatus(userId, client.id, "online");
 		client.emit("updateGameList", this.gamesCopy);
 		const gameId = this.statusService.getInviteByPlayer(userId);
+		this.updateStatus(userId, StatusMode.ONLINE);
 		if (gameId) {
 			client.emit("inviteToGame", gameId);
 		}
 	}
 
 	handleDisconnect(client: Socket): any { // user disconnect
-		this.statusService.deleteId(client.id); // remove invite
+		const userId = this.statusService.deleteId(client.id); // remove invite
 		this.statusService.removeWaitingGame(client.id);
+		this.updateStatus(userId, StatusMode.OFFLINE);
 		// TODO set to db
 	}
 
