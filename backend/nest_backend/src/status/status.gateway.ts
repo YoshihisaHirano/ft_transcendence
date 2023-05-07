@@ -74,6 +74,7 @@ export class StatusGateway implements OnGatewayDisconnect {
 	async handleMatchMakingGame(client: Socket, clientData) {
 		const waitingGame = new WaitingGame(clientData.userId, clientData.mode, client.id);
 		const gameArr = this.statusService.addWaitingGame(waitingGame);
+		// console.log(gameArr);
 		if (gameArr  == null) return ; // no game ready
 		try { // can start game.
 			const hostName = await this.userService.findUsernameById(gameArr[0].playerId);
@@ -187,7 +188,7 @@ export class StatusGateway implements OnGatewayDisconnect {
 				console.log(e);
 			}
 		}
-		console.log(gameArr);
+		// console.log(gameArr);
 		this.server.emit("updateGameList", gameArr);
 		this.gamesCopy = gameArr;
 	}

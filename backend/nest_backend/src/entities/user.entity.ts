@@ -13,6 +13,12 @@ export enum StatusMode {
   GAME = 'game',
 }
 
+export enum GameMode {
+  EASY = 'easy',
+  DEFAULT = 'default',
+  HARD = 'hard',
+}
+
 @Entity('users')
 @Unique(['username'])
 export class User {
@@ -40,4 +46,10 @@ export class User {
   twoFactorAuthIsEnabled: boolean;
   @Column({ nullable: true })
   twoFactorAuthSecret: string;
+  @Column({
+    type: 'enum',
+    enum: GameMode,
+    default: GameMode.DEFAULT,
+  })
+  preferredGameMode: GameMode;
 }

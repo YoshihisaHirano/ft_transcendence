@@ -1,16 +1,22 @@
 /** @type {import('./$types').RequestHandler} */
 export async function DELETE({ cookies }) {
-    cookies.set('user-id', '', {
+    cookies.delete('user-id', {
         path: '/',
-        maxAge: 0
+        maxAge: 0,
+        httpOnly: true,
+        secure: false
     });
-    cookies.set('user-token', '', {
+    cookies.delete('user-token', {
         path: '/',
-        maxAge: 0
+        maxAge: 0,
+        httpOnly: true,
+        secure: false
     });
-    cookies.set('user-login', '', {
+    cookies.delete('user-login', {
         path: '/',
-        maxAge: 0
+        maxAge: 0,
+        httpOnly: true,
+        secure: false
     });
     return new Response(null);
 }

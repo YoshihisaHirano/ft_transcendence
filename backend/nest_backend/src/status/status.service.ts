@@ -69,7 +69,7 @@ export class StatusService {
 
 	addWaitingGame(data: WaitingGame): Array<WaitingGame> | null{
 		this.mmQueue.push(data);
-		if (this.mmQueue.length > 2) {
+		if (this.mmQueue.length > 1) {
 			return this.mmQueue.splice(0, 2);
 		} 
 		return null;

@@ -4,7 +4,8 @@ export class ResponseChatDto {
   chatId: string;
   chatname: string;
   members: ShortResponseUserDto[];
-  adminId: string;
+  owner: ShortResponseUserDto;
+  admins: ShortResponseUserDto[];
   privacyMode: PrivacyMode;
   isDirect: boolean;
   banList: ShortResponseUserDto[];

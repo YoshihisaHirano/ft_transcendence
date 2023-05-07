@@ -5,7 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from 'src/dtos/createUser.dto';
 import { FriendshipDto } from 'src/dtos/friendship.dto';
 import { ShortResponseUserDto } from 'src/dtos/shortResponseUser.dto';
-import { StatusMode } from 'src/entities/user.entity';
+import { GameMode, StatusMode } from 'src/entities/user.entity';
 
 @Injectable()
 export class UserService {
@@ -96,6 +96,19 @@ export class UserService {
     return user;
   }
 
+  async findUserIdByLogin(login: string) {
+    const user = await this.userRepository
+      .createQueryBuilder('user')
+      .where('user.login = :login', { login: login })
+      .getOne();
+    if (user == null) {
+      return {
+        user: null
+      };
+    }
+    return user.id;
+  }
+
   async findUsernameById(id: string) {
     const user = await this.userRepository
       .createQueryBuilder('user')
@@ -129,14 +142,17 @@ export class UserService {
     const user = await this.findUserById(userId);
     return user.blacklist.includes(checkId);
   }
-  async getShortInfoByIds(ids: string[]) {
-    const res = [];
-    for (const id of ids) {
-      res.push({
+  async getShortInfoById(id: string) {
+    return {
         id: id,
         username: await this.findUsernameById(id),
         status: await this.findStatusById(id),
-      });
+    };
+  }
+  async getShortInfoByIds(ids: string[]) {
+    const res = [];
+    for (const id of ids) {
+      res.push(await this.getShortInfoById(id));
     }
     return res;
   }
@@ -145,9 +161,9 @@ export class UserService {
     user.twoFactorAuthSecret = secret;
     return this.userRepository.save(user);
   }
-  async turnOnTwoFactorAuth(login: string) {
+  async switchTwoFactorAuth(login: string, condition: boolean) {
     const user = await this.findUserByLogin(login);
-    user.twoFactorAuthIsEnabled = true;
+    user.twoFactorAuthIsEnabled = condition;
     return this.userRepository.save(user);
   }
   async changeUserStatus(userId: string, status: StatusMode) {
@@ -158,5 +174,10 @@ export class UserService {
   async findStatusById(userId: string) {
     const user = await this.findUserById(userId);
     return user.status;
+  }
+  async changeGameMode(userId: string, mode: GameMode) {
+    const user = await this.findUserById(userId);
+    user.preferredGameMode = mode;
+    return this.userRepository.save(user);
   }
 }

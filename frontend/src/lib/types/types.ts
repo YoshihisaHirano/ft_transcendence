@@ -6,7 +6,7 @@ export interface AppState {
 
 export type GameStatus = 'matchmaking' | 'waiting' | 'in progress' | 'finished' | 'failed';
 export type UserStatus = 'online' | 'offline' | 'game';
-export type UserAchievement = 'none' | 'beginner' | 'experienced' | 'master'
+export type UserAchievement = 'none' | 'beginner' | 'experienced' | 'master';
 
 export interface GameStats {
 	userOneId: string;
@@ -33,6 +33,8 @@ export interface ShortUser {
 	status: UserStatus;
 }
 
+export type GameMode = 'easy' | 'default' | 'hard';
+
 export interface User {
 	id: string;
 	image: string;
@@ -46,7 +48,10 @@ export interface User {
 	};
 	matchHistory: GameStats[];
 	blacklist: string[];
-	achievement: UserAchievement
+	achievement: UserAchievement;
+	gameMode: GameMode;
+	login: string;
+	twoFactorAuthIsEnabled: boolean;
 }
 
 export interface NewChat {
@@ -54,7 +59,7 @@ export interface NewChat {
 	members: string[];
 	privacyMode: PrivacyMode;
 	password?: string | null;
-	adminId?: string;
+	ownerId?: string;
 	isDirect: boolean;
 }
 
@@ -75,12 +80,13 @@ export interface Chat {
 	chatId: string;
 	chatname: string;
 	members: User[];
-	adminId: string;
+	owner: ShortUser;
+	admins: ShortUser[];
 	privacyMode: PrivacyMode;
 	password?: string | null;
 	isDirect: boolean;
 	muteList: string[];
-	banList: string[];
+	banList: ShortUser[];
 }
 
 export interface ChatSettings {
@@ -88,7 +94,7 @@ export interface ChatSettings {
 	chatname: string;
 	privacyMode: PrivacyMode;
 	password?: string | null;
-	adminId: string;
+	admins: string[];
 }
 
 export interface MessagesState {
@@ -107,8 +113,6 @@ export interface BallPosition {
 	yspeed: number;
 }
 
-export type GameMode = 'easy' | 'default' | 'hard';
-
 export interface GameSettings {
 	bgCol: string;
 	paddleLength: number;
@@ -121,3 +125,10 @@ export interface GameInvite {
 	mode: GameMode;
 }
 
+export interface GameData {
+	gameId: string;
+	playerId: string;
+	hostName: string;
+	playerName: string;
+	gameMode: GameMode;
+}

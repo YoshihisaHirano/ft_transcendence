@@ -13,7 +13,7 @@ import { StatusMode } from "src/entities/user.entity";
 	namespace: '/game',
 	cors: {
 	  credentials: true,
-	  origin: 'http://localhost:5176',
+	  origin: 'http://192.168.10.3:5176',
 	  methods: ['GET', 'POST'],
 	  transports: ['websocket'],
 	},
@@ -42,13 +42,14 @@ export class GameGateway implements OnGatewayDisconnect {
 	handleNewGame(client: Socket, data: GameInvite) {
 		this.gameService.addUser(data.gameId, client.id);
 		this.gameService.createGame(data);
+		console.log("createGame", data);
 		client.join(data.gameId);
 	}
 
 	@SubscribeMessage("playerJoinGame")
 	async handleJoinGame(client: Socket, data: GameInvite) { // hostId, playerId
 		const joinRes =  await this.gameService.playerJoinGame(data);
-		console.log(data, client.id, joinRes);
+		//(console.log)(data, client.id, joinRes);
 		 if (joinRes) {
 			this.gameService.addUser(data.playerId, client.id);
 			client.join(data.gameId);

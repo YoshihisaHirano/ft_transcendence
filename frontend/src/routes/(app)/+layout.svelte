@@ -12,9 +12,10 @@
 	import { appState } from '$lib/store/appState';
 	import { isGameHost, currentGameId, gameStats, gameStatus, gameMode } from '$lib/store/gameState';
 	import { goto } from '$app/navigation';
-	import type { GameInvite } from '$lib/types/types';
+	import type { GameData, GameInvite } from '$lib/types/types';
 	import { onMount } from 'svelte';
 	import { resetGame } from '$lib/utils/updates';
+	import { availableGames } from '$lib/store/gameWatchState';
 
 	$: activeGameInvitation = false;
 	$: secondPlayerName = '';
@@ -29,7 +30,7 @@
 	onMount(() => {
 		statusIo.on('inviteToGame', async (data: GameInvite) => {
 			if (!$page.url.pathname.includes('game')) {
-				// console.log(gameId);
+				
 				newGameId = data.gameId;
 				const user = await userService.getUserById(data.gameId);
 				inviteData = { ...inviteData, gameId: data.gameId, mode: data.mode };
@@ -40,25 +41,26 @@
 			}
 		});
 
-		statusIo.on('canStartGame', ({ gameId, playerId, mode }: GameInvite) => {
+		statusIo.on('canStartGame', (data) => {
 			if ($appState?.user) {
-				console.log(mode, gameId)
-				const meHost = $appState.user.id === gameId;
-				gameMode.set(mode);
+				// console.log(data);
+				const meHost = $appState.user.id === data.gameId;
+				gameMode.set(data.mode);
 				isGameHost.set(meHost);
-				currentGameId.set(gameId);
+				currentGameId.set(data.gameId);
 				gameStatus.set('waiting');
 				const resetGameStats = {
-					userOneId: gameId,
-					userOneName: meHost ? $appState.user.username : secondPlayerName,
+					userOneId: data.gameId,
+					userOneName: meHost ? data.hostName : data.playerName,
 					userOneScore: 0,
-					userTwoId: playerId,
-					userTwoName: !meHost ? $appState.user.username : secondPlayerName,
+					userTwoId: data.playerId,
+					userTwoName: !meHost ? data.hostName: data.playerName,
 					userTwoScore: 0
 				}
 				gameStats.set(resetGameStats);
-				// console.log(resetGameStats, 'GAME STARTED');
-				goto('/game');
+				if (!$page.url.pathname.includes('game')) {
+					goto('/game');
+				}
 			}
 		});
 
@@ -68,7 +70,12 @@
 			newGameId = '';
 		});
 
+		statusIo.on('updateGameList', (gameArr: GameData[]) => {
+			availableGames.set(gameArr);
+		});
+
 		return () => {
+			statusIo.off('updateGameList');
 			statusIo.off('cancelInvite');
 			statusIo.off('canStartGame');
 			statusIo.off('inviteToGame');

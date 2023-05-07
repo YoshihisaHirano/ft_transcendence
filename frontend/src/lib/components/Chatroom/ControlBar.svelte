@@ -11,16 +11,19 @@
 	import { chatIo } from '$lib/sockets/chatSocket';
 	import MembersControl from './MembersControl.svelte';
 
-	export let adminId: string,
+	export let ownerId: string,
+		admins: ShortUser[],
 		chatMembers: ShortUser[],
 		chatname: string,
 		chatId: string,
 		privacyMode: PrivacyMode,
 		password: string | undefined,
-		isDirect: boolean;
+		isDirect: boolean,
+		banList: ShortUser[];
 
 	$: userId = getFromStorage('userId') || '';
-	$: isAdmin = userId === adminId;
+	$: isAdmin = admins.findIndex((admin) => admin.id === userId) > -1;
+	$: isOwner = userId === ownerId;
 	let btnRef: HTMLButtonElement;
 	$: offsetLeft = btnRef?.offsetLeft || 0;
 
@@ -39,7 +42,18 @@
 	function copyLink() {
 		const base = import.meta.env.VITE_FRONTEND_URL;
 		const link = base + 'chat/invite/' + chatId;
-		navigator.clipboard.writeText(link);
+		// navigator.clipboard.writeText(link);
+		const textArea = document.createElement('textarea');
+		textArea.value = link;
+		document.body.appendChild(textArea);
+		textArea.focus();
+		textArea.select();
+		try {
+			document.execCommand('copy');
+		} catch (err) {
+			console.error('Unable to copy to clipboard', err);
+		}
+		document.body.removeChild(textArea);
 		copySuccessText = 'Copied to clipboard';
 		setTimeout(() => {
 			copySuccessText = '';
@@ -83,11 +97,11 @@
 			{/if}
 			<div class="members-dropdown" style="left: {offsetLeft}px">
 				{#each chatMembers as member}
-					<MembersControl {toggleDropdown} {chatId} showExtra={isAdmin && !isDirect} {member} />
+					<MembersControl {ownerId} {toggleDropdown} {chatId} showExtra={isAdmin && !isDirect} {member} />
 				{/each}
 			</div>
 		</div>
-		{#if isAdmin && !isDirect}
+		{#if isOwner && !isDirect}
 			<button class="chat-settings-btn" on:click={toggleModal}>
 				<CogIcon />
 			</button>
@@ -98,7 +112,16 @@
 
 {#if modalOpen}
 	<Modal title="{chatname} settings" onClose={toggleModal}>
-		<ChatSettings {chatname} {chatId} {privacyMode} {password} {adminId} members={chatMembers} />
+		<ChatSettings
+			{banList}
+			{chatname}
+			{chatId}
+			{privacyMode}
+			{password}
+			{admins}
+			{ownerId}
+			members={chatMembers}
+		/>
 	</Modal>
 {/if}
 
