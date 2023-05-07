@@ -94,7 +94,7 @@ export interface ChatSettings {
 	chatname: string;
 	privacyMode: PrivacyMode;
 	password?: string | null;
-	admins: string[];
+	adminIds: string[];
 }
 
 export interface MessagesState {
