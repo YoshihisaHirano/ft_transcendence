@@ -65,15 +65,10 @@
 			updateChats(userId);
 		});
 
-		chatIo.on('updateChat', () => {
-			updateChats(userId);
-		});
-
 		return () => {
 			chatIo.off('newMessage');
 			chatIo.off('youKicked');
 			chatIo.off('youBanned');
-			chatIo.off('updateChat');
 			chatIo.off('stillInMute');
 		};
 	});
@@ -99,7 +94,8 @@
 		<ControlBar
 			privacyMode={reactiveChat.privacyMode}
 			password=""
-			adminId={reactiveChat.adminId}
+			admins={reactiveChat.admins}
+			ownerId={reactiveChat.owner.id}
 			chatMembers={reactiveChat.members}
 			chatname={reactiveChat.chatname}
 			chatId={reactiveChat.chatId}

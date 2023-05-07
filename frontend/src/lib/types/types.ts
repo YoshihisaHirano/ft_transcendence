@@ -59,7 +59,7 @@ export interface NewChat {
 	members: string[];
 	privacyMode: PrivacyMode;
 	password?: string | null;
-	adminId?: string;
+	ownerId?: string;
 	isDirect: boolean;
 }
 
@@ -80,7 +80,8 @@ export interface Chat {
 	chatId: string;
 	chatname: string;
 	members: User[];
-	adminId: string;
+	owner: ShortUser;
+	admins: ShortUser[];
 	privacyMode: PrivacyMode;
 	password?: string | null;
 	isDirect: boolean;
@@ -93,7 +94,7 @@ export interface ChatSettings {
 	chatname: string;
 	privacyMode: PrivacyMode;
 	password?: string | null;
-	adminId: string;
+	admins: string[];
 }
 
 export interface MessagesState {

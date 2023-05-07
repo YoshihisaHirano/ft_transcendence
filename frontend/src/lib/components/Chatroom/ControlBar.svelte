@@ -11,7 +11,8 @@
 	import { chatIo } from '$lib/sockets/chatSocket';
 	import MembersControl from './MembersControl.svelte';
 
-	export let adminId: string,
+	export let ownerId: string,
+		admins: ShortUser[],
 		chatMembers: ShortUser[],
 		chatname: string,
 		chatId: string,
@@ -21,7 +22,8 @@
 		banList: ShortUser[];
 
 	$: userId = getFromStorage('userId') || '';
-	$: isAdmin = userId === adminId;
+	$: isAdmin = admins.findIndex((admin) => admin.id === userId) > -1;
+	$: isOwner = userId === ownerId;
 	let btnRef: HTMLButtonElement;
 	$: offsetLeft = btnRef?.offsetLeft || 0;
 
@@ -95,11 +97,11 @@
 			{/if}
 			<div class="members-dropdown" style="left: {offsetLeft}px">
 				{#each chatMembers as member}
-					<MembersControl {toggleDropdown} {chatId} showExtra={isAdmin && !isDirect} {member} />
+					<MembersControl {ownerId} {toggleDropdown} {chatId} showExtra={isAdmin && !isDirect} {member} />
 				{/each}
 			</div>
 		</div>
-		{#if isAdmin && !isDirect}
+		{#if isOwner && !isDirect}
 			<button class="chat-settings-btn" on:click={toggleModal}>
 				<CogIcon />
 			</button>
@@ -116,7 +118,8 @@
 			{chatId}
 			{privacyMode}
 			{password}
-			{adminId}
+			{admins}
+			{ownerId}
 			members={chatMembers}
 		/>
 	</Modal>

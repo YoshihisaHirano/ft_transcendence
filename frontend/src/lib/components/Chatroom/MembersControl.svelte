@@ -6,10 +6,9 @@
 	import OnlineIndicator from '../OnlineIndicator/OnlineIndicator.svelte';
 	import UserRecord from '../UserProfile/UserRecord.svelte';
 
-	export let showExtra: boolean, member: ShortUser, chatId: string, toggleDropdown: () => void;
+	export let showExtra: boolean, ownerId: string, member: ShortUser, chatId: string, toggleDropdown: () => void;
 
 	$: userId = getFromStorage('userId') || '';
-
 
 	function removeFromChat(e: Event) {
 		const target = e.target as HTMLButtonElement;
@@ -39,8 +38,11 @@
 		<UserRecord currentId={userId} username={member.username} userId={member.id} />
 	</div>
 	<div class="chat-member-controls">
+		{#if member.id === ownerId}
+			<span title="chat owner">⭐</span>
+		{/if}
 		<GameInvitation playerId={member.id} playerName={member.username} disabled={userId === member.id || member.status !== 'online'}/>
-		{#if showExtra}
+		{#if showExtra && member.id !== ownerId}
 			<button on:click={muteUser} title="Mute" id="mute-{member.id}" disabled={userId === member.id}
 				>🔇</button
 			>

@@ -18,7 +18,7 @@
 		members: [],
 		privacyMode: 'public',
 		password: '',
-		adminId: id,
+		ownerId: id,
 		isDirect: false
 	} as NewChat;
 
