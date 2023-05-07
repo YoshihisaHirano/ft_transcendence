@@ -96,6 +96,19 @@ export class UserService {
     return user;
   }
 
+  async findUserIdByLogin(login: string) {
+    const user = await this.userRepository
+      .createQueryBuilder('user')
+      .where('user.login = :login', { login: login })
+      .getOne();
+    if (user == null) {
+      return {
+        user: null
+      };
+    }
+    return user.id;
+  }
+
   async findUsernameById(id: string) {
     const user = await this.userRepository
       .createQueryBuilder('user')
