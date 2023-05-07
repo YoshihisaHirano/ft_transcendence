@@ -129,14 +129,17 @@ export class UserService {
     const user = await this.findUserById(userId);
     return user.blacklist.includes(checkId);
   }
-  async getShortInfoByIds(ids: string[]) {
-    const res = [];
-    for (const id of ids) {
-      res.push({
+  async getShortInfoById(id: string) {
+    return {
         id: id,
         username: await this.findUsernameById(id),
         status: await this.findStatusById(id),
-      });
+    };
+  }
+  async getShortInfoByIds(ids: string[]) {
+    const res = [];
+    for (const id of ids) {
+      res.push(await this.getShortInfoById(id));
     }
     return res;
   }

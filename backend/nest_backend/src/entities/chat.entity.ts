@@ -19,7 +19,9 @@ export class Chat {
   @Column('text', { array: true })
   members: string[];
   @Column()
-  adminId: string;
+  ownerId: string;
+  @Column('text', { array: true })
+  adminIds: string[];
   @Column({
     type: 'enum',
     enum: PrivacyMode,

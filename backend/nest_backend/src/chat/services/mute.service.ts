@@ -2,12 +2,15 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Mute } from 'src/entities/mute.entity';
+import { Chat } from 'src/entities';
 
 @Injectable()
 export class MuteService {
   constructor(
     @InjectRepository(Mute)
     private readonly muteRepository: Repository<Mute>,
+    @InjectRepository(Chat)
+    private readonly chatRepository: Repository<Chat>,
   ) {}
   findInMuteList(chatId: string, userId: string) {
     return this.muteRepository.findOne({
@@ -22,6 +25,12 @@ export class MuteService {
     return Math.round(Math.abs(Number(endDate) - Number(startDate)) / msInMin);
   }
   async addToMuteList(chatId: string, userId: string) {
+    const chat = await this.chatRepository.findOne({
+      where: { chatId: chatId },
+    });
+    if (userId == chat.ownerId) {
+      return "ownerErr";
+    }
     let muteEntity = await this.findInMuteList(chatId, userId);
     const addedTo = new Date();
     if (muteEntity == null) {

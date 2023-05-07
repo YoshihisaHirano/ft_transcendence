@@ -4,7 +4,7 @@ import { PrivacyMode } from 'src/entities/chat.entity';
 export class UpdateChatDto {
   chatId: string;
   chatname: string;
-  adminId: string;
+  adminIds: string[];
   @IsEnum(PrivacyMode)
   privacyMode: PrivacyMode;
   password: string;

@@ -73,7 +73,7 @@ export class ChatGateway {
   @SubscribeMessage('leaveChat')
   async handleLeaveRoom(client: Socket, data: UserChangeChatStatus) {
 	try {
-		await this.chatService.deleteUserOfChat(data.userId, data.chatId);
+		await this.chatService.deleteUserOfChat(data.userId, data.chatId, true);
 		client.leave(data.chatId);
 		client.emit('leaveChatStatus', data.chatId);
 		this.updateChat(data.chatId);
@@ -104,7 +104,7 @@ export class ChatGateway {
 	try {
 		const userToKick = this.server.sockets.get(this.users.get(data.userId));
 		const chat = await this.chatService.findById(data.chatId);
-		await this.chatService.deleteUserOfChat(data.userId, data.chatId);
+		await this.chatService.deleteUserOfChat(data.userId, data.chatId, false);
 		if (userToKick) {
 			userToKick.leave(data.chatId);
 			userToKick.emit("youKicked", chat);
@@ -121,7 +121,7 @@ export class ChatGateway {
 		const userToBan = this.server.sockets.get(this.users.get(data.userId));
 		const chat = await this.chatService.findById(data.chatId);
 
-		await this.chatService.deleteUserOfChat(data.userId, data.chatId);
+		await this.chatService.deleteUserOfChat(data.userId, data.chatId, false);
 		await this.chatService.banUser(data.chatId, data.userId);
 		if (userToBan) {
 			userToBan.leave(data.chatId);
