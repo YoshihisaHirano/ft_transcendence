@@ -69,7 +69,7 @@ export default {
 					method: "POST",
 					body: JSON.stringify({ userId, friendId, methodEndpoint })
 				});
-				// console.log(res);
+				
 				if (res.status === 401) {
 					await this.logout();
 					return;
@@ -94,7 +94,7 @@ export default {
 				method: 'POST',
 				body: JSON.stringify({ userId, blackId, method })
 			});
-			// console.log(res);
+			
 			if (res.status === 401) {
 				await this.logout();
 				return;
@@ -104,8 +104,34 @@ export default {
 		}
 	},
 
-	async savePreferredMode(mode: string): Promise<void> {
-		return ;
+	async savePreferredMode(mode: string, userId: string): Promise<void> {
+		try {
+			const url = new URL('changemode', baseUrlWithEndpoint);
+			url.searchParams.append('mode', mode);
+			url.searchParams.append('id', userId);
+			const res = await fetch(url);
+		} catch (error) {
+			return;
+		}
+	},
+
+	async unbanUser(chatId: string, userId: string): Promise<void> {
+		try {
+			const res = await fetch(new URL('unban', baseUrlWithEndpoint), {
+				headers: {
+					...addContentType()
+				},
+				method: 'POST',
+				body: JSON.stringify({ chatId, userId })
+			});
+			
+			if (res.status === 401) {
+				await this.logout();
+				return;
+			}
+		} catch (err) {
+			return;
+		}
 	},
 
 	async logout (): Promise<void> {

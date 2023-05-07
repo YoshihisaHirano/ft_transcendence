@@ -6,16 +6,14 @@
 	import { currentGameId, gameStats, gameStatus, isGameHost, gameMode } from '$lib/store/gameState';
 	import { gameIo } from '$lib/sockets/gameSocket';
 	import type { BallPosition } from '$lib/types/types';
-	import { DEFAULT_FIELD_WIDTH, gameModes } from '$lib/utils/constants';
+	import { gameModes } from '$lib/utils/constants';
+	import { appState } from '$lib/store/appState';
+	import { findScaleCoefficient } from '$lib/utils/utils';
 
 	let scores = {
 		score1: 0,
 		score2: 0
 	};
-
-	function findScaleCoefficient(canvasWidth: number) {
-		return canvasWidth / DEFAULT_FIELD_WIDTH;
-	}
 
 	let canvasWidth: number = 0;
 	let canvasHeight: number = 0;
@@ -33,12 +31,12 @@
 		const score2Div = document.getElementById('score2');
 
 		p5.setup = () => {
-			canvasWidth = Math.min(p5.windowWidth * 0.8, 800);
+			canvasWidth = Math.min(window.innerWidth * 0.8, 800);
 			canvasHeight = canvasWidth / 2;
-			p5.createCanvas(canvasWidth, canvasHeight);
+			const canvas = p5.createCanvas(canvasWidth, canvasHeight);
+			canvas.id('gameCanvas');
 			const scaleCoefficient = findScaleCoefficient(canvasWidth);
 
-			// p5.frameRate(40);
 			ball = new Ball(p5, scaleCoefficient, ballRadius, ballSpeed);
 			left = new Paddle(p5,paddleLength, true, scaleCoefficient);
 			right = new Paddle(p5, paddleLength, false, scaleCoefficient);
@@ -64,7 +62,6 @@
 			}
 
 			gameIo.on('scoreUpdate', (data) => {
-				// console.log(data);
 				if (score1Div && score2Div) {
 					scores.score1 = data.scores.score1;
 					scores.score2 = data.scores.score2;
@@ -142,8 +139,7 @@
 					gameIo.emit('leftPaddleUpdate', { gameId: $currentGameId, paddleY: left.y });
 				}
 			} else {
-				// need to change to ARROW_UP & ARROW_DOWN as well
-				if (p5.key == 'a') {
+				if (p5.key == 'ArrowUp') {
 					right.move(-30);
 					right.update();
 					p5.background(bgCol);
@@ -151,7 +147,7 @@
 					right.show();
 					gameIo.emit('rightPaddleUpdate', { gameId: $currentGameId, paddleY: right.y });
 				}
-				if (p5.key == 'z') {
+				if (p5.key == 'ArrowDown') {
 					right.move(30);
 					right.update();
 					p5.background(bgCol);
@@ -160,6 +156,7 @@
 					gameIo.emit('rightPaddleUpdate', { gameId: $currentGameId, paddleY: right.y });
 				}
 			}
+			return false;
 		};
 
 		p5.draw = () => {
@@ -179,12 +176,14 @@
 				};
 				gameIo.emit('ballPositionUpdate', {
 					gameId: $currentGameId,
-					ballPos
+					ballPos:{...ballPos,
+						// score1: scores.score1, score2: scores.score2
+					}
 				});
 
 				if (scores.score1 > 5 || scores.score2 > 5) {
 					p5.noLoop();
-					console.log('game finished', scores);
+					
 					if ($gameStats) {
 						gameStats.update((val) => {
 							if (val)
@@ -202,6 +201,8 @@
 					}
 					scores.score1 = 0;
 					scores.score2 = 0;
+					$gameMode = $appState.user?.gameMode || $gameMode;
+					p5.remove();
 					gameStatus.set('finished');
 				}
 			}

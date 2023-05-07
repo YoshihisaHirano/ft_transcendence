@@ -19,6 +19,7 @@ export async function GET({ url, cookies, fetch }) {
 				throw new Error('500');
 			}
 			const userJSON = await user.json();
+			
 			return new Response(JSON.stringify(userJSON));
 		} catch (err) {
 			if (err instanceof Error && err.message === unauthorizedCode) {

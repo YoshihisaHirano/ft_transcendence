@@ -3,12 +3,12 @@
 	import GameScreen from '$lib/components/GameScreen/GameScreen.svelte';
 	import Tournament from '$lib/components/Tournament/Tournament.svelte';
 	import { currentGameId, gameStats, gameStatus, isGameHost } from '$lib/store/gameState';
-	import { onMount } from 'svelte';
+	import { onMount, onDestroy } from 'svelte';
 	import type { PageData } from './$types';
 	import { gameIo } from '$lib/sockets/gameSocket';
 	import { appState } from '$lib/store/appState';
+	import { tournamentState } from '$lib/store/tournamentState';
 
-	export let data: PageData;
 	onMount(() => {
 		if (!gameIo.connected) {
 			gameIo.connect();
@@ -32,14 +32,21 @@
 			currentGameId.set(userId);
 		}
 	});
-	// $: console.log($gameStatus);
+
+	onDestroy(() => {
+		const canvases = document.querySelectorAll('.p5Canvas');
+		Array.from(canvases).forEach((canvas) => {
+			canvas.remove();
+		});
+	});
+	
 </script>
 
 <div class="game-page">
 	{#if $currentGameId}
 		<GameScreen />
 	{/if}
-	<Tournament tournament={data.tournament} />
+	<Tournament tournament={$tournamentState} />
 </div>
 
 <style>
@@ -47,12 +54,14 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: flex-start;
+		position: relative;
 	}
 
-	@media screen and (max-width: 800px) {
+	@media screen and (max-width: 1200px) {
 		.game-page {
 			flex-direction: column;
 			gap: 4rem;
+			align-items: center;
 		}
 	}
 

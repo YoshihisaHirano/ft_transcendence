@@ -11,7 +11,6 @@
 		newChat: boolean = false;
 
 	export let newMembers = [] as string[];
-	// $: console.log(newMembers, chatId);
 
 	function addMembers(e: Event) {
 		e.preventDefault();
@@ -99,7 +98,8 @@
 
 	.members-dropdown {
 		position: absolute;
-        top: 1.85rem;
+		z-index: 3;
+        bottom: 1.95rem;
 		width: 100%;
 		max-width: 15.75rem;
 		background-color: var(--text-primary);

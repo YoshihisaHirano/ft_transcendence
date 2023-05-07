@@ -1,90 +1,32 @@
 <script lang="ts">
 	import type { Chat, NewChat, User } from '$lib/types/types';
 	import Link from '$lib/components/Link/Link.svelte';
-	import ProfilePicture from './ProfilePicture.svelte';
 	import GameBoard from './GameBoard.svelte';
 	import FriendsBoard from './FriendsBoard.svelte';
 	import { appState } from '$lib/store/appState';
 	import Button from '../Button/Button.svelte';
-	import userService from '$lib/services/userService';
 	import chatService from '$lib/services/chatService';
 	import { chatState, selectedChatId } from '$lib/store/chatState';
 	import { goto } from '$app/navigation';
-	import { updateUser } from '$lib/utils/updates';
 	import GameInvitation from '../GameInvitation/GameInvitation.svelte';
-	import StarsAchievement from "$lib/components/UserProfile/StarsAchievement.svelte";
 	import GameModeBar from '../GameModeBar/GameModeBar.svelte';
+	import CurrentGames from './CurrentGames.svelte';
+	import UserProfileInfo from './UserProfileInfo.svelte';
 
 	export let userData: User, isCurrentUser: boolean;
-	$: ({ id, username, image, tournamentStats, matchHistory, friends, status, achievement } = userData);
+	$: ({ id, username, tournamentStats, matchHistory, friends, status } = userData);
 	const userId = $appState?.user?.id || '';
-
-	$: isFriend = false;
-	$: if (!isCurrentUser) {
-		if ($appState?.user?.friends) {
-			isFriend = $appState.user.friends.findIndex((item) => item.id === id) != -1;
-		}
-	}
-
-	$: isInBlacklist = false;
-	$: if (!isCurrentUser) {
-		if ($appState?.user?.blacklist) {
-			isInBlacklist = $appState.user.blacklist.findIndex((item) => item === id) != -1;
-		}
-	}
-
-	$: stars = 0;
-	$: switch (achievement) {
-		case 'beginner':
-			stars = 1;
-			break;
-		case 'experienced':
-			stars = 2;
-			break;
-		case 'master':
-			stars = 3;
-			break;
-	}
-
-	async function befriend() {
-		await userService.toggleFriendship(userId, id, true);
-		friends = [
-			...friends,
-			{ id: userId, status: $appState?.user?.status || 'offline', username: $appState?.user?.username || '' }
-		];
-		await updateUser(userId);
-		isFriend = true;
-	}
-
-	async function unfriend() {
-		await userService.toggleFriendship(userId, id, false);
-		friends = friends.filter((item) => item.id !== userId);
-		await updateUser(userId);
-		isFriend = false;
-	}
-
-	async function addToBlacklist() {
-		await userService.toggleBlacklist(userId, id, true);
-		await updateUser(userId);
-		isInBlacklist = true;
-	}
-
-	async function deleteFromBlacklist() {
-		await userService.toggleBlacklist(userId, id, false);
-		await updateUser(userId);
-		isInBlacklist = false;
-	}
 
 	async function startConversation() {
 		const directChat: Chat | null = await chatService.findDirectChat(userId, id);
 		if (!directChat) {
 			const newChat: NewChat = {
 				isDirect: true,
-				adminId: userId,
+				ownerId: userId,
 				privacyMode: 'private',
 				members: [userId, id],
 				chatname: `${username} + ${$appState?.user?.username || ''}`
-			}
+			};
 			const createdChat = await chatService.createChat(newChat);
 			if (!('message' in createdChat)) {
 				const updatedChats = await chatService.getChatsByUserId(userId);
@@ -97,35 +39,15 @@
 			goto('/chatrooms');
 		}
 	}
+
+	$: isInBlacklist = $appState.user?.blacklist.findIndex((item) => item === id) !== -1;
 </script>
 
 <div class="user-profile-container">
-	<div class="user-profile-info">
-		<p>Rank: {achievement}</p>
-		<div>
-			<StarsAchievement numStars={stars} />
-		</div>
-		<ProfilePicture imageSrc={image} {isCurrentUser} />
-		<p>{username}</p>
-		<p>{tournamentStats.ladderLevel} place</p>
-		{#if !isCurrentUser}
-			{#if isFriend}
-				<Button className="friendship-btn" variant="danger" onClick={unfriend}>Unfriend</Button>
-			{:else}
-				<Button className="friendship-btn" variant="success" onClick={befriend}>Befriend</Button>
-			{/if}
-		{/if}
-		{#if !isCurrentUser}
-			{#if isInBlacklist}
-				<Button className="blacklist-btn" variant="success" onClick={deleteFromBlacklist}>Delete from blacklist</Button>
-			{:else}
-				<Button className="blacklist-btn" variant="danger" onClick={addToBlacklist}>Add to blacklist</Button>
-			{/if}
-		{/if}
-	</div>
+	<UserProfileInfo {isCurrentUser} user={userData} {userId} />
 	<div class="user-profile-games">
 		{#if isCurrentUser}
-			<GameModeBar/>
+			<GameModeBar {id} />
 		{/if}
 		<GameBoard
 			wins={tournamentStats.wins}
@@ -139,19 +61,22 @@
 		{#if !isCurrentUser && status == 'online'}
 			<div class="game-invitation">
 				<p>Invite to a game:</p>
-				<GameInvitation className="user-profile-invite-btn" playerId={id} playerName={username}/>
+				<GameInvitation className="user-profile-invite-btn" playerId={id} playerName={username} />
 			</div>
 		{/if}
 	</div>
 	<div class="user-profile-friends">
 		{#if isCurrentUser}
 			<Link internal target="/chatrooms" bg="#DB55DD">Chat with friends</Link>
-		{:else}
+		{:else if !isCurrentUser && !isInBlacklist}
 			<Button className="dm-button" variant="chat" onClick={startConversation}
 				>Start DM conversation</Button
 			>
 		{/if}
 		<FriendsBoard {friends} currentId={$appState?.user?.id || id} />
+		{#if isCurrentUser}
+			<CurrentGames />
+		{/if}
 	</div>
 </div>
 
@@ -165,7 +90,7 @@
 	:global(p ~ button.user-profile-invite-btn) {
 		border: 1px solid white;
 		border-radius: 50%;
-		padding: .35rem .45rem .4rem;
+		padding: 0.35rem 0.45rem 0.4rem;
 	}
 
 	.game-invitation {
@@ -180,11 +105,11 @@
 		display: flex;
 	}
 
-	.user-profile-info {
-		flex-basis: 24%;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
+	@media (max-width: 800px) {
+		.user-profile-container {
+			flex-direction: column;
+			gap: 2rem;
+		}
 	}
 
 	.user-profile-friends {

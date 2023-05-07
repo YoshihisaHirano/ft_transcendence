@@ -20,6 +20,14 @@
 <style>
 	.tournament-container {
 		padding: 1rem 0.65rem;
+		margin-left: 1rem;
+		margin-right: 1rem;
+	}
+
+	@media (min-width: 1200px) {
+		.tournament-container {
+			max-width: 30%;
+		}
 	}
 
 	ol {
@@ -30,6 +38,12 @@
 	.record-container {
 		/* display: flex;
 		gap: 0.5rem; */
+	}
+
+	li {
+		max-width: 100%;
+		text-overflow: ellipsis;
+		white-space: pre-wrap;
 	}
 
 	li + li {

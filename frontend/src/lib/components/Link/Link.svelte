@@ -22,6 +22,7 @@
         background-color: var(--btn-bg-color);
         box-sizing: border-box;
         width: fit-content;
+        max-width: 80%;
         color: var(--text-primary)
     }
 </style>

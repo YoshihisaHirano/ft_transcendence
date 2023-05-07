@@ -1,10 +1,11 @@
-import { IsEnum } from 'class-validator';
+import { IsEnum, IsString } from 'class-validator';
 import { PrivacyMode } from 'src/entities/chat.entity';
 
 export class CreateChatDto {
+  @IsString()
   chatname: string;
   members: string[];
-  adminId: string;
+  ownerId: string;
   @IsEnum(PrivacyMode)
   privacyMode: PrivacyMode;
   password: string;

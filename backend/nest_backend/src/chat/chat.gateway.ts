@@ -16,7 +16,7 @@ import { MuteService } from './services/mute.service';
 	namespace: '/chat',
 	cors: {
 		credentials: true,
-		origin: "http://localhost:5176",
+		origin: "http://192.168.10.3:5176",
 		methods: ['GET', 'POST'],
 	  	transports: ['websocket'],
 	}
@@ -46,20 +46,20 @@ export class ChatGateway {
 
 	// @SubscribeMessage('newChat') 
 	// async handleNewChat(client: Socket, newChatData: CreateChatDto) {
-	// 	console.log(newChatData);
+	// 	//(console.log)(newChatData);
 	// 	try {
 	// 		const chat = await this.chatService.createChat(newChatData);
 	// 		client.emit('newChatCreateStatus', chat);
 	// 	} catch (e)
 	// 	{
-	// 		console.log(e);
+	// 		//(console.log)(e);
 	// 		client.emit('newChatCreateStatus', null);
 	// 	}
 	// }
 
 	@SubscribeMessage('joinChat')
 	async handleJoinRoom(client: Socket, data: UserChangeChatStatus) {
-		// console.log(data.chatId);
+		// //(console.log)(data.chatId);
 		if (this.chatService.isUserChatMember(data.chatId, data.userId) ) {
 			this.users.set(data.userId, client.id);
 			const messages = await this.messageService.findChatMessages(data.chatId);
@@ -73,12 +73,12 @@ export class ChatGateway {
   @SubscribeMessage('leaveChat')
   async handleLeaveRoom(client: Socket, data: UserChangeChatStatus) {
 	try {
-		await this.chatService.deleteUserOfChat(data.userId, data.chatId);
+		await this.chatService.deleteUserOfChat(data.userId, data.chatId, true);
 		client.leave(data.chatId);
 		client.emit('leaveChatStatus', data.chatId);
 		this.updateChat(data.chatId);
 	} catch (e) {
-		console.log(e);
+		//(console.log)(e);
 		client.emit('leaveChatStatus', null);
 	}
   }
@@ -104,14 +104,14 @@ export class ChatGateway {
 	try {
 		const userToKick = this.server.sockets.get(this.users.get(data.userId));
 		const chat = await this.chatService.findById(data.chatId);
-		await this.chatService.deleteUserOfChat(data.userId, data.chatId);
+		await this.chatService.deleteUserOfChat(data.userId, data.chatId, false);
 		if (userToKick) {
 			userToKick.leave(data.chatId);
 			userToKick.emit("youKicked", chat);
 		}
 		this.updateChat(data.chatId);
 	} catch (e) {
-		console.log(e);
+		//(console.log)(e);
 	}
   }
   
@@ -121,7 +121,7 @@ export class ChatGateway {
 		const userToBan = this.server.sockets.get(this.users.get(data.userId));
 		const chat = await this.chatService.findById(data.chatId);
 
-		await this.chatService.deleteUserOfChat(data.userId, data.chatId);
+		await this.chatService.deleteUserOfChat(data.userId, data.chatId, false);
 		await this.chatService.banUser(data.chatId, data.userId);
 		if (userToBan) {
 			userToBan.leave(data.chatId);
@@ -129,7 +129,7 @@ export class ChatGateway {
 		}
 		this.updateChat(data.chatId);
 	} catch (e) {
-		console.log(e);
+		//(console.log)(e);
 	}
   }
 
@@ -140,7 +140,7 @@ export class ChatGateway {
 		await this.muteService.addToMuteList(data.userId, data.chatId);
 		this.updateChat(data.chatId);
 	} catch (e) {
-		console.log(e);
+		//(console.log)(e);
 	}
   }
 }

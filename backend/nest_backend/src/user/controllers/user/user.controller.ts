@@ -17,8 +17,8 @@ import { Stats } from 'src/entities';
 import { ShortResponseUserDto } from 'src/dtos/shortResponseUser.dto';
 import { TournamentDto } from 'src/dtos/tournament.dto';
 import { ResponseUserDto } from 'src/dtos/responseUser.dto';
-import { AuthService } from 'src/auth/auth.service';
 import JwtTwoFactorGuard from 'src/auth/jwt-2fa-guard';
+import { GameMode } from '../../../entities/user.entity';
 
 @UseGuards(JwtTwoFactorGuard)
 @Controller('users')
@@ -27,7 +27,6 @@ export class UserController {
     private readonly userService: UserService,
     private readonly tournamentService: TournamentService,
     private readonly statsService: StatsService,
-    private readonly authService: AuthService,
   ) {}
   @Get()
   getUsers() {
@@ -47,6 +46,7 @@ export class UserController {
     }
     return {
       id: user.id,
+      login: user.login,
       image: user.image,
       username: user.username,
       status: user.status,
@@ -55,6 +55,8 @@ export class UserController {
       tournamentStats: tournamentStats,
       achievement: await this.tournamentService.getAchievements(user.id),
       blacklist: user.blacklist,
+      gameMode: user.preferredGameMode,
+      twoFactorAuthIsEnabled: user.twoFactorAuthIsEnabled,
     };
   }
   @Post('create')
@@ -75,6 +77,7 @@ export class UserController {
     };
     return {
       id: user.id,
+      login: user.login,
       image: user.image,
       username: user.username,
       status: user.status,
@@ -83,6 +86,8 @@ export class UserController {
       tournamentStats: tournamentStats,
       achievement: await this.tournamentService.getAchievements(user.id),
       blacklist: user.blacklist,
+      gameMode: user.preferredGameMode,
+      twoFactorAuthIsEnabled: user.twoFactorAuthIsEnabled,
     };
   }
   @Post('addfriend')
@@ -123,5 +128,16 @@ export class UserController {
     @Param('checkId') checkId: string,
   ) {
     return this.userService.checkBlacklist(userId, checkId);
+  }
+  @Put('changemode')
+  changeGameMode(
+    @Body('userId') userId: string,
+    @Body('mode') mode: GameMode,
+  ) {
+    return this.userService.changeGameMode(userId, mode);
+  }
+  @Get('login/:userId')
+  getLoginById(@Param('userId') userId: string) {
+    return this.userService.findUserIdByLogin(userId);
   }
 }

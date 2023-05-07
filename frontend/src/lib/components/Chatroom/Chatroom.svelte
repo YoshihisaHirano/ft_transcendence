@@ -13,9 +13,10 @@
 	import { updateChats } from '$lib/utils/updates';
 
 	$: userChats = $chatState;
+	$: console.log(userChats);
 	$: isModalOpen = false;
 
-	onMount(() => {
+	onMount(() => {	
 		const userId = $appState.user?.id;
 		if (userId) {
 			userChats.forEach((chat) => {
