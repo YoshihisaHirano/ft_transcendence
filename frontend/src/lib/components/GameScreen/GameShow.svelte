@@ -13,7 +13,7 @@
 		userTwoName: isGameWatched ? $gameBeingShown?.playerName : $gameStats?.userTwoName
 	};
 
-	// $: console.log($gameBeingShown, playerNames, isGameWatched);
+	
 </script>
 
 {#if !isGameWatched}
@@ -49,6 +49,7 @@
 		width: fit-content;
 		margin: 0 auto 0;
 		padding-top: 6rem;
+		min-width: fit-content;
 	}
 
 	.canvas-wrapper {

@@ -9,7 +9,7 @@
 	export let showExtra: boolean, member: ShortUser, chatId: string, toggleDropdown: () => void;
 
 	$: userId = getFromStorage('userId') || '';
-	// $: console.log(member);
+
 
 	function removeFromChat(e: Event) {
 		const target = e.target as HTMLButtonElement;

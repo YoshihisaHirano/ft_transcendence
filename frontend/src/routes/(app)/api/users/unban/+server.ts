@@ -20,7 +20,7 @@ export async function POST({ request, fetch, cookies }) {
 			},
 			body: JSON.stringify({ chatId: bodyJson.chatId, userId: bodyJson.userId })
 		});
-		console.log(res, JSON.stringify({ userId: bodyJson.userId, blackId: bodyJson.blackId }));
+		
 	} catch (err) {
 		if (err instanceof Error && err.message === unauthorizedCode) {
 			throw error(401, unauthorizedCode);

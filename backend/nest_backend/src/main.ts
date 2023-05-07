@@ -14,7 +14,7 @@ async function bootstrap() {
   await app.listen(3000);
   app.enableCors({
     allowedHeaders: ['content-type'],
-    origin: 'http://localhost:5174',
+    origin: 'http://192.168.10.3:5176',
     credentials: true,
   });
   app.use(json({ limit: '5mb' }));

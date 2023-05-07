@@ -4,7 +4,7 @@
 	export let userStatus: UserStatus;
 </script>
 
-<span title={`User staus is: ${userStatus}`} class="online-indicator" data-status={userStatus} />
+<span title={`User status: ${userStatus}`} class="online-indicator" data-status={userStatus} />
 
 <style>
 	.online-indicator {

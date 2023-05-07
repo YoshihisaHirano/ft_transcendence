@@ -23,7 +23,7 @@ export async function load() {
 	appState.update(() => ({
 		user: user || null
 	}));
-	console.log(user);
+	
 	if (user) {
 		statusIo.emit('userConnect', user.id);
 	}

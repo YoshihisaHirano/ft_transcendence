@@ -17,7 +17,7 @@
 	let canvasHeight: number = 0;
 
 	let currentGameMode = gameModes[$gameBeingShown?.gameMode || 'default'];
-    // console.log($gameBeingShown);
+    
 	const { paddleLength, ballRadius, bgCol, ballSpeed } = currentGameMode;
 	const sketch: Sketch = (p5) => {
 		let ball: Ball;
@@ -49,6 +49,9 @@
 			);
 
 			gameIo.on('endOfGame', () => {
+				p5.fill(255, 255, 255);
+                p5.textAlign('center');
+                p5.text('GAME OVER', 0, 0);
 				p5.noLoop();
 			});
 
@@ -99,13 +102,14 @@
 					xspeed * scaleCoefficient,
 					yspeed * scaleCoefficient
 				);
-                if (!scoresSet && score1Div && score2Div) {
-                    scoresSet = true;
-                    scores.score1 = data.score1;
-					scores.score2 = data.score2;
-					score1Div.innerHTML = scores.score1.toString();
-					score2Div.innerHTML = scores.score2.toString();
-                }
+				
+                // if (!scoresSet && score1Div && score2Div) {
+                //     scoresSet = true;
+                //     scores.score1 = data.score1;
+				// 	scores.score2 = data.score2;
+				// 	score1Div.innerHTML = scores.score1.toString();
+				// 	score2Div.innerHTML = scores.score2.toString();
+                // }
 				showFrame();
 			});
 		};
