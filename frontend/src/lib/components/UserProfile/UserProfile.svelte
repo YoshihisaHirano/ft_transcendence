@@ -14,14 +14,7 @@
 	import UserProfileInfo from './UserProfileInfo.svelte';
 
 	export let userData: User, isCurrentUser: boolean;
-	$: ({
-		id,
-		username,
-		tournamentStats,
-		matchHistory,
-		friends,
-		status,
-	} = userData);
+	$: ({ id, username, tournamentStats, matchHistory, friends, status } = userData);
 	const userId = $appState?.user?.id || '';
 
 	async function startConversation() {
@@ -46,6 +39,8 @@
 			goto('/chatrooms');
 		}
 	}
+
+	$: isInBlacklist = $appState.user?.blacklist.findIndex((item) => item === id) !== -1;
 </script>
 
 <div class="user-profile-container">
@@ -73,7 +68,7 @@
 	<div class="user-profile-friends">
 		{#if isCurrentUser}
 			<Link internal target="/chatrooms" bg="#DB55DD">Chat with friends</Link>
-		{:else}
+		{:else if !isCurrentUser && !isInBlacklist}
 			<Button className="dm-button" variant="chat" onClick={startConversation}
 				>Start DM conversation</Button
 			>
@@ -108,6 +103,13 @@
 
 	.user-profile-container {
 		display: flex;
+	}
+
+	@media (max-width: 800px) {
+		.user-profile-container {
+			flex-direction: column;
+			gap: 2rem;
+		}
 	}
 
 	.user-profile-friends {

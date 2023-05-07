@@ -37,6 +37,8 @@
 		width: 65vw;
 		top: 50%;
 		transform: translate(0%, -50%);
+		max-height: 95vh;
+		overflow-y: auto;
 	}
 
 	.modal-close {

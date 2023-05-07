@@ -40,7 +40,18 @@
 	function copyLink() {
 		const base = import.meta.env.VITE_FRONTEND_URL;
 		const link = base + 'chat/invite/' + chatId;
-		navigator.clipboard.writeText(link);
+		// navigator.clipboard.writeText(link);
+		const textArea = document.createElement('textarea');
+		textArea.value = link;
+		document.body.appendChild(textArea);
+		textArea.focus();
+		textArea.select();
+		try {
+			document.execCommand('copy');
+		} catch (err) {
+			console.error('Unable to copy to clipboard', err);
+		}
+		document.body.removeChild(textArea);
 		copySuccessText = 'Copied to clipboard';
 		setTimeout(() => {
 			copySuccessText = '';
@@ -99,7 +110,15 @@
 
 {#if modalOpen}
 	<Modal title="{chatname} settings" onClose={toggleModal}>
-		<ChatSettings {banList} {chatname} {chatId} {privacyMode} {password} {adminId} members={chatMembers} />
+		<ChatSettings
+			{banList}
+			{chatname}
+			{chatId}
+			{privacyMode}
+			{password}
+			{adminId}
+			members={chatMembers}
+		/>
 	</Modal>
 {/if}
 

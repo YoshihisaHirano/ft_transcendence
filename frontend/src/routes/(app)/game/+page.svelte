@@ -7,8 +7,8 @@
 	import type { PageData } from './$types';
 	import { gameIo } from '$lib/sockets/gameSocket';
 	import { appState } from '$lib/store/appState';
+	import { tournamentState } from '$lib/store/tournamentState';
 
-	export let data: PageData;
 	onMount(() => {
 		if (!gameIo.connected) {
 			gameIo.connect();
@@ -39,14 +39,14 @@
 			canvas.remove();
 		});
 	});
-	// $: console.log($gameStatus);
+	
 </script>
 
 <div class="game-page">
 	{#if $currentGameId}
 		<GameScreen />
 	{/if}
-	<Tournament tournament={data.tournament} />
+	<Tournament tournament={$tournamentState} />
 </div>
 
 <style>
@@ -57,10 +57,11 @@
 		position: relative;
 	}
 
-	@media screen and (max-width: 900px) {
+	@media screen and (max-width: 1200px) {
 		.game-page {
 			flex-direction: column;
 			gap: 4rem;
+			align-items: center;
 		}
 	}
 

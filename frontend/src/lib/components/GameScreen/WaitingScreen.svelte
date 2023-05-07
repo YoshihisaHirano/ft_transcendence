@@ -1,9 +1,7 @@
 <script lang="ts">
-	import { appState } from '$lib/store/appState';
 	import { onMount } from 'svelte';
-	import { currentGameId, gameStats, gameStatus, isGameHost } from '$lib/store/gameState';
+	import { currentGameId, gameMode, gameStats, gameStatus, isGameHost } from '$lib/store/gameState';
 	import { gameIo } from '$lib/sockets/gameSocket';
-	import { statusIo } from '$lib/sockets/statusSocket';
 	import JumpingDots from "../JumpingDots/JumpingDots.svelte";
 	import GameFailWarning from './GameFailWarning.svelte';
 
@@ -11,20 +9,21 @@
 		if (!$currentGameId || !$gameStats) {
 			return;
 		}
-		if ( $isGameHost) {
+		if ($isGameHost) {
 			gameIo.emit('createGame', {
 				gameId: $currentGameId,
-				playerId: $gameStats.userTwoId
+				playerId: $gameStats.userTwoId,
+				mode: $gameMode
 			});
 		} else {
 			gameIo.emit('playerJoinGame', {
 				gameId: $currentGameId,
-				playerId: $gameStats.userTwoId
+				playerId: $gameStats.userTwoId,
+				mode: $gameMode
 			});
 		}
 
 		gameIo.on('gameStart', () => {
-			console.log('GAME STARTED');
 			gameStatus.set('in progress');
 		});
 

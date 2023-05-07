@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { gamesToWatch } from '$lib/mockData/mockData';
-	import { statusIo } from '$lib/sockets/statusSocket';
+	// import { gamesToWatch } from '$lib/mockData/mockData';
 	import { availableGames, gameBeingShown } from '$lib/store/gameWatchState';
 	import type { GameData } from '$lib/types/types';
 	import { onMount } from 'svelte';
@@ -10,27 +9,14 @@
 
 	$: currentId = $appState.user?.id || '';
 
-	onMount(() => {
-		statusIo.on('updateGameList', (gameArr: GameData[]) => {
-			availableGames.set(gameArr);
-		});
-
-		//mocking
-		//availableGames.set(gamesToWatch);
-
-		return () => {
-			statusIo.off('updateGameList');
-		};
-	});
-
 	function setCurrentGameData(e: Event) {
 		e.preventDefault();
 		const target = e.target as HTMLAnchorElement;
         const game = target.dataset.game;
-        // console.log(game);
+        
         if (game) {
             const gameData = JSON.parse(game) as GameData;
-            // console.log(gameData);
+            
             gameBeingShown.set(gameData);
             goto(target.href);
         }

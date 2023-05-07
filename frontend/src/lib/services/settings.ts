@@ -1,4 +1,4 @@
-export const baseUrl = import.meta.env.VITE_FRONTEND_URL || 'http://localhost:5176/api/';
+export const baseUrl = import.meta.env.VITE_FRONTEND_URL || 'http://192.168.10.3:5176/api/';
 export const unauthorizedCode = "401";
 
 export function addAuthHeader(authToken: string) {

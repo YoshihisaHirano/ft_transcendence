@@ -7,6 +7,9 @@
 	import AddChatMembers from '../AddChatMembers/AddChatMembers.svelte';
 	import { chatState } from '$lib/store/chatState';
 	import { chatIo } from '$lib/sockets/chatSocket';
+	import UserRecord from '../UserProfile/UserRecord.svelte';
+	import userService from '$lib/services/userService';
+	import { updateChats } from '$lib/utils/updates';
 
 	export let chatId: string,
 		privacyMode: PrivacyMode,
@@ -46,7 +49,18 @@
 					return [...updatedChats];
 				});
 				chatIo.emit('updateChat', updatedChat.chatId);
+				updateChats(adminId);
 			}
+		}
+	}
+
+	async function unbanUser(e: Event) {
+		const target = e.target as HTMLButtonElement;
+		const userId = target.dataset.user;
+		console.log(userId);
+		if (userId) {
+			await userService.unbanUser(chatId, userId);
+			updateChats(adminId);
 		}
 	}
 </script>
@@ -78,12 +92,20 @@
 	{#if friends.length}
 		<AddChatMembers {friends} {members} {chatId} />
 	{/if}
-	{#if banList.length}
-		<div class="banlist">
-			<p>Banned: {banList.length}</p>
-		</div>
-	{/if}
 </form>
+{#if banList.length}
+<div class="ban-list">
+	<p>Banned: {banList.length}</p>
+	<div>
+		{#each banList as user}
+		<div class="banned-user">
+			<UserRecord currentId={adminId} userId={user.id} username={user.username} />
+			<button data-user={user.id} on:click={unbanUser} title="unban">✖</button>
+		</div>
+		{/each}
+	</div>
+</div>
+{/if}
 
 <style>
 	fieldset {
@@ -117,7 +139,26 @@
 		margin-right: 0;
 	}
 
-	.banlist {
+	.ban-list {
 		margin-top: 1rem;
+	}
+
+	.ban-list > div {
+		padding: 1rem 0;
+		display: flex;
+	}
+
+	.banned-user {
+		border-bottom: 1px dashed white;
+	}
+
+	button {
+		background: transparent;
+		cursor: pointer;
+		margin: 0;
+		padding: 0;
+		outline: none;
+		border: none;
+		color: var(--text-primary);
 	}
 </style>
