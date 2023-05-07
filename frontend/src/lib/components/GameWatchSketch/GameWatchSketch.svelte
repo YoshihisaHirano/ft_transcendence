@@ -49,10 +49,13 @@
 			);
 
 			gameIo.on('endOfGame', () => {
-				p5.fill(255, 255, 255);
-				p5.textAlign('center');
-				p5.text('GAME OVER', 0, 0);
 				p5.noLoop();
+				p5.remove();
+			});
+
+			gameIo.on('finishGame', () => {
+				p5.noLoop();
+				p5.remove();
 			});
 
 			function showFrame() {
@@ -119,19 +122,3 @@
 </script>
 
 <P5 {sketch} />
-<div class="game-over">
-	<p>
-		GAME OVER
-		<span>{$gameBeingShown?.hostName}</span>
-		VS
-		<span>{$gameBeingShown?.playerName}</span>
-	</p>
-	<Link target="/" internal>Back to home</Link>
-</div>
-
-<style>
-	.game-over {
-		text-align: center;
-		width: fit-content;
-	}
-</style>
