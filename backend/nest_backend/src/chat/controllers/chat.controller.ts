@@ -32,11 +32,16 @@ export class ChatController {
     const chat = await this.chatService.createChat(createChatDto);
     const members: ShortResponseUserDto[] =
       await this.userService.getShortInfoByIds(chat.members);
+    const owner = await 
+      this.userService.getShortInfoById(chat.ownerId);
+    const admins: ShortResponseUserDto[] =
+      await this.userService.getShortInfoByIds(chat.adminIds);
     return {
       chatId: chat.chatId,
       chatname: chat.chatname,
       members: members,
-      adminId: chat.adminId,
+      owner: owner,
+      admins: admins,
       privacyMode: chat.privacyMode,
       isDirect: chat.isDirect,
       banList: await this.userService.getShortInfoByIds(chat.banList),
@@ -59,7 +64,9 @@ export class ChatController {
         chatId: chat.chatId,
         chatname: chat.chatname,
         members: await this.userService.getShortInfoByIds(chat.members),
-        adminId: chat.adminId,
+        owner: await 
+          this.userService.getShortInfoById(chat.ownerId),
+        admins: await this.userService.getShortInfoByIds(chat.adminIds),
         privacyMode: chat.privacyMode,
         isDirect: chat.isDirect,
         banList: await this.userService.getShortInfoByIds(chat.banList),
@@ -78,8 +85,9 @@ export class ChatController {
   deleteUserOfChat(
     @Body('userId') userId: string,
     @Body('chatId') chatId: string,
+    @Body('isByHimself') isByHimself: boolean
   ) {
-    return this.chatService.deleteUserOfChat(userId, chatId);
+    return this.chatService.deleteUserOfChat(userId, chatId, isByHimself);
   }
   @Post('checkpassword')
   checkPassword(
@@ -128,13 +136,13 @@ export class ChatController {
   @Get('chatbyid/:id')
   async getChatById(@Param('id') id: string): Promise<ResponseChatDto> {
     const chat = await this.chatService.findById(id);
-    const members: ShortResponseUserDto[] =
-      await this.userService.getShortInfoByIds(chat.members);
     return {
       chatId: chat.chatId,
       chatname: chat.chatname,
-      members: members,
-      adminId: chat.adminId,
+      members: await this.userService.getShortInfoByIds(chat.members),
+      owner: await 
+        this.userService.getShortInfoByIds([chat.ownerId])[0],
+      admins: await this.userService.getShortInfoByIds(chat.adminIds),
       privacyMode: chat.privacyMode,
       isDirect: chat.isDirect,
       banList: await this.userService.getShortInfoByIds(chat.banList),
@@ -154,10 +162,6 @@ export class ChatController {
     @Param('userId') userId: string,
   ) {
     return this.muteService.isInMuteList(chatId, userId);
-  }
-  @Get('mutelist')
-  findAllMuted() {
-    // return this.muteService.getAll();
   }
   @Get('mutetime/:chatId/:userId')
   getTimeTillUnmute(

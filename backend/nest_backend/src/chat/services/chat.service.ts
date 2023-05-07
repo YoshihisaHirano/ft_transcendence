@@ -18,6 +18,7 @@ export class ChatService {
     }
     const newChat = this.chatRepository.create(createChatDto);
     newChat.banList = [];
+    newChat.adminIds = [newChat.ownerId];
     return this.chatRepository.save(newChat);
   }
   getAllChats() {
@@ -37,18 +38,35 @@ export class ChatService {
     chat.members.push(...usersId);
     return this.chatRepository.save(chat);
   }
-  async deleteUserOfChat(userId: string, chatId: string) {
+  async addAdminsToChat(usersId: string[], chatId: string) {
     const chat = await this.chatRepository.findOne({
       where: { chatId: chatId },
     });
+    chat.adminIds.push(...usersId);
+    return this.chatRepository.save(chat);
+  }
+  async deleteUserOfChat(userId: string, chatId: string, isByHimself: boolean ) {
+    const chat = await this.chatRepository.findOne({
+      where: { chatId: chatId },
+    });
+    if (chat.ownerId == userId && !isByHimself) {
+      return "ownerErr";
+    }
+    let adminsId = chat.adminIds;
+    adminsId = adminsId.filter((member) => member != userId);
     let membersId = chat.members;
     membersId = membersId.filter((member) => member != userId);
     if (membersId.length == 0) {
       return this.chatRepository.remove(chat);
     }
     chat.members = membersId;
-    if (chat.adminId == userId) {
-      chat.adminId = membersId[0];
+    chat.adminIds = adminsId;
+    if (userId == chat.ownerId && adminsId.length != 0) {
+      chat.ownerId = adminsId[0];
+    }
+    if (adminsId.length == 0) {
+      chat.adminIds = [membersId[0]];
+      chat.ownerId = membersId[0];
     }
     return this.chatRepository.save(chat);
   }
@@ -62,7 +80,7 @@ export class ChatService {
     const chat = await this.chatRepository.findOne({
       where: { chatId: updateChatDto.chatId },
     });
-    chat.adminId = updateChatDto.adminId;
+    chat.adminIds = updateChatDto.adminIds;
     chat.chatname = updateChatDto.chatname;
     chat.privacyMode = updateChatDto.privacyMode;
     if (chat.privacyMode == PrivacyMode.PROTECTED) {
@@ -76,6 +94,9 @@ export class ChatService {
     const chat = await this.chatRepository.findOne({
       where: { chatId: chatId },
     });
+    if (userId == chat.ownerId) {
+      return "ownerErr";
+    }
     chat.banList.push(userId);
     return this.chatRepository.save(chat);
   }
