@@ -10,7 +10,6 @@
 
 	$: userId = getFromStorage('userId') || '';
 
-
 	function removeFromChat(e: Event) {
 		const target = e.target as HTMLButtonElement;
 		const targetId = target.id.replace('remove-', '');

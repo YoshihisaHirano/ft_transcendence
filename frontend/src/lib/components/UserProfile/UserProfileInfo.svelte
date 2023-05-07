@@ -137,6 +137,7 @@
 	.two-factor-auth {
 		margin-top: 0.75rem;
 		cursor: pointer;
+		color: var(--background-primary);
 	}
 
 	.stars-wrapper {

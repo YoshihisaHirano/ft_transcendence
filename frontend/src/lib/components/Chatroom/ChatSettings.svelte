@@ -57,7 +57,7 @@
 	async function unbanUser(e: Event) {
 		const target = e.target as HTMLButtonElement;
 		const userId = target.dataset.user;
-		console.log(userId);
+		// console.log(userId);
 		if (userId) {
 			await userService.unbanUser(chatId, userId);
 			updateChats(adminId);
