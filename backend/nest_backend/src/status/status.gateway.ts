@@ -63,6 +63,11 @@ export class StatusGateway implements OnGatewayDisconnect {
 		}
 	}
 
+	@SubscribeMessage("exitMatchmaking")
+	handleexitMatchmaking(client: Socket, data) {
+		this.statusService.removeWaitingGame(client.id);
+	}
+
 	handleDisconnect(client: Socket): any { // user disconnect
 		const userId = this.statusService.deleteId(client.id); // remove invite
 		this.statusService.removeWaitingGame(client.id);
