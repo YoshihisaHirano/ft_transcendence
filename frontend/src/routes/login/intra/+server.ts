@@ -21,12 +21,11 @@ export async function GET({ url, cookies, fetch }) {
 			tokenRequestUrl.searchParams.append('code', code);
 			tokenRequestUrl.searchParams.append('client_id', CLIENT_UID);
 			tokenRequestUrl.searchParams.append('client_secret', CLIENT_SECRET);
-			tokenRequestUrl.searchParams.append('redirect_uri', 'http://192.168.10.11:5176/login/intra');
+			tokenRequestUrl.searchParams.append('redirect_uri', 'http://192.168.10.3:5176/login/intra');
 			const res = await fetch(tokenRequestUrl, {
 				method: 'POST'
 			});
 			const json = await res.json();
-			// 
 			const me = await fetch(GET_LOGIN_URL, {
 				headers: {
 					Authorization: `Bearer ${json.access_token}`
@@ -40,7 +39,7 @@ export async function GET({ url, cookies, fetch }) {
 		}
 	}
 	// for testing stuff
-	// login = 'momo';
+	login = 'momo';
 	if (login) {
 		// try {
 			const logMe = await fetch(new URL('/2fa/login', VITE_BACKEND_URL), {
@@ -50,10 +49,7 @@ export async function GET({ url, cookies, fetch }) {
 					...addContentType()
 				}
 			});
-			// 
             const logMeJSON = await logMe.json();
-			
-			// 
 			const now = new Date();
 			cookies.set('user-login', login, {
 				path: '/', secure: false, httpOnly: true,

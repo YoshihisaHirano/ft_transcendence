@@ -57,10 +57,11 @@
 		position: relative;
 	}
 
-	@media screen and (max-width: 900px) {
+	@media screen and (max-width: 1200px) {
 		.game-page {
 			flex-direction: column;
 			gap: 4rem;
+			align-items: center;
 		}
 	}
 

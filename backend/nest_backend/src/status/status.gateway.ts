@@ -16,7 +16,7 @@ import { GameSettings } from "src/game/types/GameSettings";
 	namespace: '/status',
 	cors: {
 	  credentials: true,
-	  origin: 'http://192.168.10.11:5176',
+	  origin: 'http://192.168.10.3:5176',
 	  methods: ['GET', 'POST'],
 	  transports: ['websocket'],
 	},

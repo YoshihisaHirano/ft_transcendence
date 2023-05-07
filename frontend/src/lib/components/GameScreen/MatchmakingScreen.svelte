@@ -3,13 +3,13 @@
 	import { currentGameId, gameStats, gameMode } from '$lib/store/gameState';
 	import JumpingDots from '../JumpingDots/JumpingDots.svelte';
 	import enigma from '$lib/images/enigma.svg';
+	import defaultPicture from '$lib/images/default_pic.svg';
 	import { onMount } from 'svelte';
 	import { statusIo } from '$lib/sockets/statusSocket';
 	import GameFailWarning from './GameFailWarning.svelte';
 
 	onMount(() => {
 		statusIo.emit('matchMakingGame', { userId: $currentGameId, mode: $gameMode });
-		console.log('matchmaking sent')
 	});
 </script>
 
@@ -19,7 +19,7 @@
 		{#if $appState.user && $gameStats}
 			<div class="versus-wrapper">
 				<div class="image-frame">
-					<img src={enigma} alt="player one pic" />
+					<img src={defaultPicture} alt="player one pic" />
 					<p class="player-name">{$gameStats.userOneName}</p>
 				</div>
 				<p>VS</p>

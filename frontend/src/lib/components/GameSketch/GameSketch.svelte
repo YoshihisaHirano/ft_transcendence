@@ -31,10 +31,11 @@
 		const score2Div = document.getElementById('score2');
 
 		p5.setup = () => {
-			canvasWidth = Math.min(p5.windowWidth * 0.8, 800);
+			canvasWidth = Math.min(window.innerWidth * 0.8, 800);
 			canvasHeight = canvasWidth / 2;
 			const canvas = p5.createCanvas(canvasWidth, canvasHeight);
 			canvas.id('gameCanvas');
+			console.log(canvasWidth, canvasHeight, p5.width, p5.height);
 			const scaleCoefficient = findScaleCoefficient(canvasWidth);
 
 			ball = new Ball(p5, scaleCoefficient, ballRadius, ballSpeed);
@@ -139,9 +140,8 @@
 					ballShadow.show();
 					gameIo.emit('leftPaddleUpdate', { gameId: $currentGameId, paddleY: left.y });
 				}
-			} else {	
-				// @TODO IMPORTANT need to change to ARROW_UP & ARROW_DOWN as well
-				if (p5.key == 'a') {
+			} else {
+				if (p5.key == 'ArrowUp') {
 					right.move(-30);
 					right.update();
 					p5.background(bgCol);
@@ -149,7 +149,7 @@
 					right.show();
 					gameIo.emit('rightPaddleUpdate', { gameId: $currentGameId, paddleY: right.y });
 				}
-				if (p5.key == 'z') {
+				if (p5.key == 'ArrowDown') {
 					right.move(30);
 					right.update();
 					p5.background(bgCol);
@@ -158,6 +158,7 @@
 					gameIo.emit('rightPaddleUpdate', { gameId: $currentGameId, paddleY: right.y });
 				}
 			}
+			return false;
 		};
 
 		p5.draw = () => {

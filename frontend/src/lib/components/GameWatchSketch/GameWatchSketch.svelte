@@ -49,6 +49,7 @@
 			);
 
 			gameIo.on('endOfGame', () => {
+				p5.fill(255, 255, 255);
                 p5.textAlign('center');
                 p5.text('GAME OVER', 0, 0);
 				p5.noLoop();

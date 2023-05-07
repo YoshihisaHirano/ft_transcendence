@@ -46,6 +46,8 @@
 			goto('/chatrooms');
 		}
 	}
+
+	$: isInBlacklist = $appState.user?.blacklist.findIndex((item) => item === id) !== -1;
 </script>
 
 <div class="user-profile-container">
@@ -73,7 +75,7 @@
 	<div class="user-profile-friends">
 		{#if isCurrentUser}
 			<Link internal target="/chatrooms" bg="#DB55DD">Chat with friends</Link>
-		{:else}
+		{:else if !isCurrentUser  && !isInBlacklist}
 			<Button className="dm-button" variant="chat" onClick={startConversation}
 				>Start DM conversation</Button
 			>

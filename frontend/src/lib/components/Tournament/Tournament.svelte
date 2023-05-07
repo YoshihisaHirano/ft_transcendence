@@ -24,6 +24,12 @@
 		margin-right: 1rem;
 	}
 
+	@media (min-width: 1200px) {
+		.tournament-container {
+			max-width: 30%;
+		}
+	}
+
 	ol {
 		list-style-position: inside;
 		padding-left: 0;
@@ -32,6 +38,12 @@
 	.record-container {
 		/* display: flex;
 		gap: 0.5rem; */
+	}
+
+	li {
+		max-width: 100%;
+		text-overflow: ellipsis;
+		white-space: pre-wrap;
 	}
 
 	li + li {
