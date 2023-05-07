@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Chat, NewChat, User } from '$lib/types/types';
+	import type { Chat, NewChat, StatusUpdate, User } from '$lib/types/types';
 	import Link from '$lib/components/Link/Link.svelte';
 	import GameBoard from './GameBoard.svelte';
 	import FriendsBoard from './FriendsBoard.svelte';
@@ -12,10 +12,29 @@
 	import GameModeBar from '../GameModeBar/GameModeBar.svelte';
 	import CurrentGames from './CurrentGames.svelte';
 	import UserProfileInfo from './UserProfileInfo.svelte';
+	import { statusIo } from '$lib/sockets/statusSocket';
+	import { onMount } from 'svelte';
 
 	export let userData: User, isCurrentUser: boolean;
 	$: ({ id, username, tournamentStats, matchHistory, friends, status } = userData);
 	const userId = $appState?.user?.id || '';
+
+	onMount(() => {
+		statusIo.on('userStatusUpdate', (data: StatusUpdate) => {
+			if (!isCurrentUser && data.userId === id) {
+				status = data.status;
+			}
+			const friendIdx = friends.findIndex((item) => item.id === data.userId);
+			if (friendIdx > -1) {
+				friends[friendIdx] = { ...friends[friendIdx], status: data.status };
+				friends = [ ...friends ];
+			}
+		});
+
+		return () => {
+			statusIo.off('usersStatusUpdate');
+		};
+	});
 
 	async function startConversation() {
 		const directChat: Chat | null = await chatService.findDirectChat(userId, id);

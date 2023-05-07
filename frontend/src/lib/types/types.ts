@@ -132,3 +132,8 @@ export interface GameData {
 	playerName: string;
 	gameMode: GameMode;
 }
+
+export interface StatusUpdate {
+	userId: string;
+	status: UserStatus
+}
