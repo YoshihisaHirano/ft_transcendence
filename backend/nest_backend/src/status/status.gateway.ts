@@ -77,7 +77,6 @@ export class StatusGateway implements OnGatewayDisconnect {
 			}
 			this.server.sockets.get(gameArr[0].socketId).emit("canStartGame", data);
 			this.server.sockets.get(gameArr[1].socketId).emit("canStartGame", data);
-			console.log("canStartGame send");
 		} catch (e) {
 			console.log("can't find user's names in db.");
 			console.log(e);
@@ -174,6 +173,7 @@ export class StatusGateway implements OnGatewayDisconnect {
 				console.log(e);
 			}
 		}
+		// console.log(gameArr);
 		this.server.emit("updateGameList", gameArr);
 		this.gamesCopy = gameArr;
 	}
