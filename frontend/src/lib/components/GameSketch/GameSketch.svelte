@@ -44,6 +44,12 @@
 
 			gameIo.on('endOfGame', () => {
 				p5.noLoop();
+				p5.remove();
+			});
+
+			gameIo.on('finishGame', () => {
+				p5.noLoop();
+				p5.remove();
 			});
 
 			function showFrame() {

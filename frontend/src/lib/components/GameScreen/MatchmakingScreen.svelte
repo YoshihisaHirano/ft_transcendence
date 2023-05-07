@@ -10,6 +10,8 @@
 
 	onMount(() => {
 		statusIo.emit('matchMakingGame', { userId: $currentGameId, mode: $gameMode });
+
+		return () => statusIo.emit('exitMatchmaking', { userId: $currentGameId });
 	});
 </script>
 
