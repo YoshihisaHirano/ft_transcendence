@@ -13,7 +13,6 @@ import { GameSettings } from "src/game/types/GameSettings";
 import { WaitingGame } from "./types/WaitingGame";
 import { StatusMode } from "src/entities/user.entity";
 
-
 @WebSocketGateway({
 	namespace: '/status',
 	cors: {
@@ -191,5 +190,9 @@ export class StatusGateway implements OnGatewayDisconnect {
 		console.log(gameArr);
 		this.server.emit("updateGameList", gameArr);
 		this.gamesCopy = gameArr;
+	}
+
+	isUserOnline(userId) {
+		return this.statusService.isUserOnline(userId);
 	}
 }

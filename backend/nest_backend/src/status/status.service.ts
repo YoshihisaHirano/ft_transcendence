@@ -19,6 +19,10 @@ export class StatusService {
 		this.users.set(userId, socketId);
 	}
 
+	isUserOnline(userId) {
+		return this.users.has(userId);
+	}
+
 	addInvite(invite: GameInvite) {
 		this.pendingInvites.set(invite.gameId, invite.playerId);
 	}
