@@ -1,5 +1,4 @@
 import { addAuthHeader, createBackendUrl, removeApiEndpoint, unauthorizedCode } from '$lib/services/settings';
-import { redirect } from '@sveltejs/kit';
 import { error } from '@sveltejs/kit';
 
 /** @type {import('./$types').RequestHandler} */

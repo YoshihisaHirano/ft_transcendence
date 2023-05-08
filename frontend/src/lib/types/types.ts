@@ -94,7 +94,7 @@ export interface ChatSettings {
 	chatname: string;
 	privacyMode: PrivacyMode;
 	password?: string | null;
-	admins: string[];
+	adminIds: string[];
 }
 
 export interface MessagesState {
@@ -131,4 +131,9 @@ export interface GameData {
 	hostName: string;
 	playerName: string;
 	gameMode: GameMode;
+}
+
+export interface StatusUpdate {
+	userId: string;
+	status: UserStatus
 }

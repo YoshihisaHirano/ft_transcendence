@@ -96,17 +96,17 @@ export class UserService {
     return user;
   }
 
-  async findUserIdByLogin(login: string) {
+  async findUserIdByUsername(username: string) {
     const user = await this.userRepository
       .createQueryBuilder('user')
-      .where('user.login = :login', { login: login })
+      .where('user.username = :username', { username: username })
       .getOne();
     if (user == null) {
       return {
         user: null
       };
     }
-    return user.id;
+    return { user: user.id};
   }
 
   async findUsernameById(id: string) {

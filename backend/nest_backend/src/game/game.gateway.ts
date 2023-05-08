@@ -4,6 +4,9 @@ import { GameData } from "src/dtos/gameData.dto";
 import { GameInvite } from "src/dtos/GameInvite.dto";
 import { StatusService } from "src/status/status.service";
 import { GameService } from "./game.service";
+import { Inject } from "@nestjs/common";
+import { StatusGateway } from "src/status/status.gateway";
+import { StatusMode } from "src/entities/user.entity";
 
 
 @WebSocketGateway({
@@ -20,8 +23,8 @@ import { GameService } from "./game.service";
 export class GameGateway implements OnGatewayDisconnect {
 	constructor(
 		private gameService: GameService,
+		private statusGateway : StatusGateway
 		)  {
-			
 	}
 
 	@WebSocketServer()
@@ -51,6 +54,8 @@ export class GameGateway implements OnGatewayDisconnect {
 			this.gameService.addUser(data.playerId, client.id);
 			client.join(data.gameId);
 			this.server.to(data.gameId).emit("gameStart", data);
+			this.statusGateway.updateStatus(data.gameId, StatusMode.GAME);
+			this.statusGateway.updateStatus(data.playerId, StatusMode.GAME);
 		 } else {
 			client.emit("joinGameFail", null);
 		 }
@@ -71,22 +76,28 @@ export class GameGateway implements OnGatewayDisconnect {
 	handleFinishGame(client: Socket, data: GameInvite) {
 		this.gameService.deleteGame(data.gameId);
 		this.server.to(data.gameId).emit("finishGame", data);
+		this.statusGateway.updateStatus(data.gameId, StatusMode.ONLINE);
+		this.statusGateway.updateStatus(data.playerId, StatusMode.ONLINE);
 	}
 
 
 	handleDisconnect(client: Socket) {
 		const leftPlayerId = this.gameService.getUserIdBySocketId(client.id);
 		if (leftPlayerId)  { // one of players
+			if (this.statusGateway.isUserOnline(leftPlayerId)) {
+				this.statusGateway.updateStatus(leftPlayerId, StatusMode.ONLINE);
+			}
 			const secondPlayer = this.gameService.getSecondPlayerId(leftPlayerId);
 			const gameId: string = this.gameService.getGameId(leftPlayerId, secondPlayer);
-			if (secondPlayer || this.gameService.isUserGameHost(leftPlayerId)) {
-				this.gameService.removeUser(leftPlayerId);
+			if (secondPlayer) {
 				this.gameService.removeUser(secondPlayer);
-				if (gameId) {
-					this.server.to(gameId).emit("endOfGame", null);
-				}
+				this.statusGateway.updateStatus(secondPlayer, StatusMode.ONLINE);
 			}
-			this.gameService.deleteGame(gameId);
+			this.gameService.removeUser(leftPlayerId);
+			if (gameId) {
+				this.server.to(gameId).emit("endOfGame", null);
+				this.gameService.deleteGame(gameId);
+			}
 		} else { // left spectator
 			// nothing
 		}

@@ -24,7 +24,7 @@
 
 	$: chatSettings = {
 		chatId,
-		admins: admins.map((item) => item.id),
+		adminIds: admins.map((item) => item.id),
 		privacyMode,
 		password,
 		chatname
@@ -35,22 +35,25 @@
 	$: areSettingsChanged =
 		chatSettings.privacyMode != privacyMode ||
 		chatSettings.password !== password ||
-		// chatSettings.admins[] != admins.length ||
 		chatSettings.chatname != chatname;
+
+	async function chatUpdater() {
+		const updatedChat = await chatService.updateChat(chatSettings);
+			if (!('message' in updatedChat)) {
+				// chatState.update((val) => {
+				// 	const updatedChatIdx = val.findIndex((item) => item.chatId === chatId);
+				// 	const updatedChats = val.slice();
+				// 	updatedChats[updatedChatIdx] = updatedChat;
+				// 	return [...updatedChats];
+				// });
+				chatIo.emit('updateChat', updatedChat.chatId);
+			}
+	}
 
 	async function updateChat(e: Event) {
 		e.preventDefault();
 		if (formRef && formRef.reportValidity()) {
-			const updatedChat = await chatService.updateChat(chatSettings);
-			if (!('message' in updatedChat)) {
-				chatState.update((val) => {
-					const updatedChatIdx = val.findIndex((item) => item.chatId === chatId);
-					const updatedChats = val.slice();
-					updatedChats[updatedChatIdx] = updatedChat;
-					return [...updatedChats];
-				});
-				chatIo.emit('updateChat', updatedChat.chatId);
-			}
+			await chatUpdater();
 		}
 	}
 
@@ -60,6 +63,28 @@
 		// console.log(userId);
 		if (userId) {
 			await userService.unbanUser(chatId, userId);
+			updateChats(ownerId);
+		}
+	}
+
+	async function addChatAdmin(e: Event) {
+		const target = e.target as HTMLButtonElement;
+		const id = target.dataset.id;
+		if (id) {
+			const newAdmins = [...chatSettings.adminIds, id];
+			chatSettings = { ...chatSettings, adminIds: newAdmins };
+			await chatUpdater();
+			updateChats(ownerId);
+		}
+	}
+
+	async function removeChatAdmin(e: Event) {
+		const target = e.target as HTMLButtonElement;
+		const id = target.dataset.id;
+		if (id) {
+			const newAdmins = chatSettings.adminIds.filter((item) => item !== id);
+			chatSettings = { ...chatSettings, adminIds: newAdmins };
+			await chatUpdater();
 			updateChats(ownerId);
 		}
 	}
@@ -75,16 +100,6 @@
 			</label>
 		</div>
 		<div class="settings-field">
-			<!-- <label for="admin">
-				<p>chat admin</p>
-				<select name="admin" id="admin" bind:value={chatSettings.adminId}>
-					{#each members as { id, username }}
-						<option value={id} selected={id === adminId}>{username}</option>
-					{/each}
-				</select>
-			</label> -->
-		</div>
-		<div class="settings-field">
 			<PrivacySelect bind:chatSettings />
 		</div>
 		<Button disabled={!areSettingsChanged} onClick={updateChat} variant="danger">Save</Button>
@@ -94,17 +109,55 @@
 	{/if}
 </form>
 {#if banList.length}
-<div class="ban-list">
-	<p>Banned: {banList.length}</p>
-	<div>
-		{#each banList as user}
-		<div class="banned-user">
-			<UserRecord currentId={ownerId} userId={user.id} username={user.username} />
-			<button data-user={user.id} on:click={unbanUser} title="unban">✖</button>
+	<div class="ban-list">
+		<p>Banned: {banList.length}</p>
+		<div>
+			{#each banList as user}
+				<div class="banned-user">
+					<UserRecord currentId={ownerId} userId={user.id} username={user.username} /><button
+						data-user={user.id}
+						on:click={unbanUser}
+						title="unban">✖</button
+					>
+				</div>
+			{/each}
 		</div>
-		{/each}
 	</div>
-</div>
+{/if}
+{#if members.length - 1}
+	<fieldset>
+		<legend>Admins: {admins.length}</legend>
+		{#if admins.length}
+			<p class="admins-label">Here are your chat admins:</p>
+			<div class="admins-wrapper">
+				{#each admins as admin}
+					<p>
+						<UserRecord currentId={ownerId} userId={admin.id} username={admin.username} />
+						{#if admin.id !== ownerId}
+							<button title="exclude from admins" on:click={removeChatAdmin} data-id={admin.id} class="remove-admin-btn">✖</button>
+						{/if}
+					</p>
+				{/each}
+			</div>
+		{/if}
+		<p class="admins-label">You can set these users as chat admins:</p>
+		<div class="admins-wrapper">
+			{#each members as potentialAdmin}
+			{#if !chatSettings.adminIds.includes(potentialAdmin.id)}
+				<p>
+					<UserRecord
+						currentId={ownerId}
+						userId={potentialAdmin.id}
+						username={potentialAdmin.username}
+					/>
+					<button title="add to admins" on:click={addChatAdmin} data-id={potentialAdmin.id} class="add-admin-btn"
+						>+</button
+					>
+				</p>
+				{/if}
+			{/each}
+		</div>
+	</fieldset>
 {/if}
 
 <style>
@@ -128,11 +181,30 @@
 		margin-bottom: 0.5rem;
 	}
 
-	select {
-		appearance: none;
-		padding: 0.35rem 0.25rem;
-		min-width: 8rem;
-		max-width: 10rem;
+	.add-admin-btn {
+		color: #2cb01a;
+	}
+
+	.remove-admin-btn {
+		color: #e52521;
+	}
+
+	.admins-wrapper {
+		display: flex;
+		gap: 0.85rem;
+		flex-wrap: wrap;
+	}
+
+	.admins-wrapper + p {
+		margin-top: 1.5rem;
+	}
+
+	.admins-wrapper p {
+		border-bottom: 1px white dashed;
+	}
+
+	.admins-label {
+		margin-bottom: 1rem;
 	}
 
 	:global(.members-add-btn) {
@@ -140,7 +212,9 @@
 	}
 
 	.ban-list {
-		margin-top: 1rem;
+		/* margin-top: 1rem; */
+		display: flex;
+		gap: 0.75rem;
 	}
 
 	.ban-list > div {

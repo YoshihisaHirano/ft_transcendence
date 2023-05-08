@@ -10,10 +10,9 @@
 	import { onMount } from 'svelte';
 	import { appState } from '$lib/store/appState';
 	import { messagesState } from '$lib/store/messagesState';
-	import { updateChats } from '$lib/utils/updates';
 
 	$: userChats = $chatState;
-	$: console.log(userChats);
+	// $: console.log(userChats);
 	$: isModalOpen = false;
 
 	onMount(() => {	

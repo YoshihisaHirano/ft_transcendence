@@ -13,7 +13,6 @@ import { GameSettings } from "src/game/types/GameSettings";
 import { WaitingGame } from "./types/WaitingGame";
 import { StatusMode } from "src/entities/user.entity";
 
-
 @WebSocketGateway({
 	namespace: '/status',
 	cors: {
@@ -41,6 +40,7 @@ export class StatusGateway implements OnGatewayDisconnect {
 	}
 
 	async updateStatus(userId, status) {
+		console.log("updateStatus", status);
 		try {
 			await this.userService.changeUserStatus(userId, status);
 			const data = {
@@ -62,6 +62,11 @@ export class StatusGateway implements OnGatewayDisconnect {
 		if (gameId) {
 			client.emit("inviteToGame", gameId);
 		}
+	}
+
+	@SubscribeMessage("exitMatchmaking")
+	handleexitMatchmaking(client: Socket, data) {
+		this.statusService.removeWaitingGame(client.id);
 	}
 
 	handleDisconnect(client: Socket): any { // user disconnect
@@ -192,5 +197,9 @@ export class StatusGateway implements OnGatewayDisconnect {
 		// console.log(gameArr);
 		this.server.emit("updateGameList", gameArr);
 		this.gamesCopy = gameArr;
+	}
+
+	isUserOnline(userId) {
+		return this.statusService.isUserOnline(userId);
 	}
 }

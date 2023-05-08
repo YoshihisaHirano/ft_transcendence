@@ -38,15 +38,6 @@
 		<legend> Add members </legend>
 	{/if}
 	<div class="members-select">
-		<label for="toggle-dropdown">
-			<p>choose friends ▽ {newMembers.length ? `(${newMembers.length})` : ''}</p>
-			<input
-				type="checkbox"
-				id="toggle-dropdown"
-				class="visually-hidden"
-				bind:checked={isDropdownActive}
-			/>
-		</label>
 		<div class="members-dropdown" class:active={isDropdownActive}>
 			{#each friends as { id, username }}
 				{#if !isChatMember(id) && !userBanned(id, chatId)}
@@ -63,6 +54,15 @@
 				{/if}
 			{/each}
 		</div>
+		<label for="toggle-dropdown">
+			<p>choose friends ▽ {newMembers.length ? `(${newMembers.length})` : ''}</p>
+			<input
+				type="checkbox"
+				id="toggle-dropdown"
+				class="visually-hidden"
+				bind:checked={isDropdownActive}
+			/>
+		</label>
 	</div>
 	{#if !newChat}
 		<Button
@@ -81,6 +81,7 @@
 
 	fieldset {
 		padding: 1.5rem 1rem;
+		margin-bottom: 1rem;
 	}
 
 	.section-header {
@@ -136,5 +137,14 @@
 		display: block;
 		border: none;
 		padding: 0;
+	}
+
+	.members-dropdown:empty {
+		visibility: hidden;
+	}
+
+	.members-dropdown:empty ~ label {
+		opacity: .5;
+		cursor: not-allowed;
 	}
 </style>

@@ -34,7 +34,7 @@
 		position: relative;
 		padding: 1.5rem;
 		background: var(--background-primary);
-		width: 65vw;
+		width: 75vw;
 		top: 50%;
 		transform: translate(0%, -50%);
 		max-height: 95vh;
