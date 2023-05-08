@@ -4,6 +4,7 @@ import { addAuthHeader, createBackendUrl, removeApiEndpoint } from "$lib/service
 export async function GET({ url, cookies, fetch }) {
     const backendEndpoint = removeApiEndpoint(url.pathname);
 	const authToken = cookies.get('user-token');
+    console.log("authToken", authToken);
     try {
         const chats = await fetch(createBackendUrl(backendEndpoint), {
             headers: {

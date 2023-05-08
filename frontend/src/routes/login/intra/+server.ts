@@ -21,7 +21,7 @@ export async function GET({ url, cookies, fetch }) {
 			tokenRequestUrl.searchParams.append('code', code);
 			tokenRequestUrl.searchParams.append('client_id', CLIENT_UID);
 			tokenRequestUrl.searchParams.append('client_secret', CLIENT_SECRET);
-			tokenRequestUrl.searchParams.append('redirect_uri', 'http://192.168.10.3:5176/login/intra');
+			tokenRequestUrl.searchParams.append('redirect_uri', 'http://192.168.10.9:5176/login/intra');
 			const res = await fetch(tokenRequestUrl, {
 				method: 'POST'
 			});

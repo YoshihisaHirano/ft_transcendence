@@ -135,13 +135,14 @@ export class ChatController {
   }
   @Get('chatbyid/:id')
   async getChatById(@Param('id') id: string): Promise<ResponseChatDto> {
+    console.log("here")
     const chat = await this.chatService.findById(id);
     return {
       chatId: chat.chatId,
       chatname: chat.chatname,
       members: await this.userService.getShortInfoByIds(chat.members),
       owner: await 
-        this.userService.getShortInfoByIds([chat.ownerId])[0],
+        this.userService.getShortInfoById(chat.ownerId),
       admins: await this.userService.getShortInfoByIds(chat.adminIds),
       privacyMode: chat.privacyMode,
       isDirect: chat.isDirect,
