@@ -1,0 +1,11 @@
+FROM node:latest
+RUN mkdir /app
+WORKDIR /app
+COPY . .
+WORKDIR nest_backend
+# RUN npm ci --production
+RUN npm install
+RUN npm install class-transformer
+CMD [ "npm", "start" ]
+
+# CMD ["tail -f /dev/null"]

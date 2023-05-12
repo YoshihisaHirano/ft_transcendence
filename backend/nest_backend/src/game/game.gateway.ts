@@ -74,6 +74,7 @@ export class GameGateway implements OnGatewayDisconnect {
 
 	@SubscribeMessage("finishGame")
 	handleFinishGame(client: Socket, data: GameInvite) {
+		// check input data. ids?? 
 		this.gameService.deleteGame(data.gameId);
 		this.server.to(data.gameId).emit("finishGame", data);
 		this.statusGateway.updateStatus(data.gameId, StatusMode.ONLINE);
@@ -84,6 +85,7 @@ export class GameGateway implements OnGatewayDisconnect {
 	handleDisconnect(client: Socket) {
 		const leftPlayerId = this.gameService.getUserIdBySocketId(client.id);
 		if (leftPlayerId)  { // one of players
+			this.gameService.sleep(100); // if player offline total its time to status socker change it.
 			if (this.statusGateway.isUserOnline(leftPlayerId)) {
 				this.statusGateway.updateStatus(leftPlayerId, StatusMode.ONLINE);
 			}
@@ -103,6 +105,7 @@ export class GameGateway implements OnGatewayDisconnect {
 			// nothing
 		}
 	}
+
 
 	@SubscribeMessage("ballPositionUpdate")
 	handleBallUpdate(client: Socket, data: GameData) {
