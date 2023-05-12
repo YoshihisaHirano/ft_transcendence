@@ -71,7 +71,7 @@ export class GameService {
 
 	getSecondPlayerId(leftUserId) {
 		if (this.games.has(leftUserId)) { // host left
-			return this.games.get(leftUserId); // return id player
+			return this.games.get(leftUserId).playerId; // return id player
 		} else {
 			for (const [key, gameSets] of this.games.entries()) {
 				if (gameSets.playerId.localeCompare(leftUserId) == 0) {
