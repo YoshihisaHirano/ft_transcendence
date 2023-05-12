@@ -87,10 +87,13 @@ export class ChatGateway {
   async handleMessage(client: Socket, data: CreateMessageDto) {
 	try {
 		if (await this.muteService.isInMuteList(data.authorId, data.chatId)) {
+			// console.log("in mute list");
 			const chat = await this.chatService.findById(data.chatId);
 			client.emit("stillInMute", chat);
 			return ;
 		}
+		// console.log("NOT in mute list");
+
 		await this.messageService.createMessage(data);
 		this.server.to(data.chatId).emit('newMessage', data);
 	}
@@ -136,11 +139,13 @@ export class ChatGateway {
   @SubscribeMessage('muteUser')
   async handleMuteUser(admin: Socket, data: UserChangeChatStatus) {
 	try {
+		// console.log(data);
 		// const userToKick = this.server.sockets.get(data.userId);
-		await this.muteService.addToMuteList(data.userId, data.chatId);
+		let res = await this.muteService.addToMuteList(data.userId, data.chatId);
+		// console.log("add to mute list: ", res)
 		this.updateChat(data.chatId);
 	} catch (e) {
-		//(console.log)(e);
+		console.log(e);
 	}
   }
 }

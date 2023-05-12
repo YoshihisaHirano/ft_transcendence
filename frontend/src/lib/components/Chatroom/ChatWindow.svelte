@@ -69,7 +69,6 @@
 			chatIo.off('newMessage');
 			chatIo.off('youKicked');
 			chatIo.off('youBanned');
-			chatIo.off('stillInMute');
 		};
 	});
 
