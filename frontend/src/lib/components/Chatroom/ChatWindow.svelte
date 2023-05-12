@@ -76,7 +76,6 @@
 	function sendMessage() {
 		const user = $appState.user;
 		if (messageText && reactiveChat?.chatId && user) {
-			
 			const newMessage: Message = {
 				chatId: reactiveChat.chatId,
 				authorUsername: user.username,

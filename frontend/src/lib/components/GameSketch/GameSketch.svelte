@@ -187,7 +187,7 @@
 					}
 				});
 
-				if (scores.score1 > 5 || scores.score2 > 5) {
+				if (scores.score1 > 9 || scores.score2 > 9) {
 					p5.noLoop();
 					
 					if ($gameStats) {

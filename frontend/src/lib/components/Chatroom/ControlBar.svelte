@@ -67,6 +67,7 @@
 
 	function deleteChat() {
 		chatService.deleteChat(chatId);
+		chatIo.emit('updateChat', chatId);
 		selectedChatId.set(null);
 		const updatedChats = $chatState.filter((item) => item.chatId !== chatId);
 		chatState.update(() => [...updatedChats]);
