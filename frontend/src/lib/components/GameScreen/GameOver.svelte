@@ -1,12 +1,12 @@
 <script lang="ts">
-	import { gameStats } from '$lib/store/gameState';
+	import { gameStats, isGameHost } from '$lib/store/gameState';
 	import { onMount } from 'svelte';
 	import StartNewGame from '../StartNewGame/StartNewGame.svelte';
 	import gameService from '$lib/services/gameService';
 	import { tournamentState } from '$lib/store/tournamentState';
 
 	onMount(async () => {
-		if ($gameStats) {
+		if ($gameStats && $isGameHost) {
 			await gameService.sendGameResult($gameStats);
 		}
 		const tournament = await gameService.getTournament();
