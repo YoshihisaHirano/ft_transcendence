@@ -43,7 +43,7 @@
 
 		statusIo.on('canStartGame', (data) => {
 			if ($appState?.user) {
-				// console.log(data);
+				// console.log(data, $appState.user.id);
 				const meHost = $appState.user.id === data.gameId;
 				gameMode.set(data.mode);
 				isGameHost.set(meHost);
@@ -51,10 +51,10 @@
 				gameStatus.set('waiting');
 				const resetGameStats = {
 					userOneId: data.gameId,
-					userOneName: meHost ? data.hostName : data.playerName,
+					userOneName: data.hostName,
 					userOneScore: 0,
 					userTwoId: data.playerId,
-					userTwoName: !meHost ? data.hostName: data.playerName,
+					userTwoName: data.playerName,
 					userTwoScore: 0
 				}
 				gameStats.set(resetGameStats);

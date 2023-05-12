@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { gameStats } from '$lib/store/gameState';
 	import { gameBeingShown } from '$lib/store/gameWatchState';
-	import { onDestroy } from 'svelte';
 	import GameSketch from '../GameSketch/GameSketch.svelte';
 	import GameWatchSketch from '../GameWatchSketch/GameWatchSketch.svelte';
 	import GameFailWarning from './GameFailWarning.svelte';

@@ -4,7 +4,6 @@
 	import Tournament from '$lib/components/Tournament/Tournament.svelte';
 	import { currentGameId, gameStats, gameStatus, isGameHost } from '$lib/store/gameState';
 	import { onMount, onDestroy } from 'svelte';
-	import type { PageData } from './$types';
 	import { gameIo } from '$lib/sockets/gameSocket';
 	import { appState } from '$lib/store/appState';
 	import { tournamentState } from '$lib/store/tournamentState';
