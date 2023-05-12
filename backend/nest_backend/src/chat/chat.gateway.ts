@@ -86,7 +86,7 @@ export class ChatGateway {
   @SubscribeMessage('newMessage')
   async handleMessage(client: Socket, data: CreateMessageDto) {
 	try {
-		if (await this.muteService.isInMuteList(data.authorId, data.chatId)) {
+		if (await this.muteService.isInMuteList(data.chatId, data.authorId)) {
 			const chat = await this.chatService.findById(data.chatId);
 			client.emit("stillInMute", chat);
 			return ;
@@ -137,7 +137,7 @@ export class ChatGateway {
   async handleMuteUser(admin: Socket, data: UserChangeChatStatus) {
 	try {
 		// const userToKick = this.server.sockets.get(data.userId);
-		await this.muteService.addToMuteList(data.userId, data.chatId);
+		await this.muteService.addToMuteList(data.chatId, data.userId);
 		this.updateChat(data.chatId);
 	} catch (e) {
 		//(console.log)(e);
