@@ -93,6 +93,7 @@ export class GameGateway implements OnGatewayDisconnect {
 				this.gameService.removeUser(secondPlayer);
 				this.statusGateway.updateStatus(secondPlayer, StatusMode.ONLINE);
 			}
+			console.log("disconnet:", leftPlayerId, secondPlayer);
 			this.gameService.removeUser(leftPlayerId);
 			if (gameId) {
 				this.server.to(gameId).emit("endOfGame", null);
