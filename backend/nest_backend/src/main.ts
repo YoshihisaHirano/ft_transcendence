@@ -11,10 +11,10 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     // httpsOptions,
   });
-  await app.listen(3000);
+  await app.listen(3000, "0.0.0.0");
   app.enableCors({
     allowedHeaders: ['content-type'],
-    origin: 'http://192.168.10.3:5176',
+    origin: 'http://172.20.0.11:5176',
     credentials: true,
   });
   app.use(json({ limit: '5mb' }));

@@ -4,7 +4,8 @@ import {
 	GET_TOKEN_URL,
 	CLIENT_UID,
 	CLIENT_SECRET,
-	GET_LOGIN_URL
+	GET_LOGIN_URL,
+	// REDIRECT_URL_RAW
 } from '$env/static/private';
 import { redirect } from '@sveltejs/kit';
 import { addContentType } from '$lib/services/settings';
@@ -21,7 +22,7 @@ export async function GET({ url, cookies, fetch }) {
 			tokenRequestUrl.searchParams.append('code', code);
 			tokenRequestUrl.searchParams.append('client_id', CLIENT_UID);
 			tokenRequestUrl.searchParams.append('client_secret', CLIENT_SECRET);
-			tokenRequestUrl.searchParams.append('redirect_uri', 'http://localhost:5176/login/intra');
+			tokenRequestUrl.searchParams.append('redirect_uri', 'http://10.18.120.249:5176/login/intra');
 			const res = await fetch(tokenRequestUrl, {
 				method: 'POST'
 			});

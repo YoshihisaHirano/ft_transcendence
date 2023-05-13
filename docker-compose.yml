@@ -1,4 +1,4 @@
-version: '3.3'
+version: '3.5'
 services:
   database:
     container_name: database
@@ -11,12 +11,17 @@ services:
       - docker.env
     networks:
       - web_pacani
+    ports:
+      - '5432:5432'
+
 
   backend:
     container_name: backend
     build: ./backend/
     depends_on:
       - database
+    ports:
+      - '3000:3000'
     networks:
       web_pacani:
           ipv4_address: 172.20.0.10
@@ -29,8 +34,6 @@ services:
     networks:
       web_pacani:
           ipv4_address: 172.20.0.11
-    expose:
-      - "5176" #change to .env
     ports:
       - '5176:5176'
 
