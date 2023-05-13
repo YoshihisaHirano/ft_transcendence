@@ -13,7 +13,7 @@ import { StatusMode } from "src/entities/user.entity";
 	namespace: '/game',
 	cors: {
 	  credentials: true,
-	  origin: 'http://192.168.10.3:5176',
+	  origin: 'http://172.20.0.11:5176',
 	  methods: ['GET', 'POST'],
 	  transports: ['websocket'],
 	},

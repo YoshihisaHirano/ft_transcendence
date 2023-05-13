@@ -1,10 +1,8 @@
-version: '3.5'
+version: '3.3'
 services:
-  postgres:
-    container_name: postgres
+  database:
+    container_name: database
     image: postgres:latest
-    # ports:
-    #   - '5432:5432'
     expose:
       - "5432"
     volumes:
@@ -18,22 +16,27 @@ services:
     container_name: backend
     build: ./backend/
     depends_on:
-      - postgres
+      - database
     networks:
-      - web_pacani
+      web_pacani:
+          ipv4_address: 172.20.0.10
+
   frontend:
     container_name: frontend
     build: ./frontend/
     depends_on:
       - backend
     networks:
-      - web_pacani
+      web_pacani:
+          ipv4_address: 172.20.0.11
     expose:
       - "5176" #change to .env
     ports:
       - '5176:5176'
 
-
 networks:
   web_pacani:
     driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
