@@ -9,7 +9,7 @@
 	export let isBlocked = false;
 	$: messages = ($selectedChatId ? $messagesState[$selectedChatId] : []) || [];
 	let windowDiv: HTMLDivElement, autoscroll: boolean;
-	$: popupMsg = isBlocked ? 'You cannot send messages to this chat' : '';
+	$: popupMsg = isBlocked ? 'You have been blocked by this chat\' member' : '';
 	$: blacklist = $appState.user?.blacklist || [];
 
 	beforeUpdate(() => {

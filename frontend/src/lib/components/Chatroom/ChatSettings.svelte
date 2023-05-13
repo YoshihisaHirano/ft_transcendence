@@ -13,7 +13,7 @@
 
 	export let chatId: string,
 		privacyMode: PrivacyMode,
-		password: string | undefined,
+		password: string | null,
 		members: ShortUser[],
 		admins: ShortUser[],
 		ownerId: string,
@@ -22,7 +22,7 @@
 
 	$: friends = $appState.user?.friends || [];
 
-	$: chatSettings = {
+	let chatSettings = {
 		chatId,
 		adminIds: admins.map((item) => item.id),
 		privacyMode,
@@ -34,10 +34,11 @@
 
 	$: areSettingsChanged =
 	chatSettings.privacyMode != privacyMode ||
-		chatSettings.password !== password ||
-		chatSettings.chatname != chatname;
+	chatSettings.password !== password ||
+	chatSettings.chatname != chatname;
 
 	async function chatUpdater() {
+		// console.log('updating chats');
 		const privacyModeChanged = chatSettings.privacyMode != privacyMode;
 		const updatedChat = await chatService.updateChat(chatSettings, privacyModeChanged);
 		// console.log(updatedChat);
@@ -50,6 +51,7 @@
 		e.preventDefault();
 		if (formRef && formRef.reportValidity()) {
 			await chatUpdater();
+			await updateChats(ownerId);
 		}
 	}
 
@@ -153,6 +155,7 @@
 				{/if}
 			{/each}
 		</div>
+		<p class="no-potential-admins">no one here...</p>
 	</fieldset>
 {/if}
 
@@ -208,18 +211,21 @@
 	}
 
 	.ban-list {
-		/* margin-top: 1rem; */
-		display: flex;
-		gap: 0.75rem;
+		padding: 0.75rem 0;
 	}
 
 	.ban-list > div {
 		padding: 1rem 0;
 		display: flex;
+		gap: 1rem;
 	}
 
 	.banned-user {
 		border-bottom: 1px dashed white;
+	}
+
+	.banned-user button {
+		padding-left: .5rem;
 	}
 
 	button {
@@ -230,5 +236,14 @@
 		outline: none;
 		border: none;
 		color: var(--text-primary);
+	}
+
+	.no-potential-admins {
+		display: none;
+	}
+
+	.admins-wrapper:empty + .no-potential-admins {
+		display: block;
+		margin-top: .5rem;
 	}
 </style>

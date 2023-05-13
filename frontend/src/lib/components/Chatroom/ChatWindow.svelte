@@ -91,7 +91,7 @@
 	{#if $selectedChatId && reactiveChat}
 		<ControlBar
 			privacyMode={reactiveChat.privacyMode}
-			password=""
+			password={null}
 			admins={reactiveChat.admins}
 			ownerId={reactiveChat.owner.id}
 			chatMembers={reactiveChat.members}
