@@ -26,5 +26,6 @@ export async function load() {
 	
 	if (user) {
 		statusIo.emit('userConnect', user.id);
+		// console.log('connect event emmited');
 	}
 }

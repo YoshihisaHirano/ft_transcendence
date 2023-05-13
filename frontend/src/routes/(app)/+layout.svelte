@@ -74,11 +74,31 @@
 			availableGames.set(gameArr);
 		});
 
+		statusIo.on('userStatusUpdate', async (data: StatusUpdate) => {
+			if ($appState.user) {
+				// console.log('userStatusUpdate, main layout', data)
+				if (myId === data.userId) {
+					$appState.user.status = data.status;
+				}
+				let friends = $appState.user.friends;
+				const friendIdx = friends.findIndex((item) => item.id === data.userId);
+				if (friendIdx > -1) {
+					friends[friendIdx] = { ...friends[friendIdx], status: data.status };
+					friends = [...friends];
+				}
+
+				if ($page.url.pathname.includes('chatrooms')) {
+					await updateChats($appState.user.id);
+				}
+			}
+		});
+
 		return () => {
 			statusIo.off('updateGameList');
 			statusIo.off('cancelInvite');
 			statusIo.off('canStartGame');
 			statusIo.off('inviteToGame');
+			statusIo.off('userStatusUpdate');
 		}
 	});
 
