@@ -84,7 +84,9 @@ export class ChatService {
     chat.chatname = updateChatDto.chatname;
     chat.privacyMode = updateChatDto.privacyMode;
     if (chat.privacyMode == PrivacyMode.PROTECTED) {
-      chat.password = await bcrypt.hash(updateChatDto.password, 10);
+      if (updateChatDto.password != "" && updateChatDto.password != null) {
+        chat.password = await bcrypt.hash(updateChatDto.password, 10);
+      }
     } else {
       chat.password = null;
     }

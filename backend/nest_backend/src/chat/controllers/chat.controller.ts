@@ -142,7 +142,7 @@ export class ChatController {
       chatname: chat.chatname,
       members: await this.userService.getShortInfoByIds(chat.members),
       owner: await 
-        this.userService.getShortInfoByIds([chat.ownerId])[0],
+        this.userService.getShortInfoById(chat.ownerId),
       admins: await this.userService.getShortInfoByIds(chat.adminIds),
       privacyMode: chat.privacyMode,
       isDirect: chat.isDirect,

@@ -44,22 +44,8 @@ export class ChatGateway {
 		this.updateChat(chatId);
 	}
 
-	// @SubscribeMessage('newChat') 
-	// async handleNewChat(client: Socket, newChatData: CreateChatDto) {
-	// 	//(console.log)(newChatData);
-	// 	try {
-	// 		const chat = await this.chatService.createChat(newChatData);
-	// 		client.emit('newChatCreateStatus', chat);
-	// 	} catch (e)
-	// 	{
-	// 		//(console.log)(e);
-	// 		client.emit('newChatCreateStatus', null);
-	// 	}
-	// }
-
 	@SubscribeMessage('joinChat')
 	async handleJoinRoom(client: Socket, data: UserChangeChatStatus) {
-		// //(console.log)(data.chatId);
 		if (this.chatService.isUserChatMember(data.chatId, data.userId) ) {
 			this.users.set(data.userId, client.id);
 			const messages = await this.messageService.findChatMessages(data.chatId);
@@ -78,7 +64,6 @@ export class ChatGateway {
 		client.emit('leaveChatStatus', data.chatId);
 		this.updateChat(data.chatId);
 	} catch (e) {
-		//(console.log)(e);
 		client.emit('leaveChatStatus', null);
 	}
   }
@@ -86,14 +71,11 @@ export class ChatGateway {
   @SubscribeMessage('newMessage')
   async handleMessage(client: Socket, data: CreateMessageDto) {
 	try {
-		if (await this.muteService.isInMuteList(data.authorId, data.chatId)) {
-			// console.log("in mute list");
+		if (await this.muteService.isInMuteList(data.chatId, data.authorId)) {
 			const chat = await this.chatService.findById(data.chatId);
 			client.emit("stillInMute", chat);
 			return ;
 		}
-		// console.log("NOT in mute list");
-
 		await this.messageService.createMessage(data);
 		this.server.to(data.chatId).emit('newMessage', data);
 	}
@@ -114,7 +96,6 @@ export class ChatGateway {
 		}
 		this.updateChat(data.chatId);
 	} catch (e) {
-		//(console.log)(e);
 	}
   }
   
@@ -132,17 +113,13 @@ export class ChatGateway {
 		}
 		this.updateChat(data.chatId);
 	} catch (e) {
-		//(console.log)(e);
 	}
   }
 
   @SubscribeMessage('muteUser')
   async handleMuteUser(admin: Socket, data: UserChangeChatStatus) {
 	try {
-		// console.log(data);
-		// const userToKick = this.server.sockets.get(data.userId);
-		let res = await this.muteService.addToMuteList(data.userId, data.chatId);
-		// console.log("add to mute list: ", res)
+		let res = await this.muteService.addToMuteList(data.chatId, data.userId);
 		this.updateChat(data.chatId);
 	} catch (e) {
 		console.log(e);
