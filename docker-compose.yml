@@ -3,15 +3,37 @@ services:
   postgres:
     container_name: postgres
     image: postgres:latest
-    ports:
-      - '5432:5432'
+    # ports:
+    #   - '5432:5432'
+    expose:
+      - "5432"
     volumes:
       - /var/folders/postgres:/data/postgres
     env_file:
       - docker.env
     networks:
+      - web_pacani
+
+  backend:
+    container_name: backend
+    build: ./backend/
+    depends_on:
       - postgres
+    networks:
+      - web_pacani
+  frontend:
+    container_name: frontend
+    build: ./frontend/
+    depends_on:
+      - backend
+    networks:
+      - web_pacani
+    expose:
+      - "5176" #change to .env
+    ports:
+      - '5176:5176'
+
 
 networks:
-  postgres:
+  web_pacani:
     driver: bridge
