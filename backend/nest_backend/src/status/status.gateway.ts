@@ -17,7 +17,7 @@ import { StatusMode } from "src/entities/user.entity";
 	namespace: '/status',
 	cors: {
 	  credentials: true,
-	  origin: 'http://172.20.0.11:5176',
+	  origin: ['http://172.20.0.11:5176', 'http://localhost:5176'],
 	  methods: ['GET', 'POST'],
 	  transports: ['websocket'],
 	},

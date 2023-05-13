@@ -1,2 +1,3 @@
 node_modules/
 nest_backend/test_frontend
+backend/nest_backend/.env

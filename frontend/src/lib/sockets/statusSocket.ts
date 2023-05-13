@@ -1,4 +1,4 @@
 import ioClient from 'socket.io-client';
 
-const statusSocket = ioClient('http://172.20.0.10:3000/status');
+const statusSocket = ioClient('http://localhost:3000/status', { transports: ['websocket']});
 export const statusIo = statusSocket;
