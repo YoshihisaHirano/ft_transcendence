@@ -2,15 +2,17 @@
 	import { gameModes } from "$lib/utils/constants";
     import { gameMode } from "$lib/store/gameState";
 	import userService from "$lib/services/userService";
-	import { onMount } from "svelte";
+	import type { GameMode } from "$lib/types/types";
 
     export let id: string;
 
-    onMount(() => {
-        gameMode.subscribe(async (val) => {
-            await userService.savePreferredMode(val, id);
-        })
-    })
+    async function changePrefferedMode(e: Event) {
+        const target = e.target as HTMLInputElement;
+        const value = target.value as GameMode;
+        if (value) {
+            await userService.savePreferredMode(value, id);
+        }
+    }
 </script>
 
 <div class="game-mode-wrapper">
@@ -19,7 +21,7 @@
         {#each Object.keys(gameModes) as mode}
             <label for="{mode}-mode" title="{mode} mode" class:active={mode == $gameMode}>
                 <p>{gameModes[mode].emoji}</p>
-                <input id="{mode}-mode" value={mode} bind:group={$gameMode} type="radio" class="visually-hidden">
+                <input on:change={changePrefferedMode} id="{mode}-mode" value={mode} bind:group={$gameMode} type="radio" class="visually-hidden">
             </label>
         {/each}
     </div>
