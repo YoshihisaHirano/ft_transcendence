@@ -8,7 +8,7 @@ import { WaitingGame } from "./types/WaitingGame";
 export class StatusService {
 	constructor() {
 		this.users = new Map(); // [userId: socketId]
-		this.pendingInvites = new Map(); // [userId: socketId]
+		this.pendingInvites = new Map(); // [gameId, playerId]
 		this.mmQueue = new Array<WaitingGame>(); // [userId] TODO add mode 
 	}
 	users;
@@ -28,9 +28,13 @@ export class StatusService {
 	}
 
 	removeInvite(gameId) {
+		if (gameId == null) return null;
 		if (this.pendingInvites.has(gameId)) {
+			const playerId = this.pendingInvites.get(gameId);
 			this.pendingInvites.delete(gameId);
+			return playerId;
 		}
+		return null;
 	}
 
 	getInviteByPlayer(playerId) {
@@ -55,6 +59,7 @@ export class StatusService {
 		if (this.pendingInvites.has(userId)) {
 			this.pendingInvites.delete(userId);
 		}
+		console.log("deleteId: ", userId);
 		return userId;
 	}
 
