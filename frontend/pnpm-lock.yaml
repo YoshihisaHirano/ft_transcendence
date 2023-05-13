@@ -7,6 +7,7 @@ specifiers:
   '@types/p5': ^1.5.0
   '@typescript-eslint/eslint-plugin': ^5.45.0
   '@typescript-eslint/parser': ^5.45.0
+  dotenv: ^16.0.3
   eslint: ^8.28.0
   eslint-config-prettier: ^8.5.0
   eslint-plugin-svelte3: ^4.0.0
@@ -25,6 +26,7 @@ specifiers:
 
 dependencies:
   '@types/p5': 1.5.0
+  dotenv: 16.0.3
   p5-svelte: 3.1.2_@types+p5@1.5.0+p5@1.6.0
   socket.io: 4.6.1
   socket.io-client: 4.6.1
@@ -864,6 +866,11 @@ packages:
     dependencies:
       esutils: 2.0.3
     dev: true
+
+  /dotenv/16.0.3:
+    resolution: {integrity: sha512-7GO6HghkA5fYG9TYnNxi14/7K9f5occMlp3zXAuSxn7CKCxt9xbNWG7yF8hTCSUchlfWSe3uLmlPfigevRItzQ==}
+    engines: {node: '>=12'}
+    dev: false
 
   /engine.io-client/6.4.0:
     resolution: {integrity: sha512-GyKPDyoEha+XZ7iEqam49vz6auPnNJ9ZBfy89f+rMMas8AuiMWOZ9PVzu8xb9ZC6rafUqiGHSCfu22ih66E+1g==}
