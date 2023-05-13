@@ -52,21 +52,21 @@ export async function GET({ url, cookies, fetch }) {
             const logMeJSON = await logMe.json();
 			const now = new Date();
 			cookies.set('user-login', login, {
-				path: '/', secure: false, httpOnly: true,
+				path: '/', secure: false,
 				expires: new Date(now.getTime() + 10*60000)
 			})
+			if (logMeJSON.id) {
+                cookies.set('user-id', logMeJSON.id, {
+                    path: '/', secure: false
+                });
+                userExists = true;
+            }
 			if (logMeJSON.auth === '2fa') {
 				throw redirect(302, `/login/2fa/${login}`);
 			}
 			cookies.set('user-token', logMeJSON.token, {
-                path: '/', secure: false, httpOnly: true
+                path: '/', secure: false
             });
-            if (logMeJSON.id) {
-                cookies.set('user-id', logMeJSON.id, {
-                    path: '/', secure: false, httpOnly: true
-                });
-                userExists = true;
-            }
 		// }
 		// catch (error) {
 		// 	console.error(error);

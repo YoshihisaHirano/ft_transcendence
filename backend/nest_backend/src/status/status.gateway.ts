@@ -40,7 +40,6 @@ export class StatusGateway implements OnGatewayDisconnect {
 	}
 
 	async updateStatus(userId, status) {
-		console.log("updateStatus", status);
 		try {
 			await this.userService.changeUserStatus(userId, status);
 			const data = {

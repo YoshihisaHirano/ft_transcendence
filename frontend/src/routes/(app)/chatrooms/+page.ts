@@ -20,5 +20,6 @@ export const load: PageLoad = async () => {
     }
 
     const chats = await chatService.getChatsByUserId(id);
+    // console.log(chats);
     chatState.set(chats);
 }

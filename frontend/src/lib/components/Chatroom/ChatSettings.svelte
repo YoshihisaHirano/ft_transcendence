@@ -33,19 +33,15 @@
 	let formRef: HTMLFormElement;
 
 	$: areSettingsChanged =
-		chatSettings.privacyMode != privacyMode ||
+	chatSettings.privacyMode != privacyMode ||
 		chatSettings.password !== password ||
 		chatSettings.chatname != chatname;
 
 	async function chatUpdater() {
-		const updatedChat = await chatService.updateChat(chatSettings);
+		const privacyModeChanged = chatSettings.privacyMode != privacyMode;
+		const updatedChat = await chatService.updateChat(chatSettings, privacyModeChanged);
+		// console.log(updatedChat);
 			if (!('message' in updatedChat)) {
-				// chatState.update((val) => {
-				// 	const updatedChatIdx = val.findIndex((item) => item.chatId === chatId);
-				// 	const updatedChats = val.slice();
-				// 	updatedChats[updatedChatIdx] = updatedChat;
-				// 	return [...updatedChats];
-				// });
 				chatIo.emit('updateChat', updatedChat.chatId);
 			}
 	}

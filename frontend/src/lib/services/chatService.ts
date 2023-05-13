@@ -50,9 +50,9 @@ export default {
 		return;
 	},
 
-	updateChat: async (settings: ChatSettings): Promise<Chat | Error> => {
+	updateChat: async (settings: ChatSettings, privacyModeChanged: boolean): Promise<Chat | Error> => {
 		try {
-			if (settings.privacyMode === 'protected' && !settings.password) {
+			if (privacyModeChanged && settings.privacyMode === 'protected' && !settings.password) {
 				throw new Error('Protected chats should have a password!');
 			} else if (settings.privacyMode != 'protected') {
 				settings.password = null;

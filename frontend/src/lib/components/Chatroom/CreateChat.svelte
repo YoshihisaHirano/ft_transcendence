@@ -5,8 +5,9 @@
 	import { appState } from '$lib/store/appState';
 	import Button from '../Button/Button.svelte';
 	import chatService from '$lib/services/chatService';
-	import { chatState } from '$lib/store/chatState';
+	import { chatState, selectedChatId } from '$lib/store/chatState';
 	import { chatIo } from '$lib/sockets/chatSocket';
+	import { updateChats } from '$lib/utils/updates';
 
 	export let toggleModal: () => void;
 
@@ -38,6 +39,8 @@
 				chatState.update((val) => ([...val, resChat]));
 				errorMsg = '';
 				toggleModal();
+				updateChats(id);
+				chatIo.emit('joinChat', { userId: id, chatId: resChat.chatId });
 				chatIo.emit('updateChat', resChat.chatId);
 			}
 		}

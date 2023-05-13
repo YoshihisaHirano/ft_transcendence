@@ -38,15 +38,17 @@
 
 	$: stars = 0;
 	$: switch (achievement) {
-		case 'beginner':
+		case 'novice':
 			stars = 1;
 			break;
-		case 'experienced':
+		case 'expert':
 			stars = 2;
 			break;
 		case 'master':
 			stars = 3;
 			break;
+		default:
+			stars = 0;
 	}
 
 	async function befriend() {

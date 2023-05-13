@@ -187,7 +187,7 @@
 					}
 				});
 
-				if (scores.score1 > 5 || scores.score2 > 5) {
+				if (scores.score1 > 9 || scores.score2 > 9) {
 					p5.noLoop();
 					
 					if ($gameStats) {
@@ -207,7 +207,6 @@
 					}
 					scores.score1 = 0;
 					scores.score2 = 0;
-					$gameMode = $appState.user?.gameMode || $gameMode;
 					p5.remove();
 					gameStatus.set('finished');
 				}

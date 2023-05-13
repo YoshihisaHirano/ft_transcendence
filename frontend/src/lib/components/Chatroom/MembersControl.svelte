@@ -27,6 +27,7 @@
 	function muteUser(e: Event) {
 		const target = e.target as HTMLButtonElement;
 		const targetId = target.id.replace('mute-', '');
+		// console.log('muting', { userId: targetId, chatId });
 		chatIo.emit('muteUser', { userId: targetId, chatId });
         toggleDropdown();
 	}
