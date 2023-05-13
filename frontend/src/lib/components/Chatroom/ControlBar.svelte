@@ -17,7 +17,7 @@
 		chatname: string,
 		chatId: string,
 		privacyMode: PrivacyMode,
-		password: string | undefined,
+		password: string | null,
 		isDirect: boolean,
 		banList: ShortUser[];
 

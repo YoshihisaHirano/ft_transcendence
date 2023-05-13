@@ -15,15 +15,15 @@
 			}
 		})
 
-		statusIo.on('usersStatusUpdate', async (data: StatusUpdate) => {
-			if (userId) {
-				await updateChats(userId);
-			}
-		})
+		// statusIo.on('userStatusUpdate', async (data: StatusUpdate) => {
+		// 	if (userId) {
+		// 		await updateChats(userId);
+		// 	}
+		// })
 
 		return () => {
 			chatIo.off('updateChat');
-			statusIo.off('usersStatusUpdate');
+			// statusIo.off('userStatusUpdate');
 		}
 	})
 </script>

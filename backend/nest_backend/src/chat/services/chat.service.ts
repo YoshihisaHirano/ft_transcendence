@@ -35,7 +35,11 @@ export class ChatService {
     const chat = await this.chatRepository.findOne({
       where: { chatId: chatId },
     });
-    chat.members.push(...usersId);
+    for (let user of usersId) {
+      if (!chat.members.includes(user)) {
+        chat.members.push(user);
+      }
+    }
     return this.chatRepository.save(chat);
   }
   async addAdminsToChat(usersId: string[], chatId: string) {

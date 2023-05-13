@@ -19,22 +19,22 @@
 	$: ({ id, username, tournamentStats, matchHistory, friends, status } = userData);
 	const userId = $appState?.user?.id || '';
 
-	onMount(() => {
-		statusIo.on('userStatusUpdate', (data: StatusUpdate) => {
-			if (!isCurrentUser && data.userId === id) {
-				status = data.status;
-			}
-			const friendIdx = friends.findIndex((item) => item.id === data.userId);
-			if (friendIdx > -1) {
-				friends[friendIdx] = { ...friends[friendIdx], status: data.status };
-				friends = [ ...friends ];
-			}
-		});
+	// onMount(() => {
+	// 	statusIo.on('userStatusUpdate', (data: StatusUpdate) => {
+	// 		if (!isCurrentUser && data.userId === id) {
+	// 			status = data.status;
+	// 		}
+	// 		const friendIdx = friends.findIndex((item) => item.id === data.userId);
+	// 		if (friendIdx > -1) {
+	// 			friends[friendIdx] = { ...friends[friendIdx], status: data.status };
+	// 			friends = [ ...friends ];
+	// 		}
+	// 	});
 
-		return () => {
-			statusIo.off('usersStatusUpdate');
-		};
-	});
+	// 	return () => {
+	// 		statusIo.off('usersStatusUpdate');
+	// 	};
+	// });
 
 	async function startConversation() {
 		const directChat: Chat | null = await chatService.findDirectChat(userId, id);

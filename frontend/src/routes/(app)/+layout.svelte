@@ -12,9 +12,9 @@
 	import { appState } from '$lib/store/appState';
 	import { isGameHost, currentGameId, gameStats, gameStatus, gameMode } from '$lib/store/gameState';
 	import { goto } from '$app/navigation';
-	import type { GameData, GameInvite } from '$lib/types/types';
+	import type { GameData, GameInvite, StatusUpdate } from '$lib/types/types';
 	import { onMount } from 'svelte';
-	import { resetGame } from '$lib/utils/updates';
+	import { resetGame, updateChats } from '$lib/utils/updates';
 	import { availableGames } from '$lib/store/gameWatchState';
 
 	$: activeGameInvitation = false;
@@ -30,7 +30,6 @@
 	onMount(() => {
 		statusIo.on('inviteToGame', async (data: GameInvite) => {
 			if (!$page.url.pathname.includes('game')) {
-				
 				newGameId = data.gameId;
 				const user = await userService.getUserById(data.gameId);
 				inviteData = { ...inviteData, gameId: data.gameId, mode: data.mode };
@@ -56,7 +55,7 @@
 					userTwoId: data.playerId,
 					userTwoName: data.playerName,
 					userTwoScore: 0
-				}
+				};
 				gameStats.set(resetGameStats);
 				if (!$page.url.pathname.includes('game')) {
 					goto('/game');
@@ -74,12 +73,31 @@
 			availableGames.set(gameArr);
 		});
 
+		statusIo.on('userStatusUpdate', async (data: StatusUpdate) => {
+			if ($appState.user) {
+				if (myId === data.userId) {
+					$appState.user.status = data.status;
+				}
+				let friends = $appState.user.friends;
+				const friendIdx = friends.findIndex((item) => item.id === data.userId);
+				if (friendIdx > -1) {
+					friends[friendIdx] = { ...friends[friendIdx], status: data.status };
+					friends = [...friends];
+				}
+
+				if ($page.url.pathname.includes('chatrooms')) {
+					await updateChats($appState.user.id);
+				}
+			}
+		});
+
 		return () => {
 			statusIo.off('updateGameList');
 			statusIo.off('cancelInvite');
 			statusIo.off('canStartGame');
 			statusIo.off('inviteToGame');
-		}
+			statusIo.off('userStatusUpdate');
+		};
 	});
 
 	function rejectGame() {
@@ -95,7 +113,7 @@
 		// set to [...game-loading] ?
 	}
 
-	$: if($gameStatus && !$page.url.pathname.includes('game')) {
+	$: if ($gameStatus && !$page.url.pathname.includes('game')) {
 		resetGame();
 	}
 </script>
