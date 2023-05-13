@@ -5,7 +5,7 @@ import {
 	CLIENT_UID,
 	CLIENT_SECRET,
 	GET_LOGIN_URL,
-	// REDIRECT_URL_RAW
+	REDIRECT_URL_RAW
 } from '$env/static/private';
 import { redirect } from '@sveltejs/kit';
 import { addContentType } from '$lib/services/settings';
@@ -22,7 +22,7 @@ export async function GET({ url, cookies, fetch }) {
 			tokenRequestUrl.searchParams.append('code', code);
 			tokenRequestUrl.searchParams.append('client_id', CLIENT_UID);
 			tokenRequestUrl.searchParams.append('client_secret', CLIENT_SECRET);
-			tokenRequestUrl.searchParams.append('redirect_uri', 'http://10.18.120.249:5176/login/intra');
+			tokenRequestUrl.searchParams.append('redirect_uri', REDIRECT_URL_RAW);
 			const res = await fetch(tokenRequestUrl, {
 				method: 'POST'
 			});
@@ -42,6 +42,7 @@ export async function GET({ url, cookies, fetch }) {
 	// for testing stuff
 	// login = 'momo';
 	if (login) {
+		// console.log(VITE_BACKEND_URL);
 		// try {
 			const logMe = await fetch(new URL('/2fa/login', VITE_BACKEND_URL), {
 				method: 'POST',
@@ -71,7 +72,7 @@ export async function GET({ url, cookies, fetch }) {
 		// }
 		// catch (error) {
 		// 	console.error(error);
-        //     throw redirect(302, '/404');
+            // throw redirect(302, '/404');
 		// }
 	}
 	if (userExists) {
