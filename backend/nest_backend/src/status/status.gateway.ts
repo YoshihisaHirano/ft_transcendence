@@ -70,9 +70,17 @@ export class StatusGateway implements OnGatewayDisconnect {
 
 	handleDisconnect(client: Socket): any { // user disconnect
 		const userId = this.statusService.deleteId(client.id); // remove invite
+		const playerId = this.statusService.removeInvite(userId);
+		if (playerId) { // has pending invite
+			const playerSocketId = this.getUserSocket(playerId);
+			if (playerSocketId) {
+				playerSocketId.emit("cancelInvite", null);
+			}
+		}
 		this.statusService.removeWaitingGame(client.id);
 		this.updateStatus(userId, StatusMode.OFFLINE);
-		// TODO set to db
+
+		// cancel game
 	}
 
 	@SubscribeMessage("matchMakingGame") // from any player 

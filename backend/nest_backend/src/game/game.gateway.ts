@@ -77,7 +77,7 @@ export class GameGateway implements OnGatewayDisconnect {
 		// check input data. ids?? 
 		this.gameService.deleteGame(data.gameId);
 		this.server.to(data.gameId).emit("finishGame", data);
-		this.statusGateway.updateStatus(data.gameId, StatusMode.ONLINE);
+		this.statusGateway.updateStatus(data.gameId, StatusMode.ONLINE); // twisy? 
 		this.statusGateway.updateStatus(data.playerId, StatusMode.ONLINE);
 	}
 
