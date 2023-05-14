@@ -7,11 +7,10 @@
 	import { findScaleCoefficient } from '$lib/utils/utils';
 	import P5 from 'p5-svelte';
 	import type { Sketch } from 'p5-svelte';
-	import Link from '../Link/Link.svelte';
 
 	let scores = {
-		score1: 0,
-		score2: 0
+		score1: $gameBeingShown?.hostScore || 0,
+		score2: $gameBeingShown?.playerScore || 0
 	};
 
 	let canvasWidth: number = 0;
@@ -105,14 +104,6 @@
 					xspeed * scaleCoefficient,
 					yspeed * scaleCoefficient
 				);
-
-				// if (!scoresSet && score1Div && score2Div) {
-				//     scoresSet = true;
-				//     scores.score1 = data.score1;
-				// 	scores.score2 = data.score2;
-				// 	score1Div.innerHTML = scores.score1.toString();
-				// 	score2Div.innerHTML = scores.score2.toString();
-				// }
 				showFrame();
 			});
 		};
