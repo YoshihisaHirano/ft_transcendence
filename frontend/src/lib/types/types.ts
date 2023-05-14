@@ -131,9 +131,17 @@ export interface GameData {
 	hostName: string;
 	playerName: string;
 	gameMode: GameMode;
+	hostScore: number;
+	playerScore: number;
 }
 
 export interface StatusUpdate {
 	userId: string;
-	status: UserStatus
+	status: UserStatus;
+}
+
+export interface WatchJoinGameData {
+	gameId: string;
+	hostScore: number;
+	playerScore: number;
 }
