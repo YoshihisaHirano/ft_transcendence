@@ -1,8 +1,9 @@
-<script>
+<script lang="ts">
 	import GameShow from '$lib/components/GameScreen/GameShow.svelte';
 	import Link from '$lib/components/Link/Link.svelte';
 	import { gameIo } from '$lib/sockets/gameSocket';
 	import { gameBeingShown } from '$lib/store/gameWatchState';
+	import type { WatchJoinGameData } from '$lib/types/types.js';
 	import { onDestroy, onMount } from 'svelte';
 
 	export let data;
@@ -16,6 +17,15 @@
 			connectionFailed = true;
 		});
 
+		gameIo.on('spectatorJoinGame', (data: WatchJoinGameData) => {
+			gameBeingShown.update((val) => {
+				if (val && val.gameId === data.gameId) {
+					return {...val, hostScore: data.hostScore, playerScore: data.playerScore }
+				}
+				return null;
+			})
+		})
+
 		gameIo.on('endOfGame', () => {
 			connectionFailed = true;
 		});
@@ -28,6 +38,7 @@
             gameIo.off('joinGameFail');
 			gameIo.off('endOfGame');
 			gameIo.off('finishGame');
+			gameIo.off('spectatorJoinGame');
         }
 	});
 
