@@ -75,6 +75,7 @@
 
 		statusIo.on('userStatusUpdate', async (data: StatusUpdate) => {
 			if ($appState.user) {
+				// console.log('userStatusUpdate, main layout', data)
 				if (myId === data.userId) {
 					$appState.user.status = data.status;
 				}
@@ -97,7 +98,7 @@
 			statusIo.off('canStartGame');
 			statusIo.off('inviteToGame');
 			statusIo.off('userStatusUpdate');
-		};
+		}
 	});
 
 	function rejectGame() {
