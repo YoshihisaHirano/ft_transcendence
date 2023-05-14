@@ -42,7 +42,6 @@ export class GameGateway implements OnGatewayDisconnect {
 	handleNewGame(client: Socket, data: GameInvite) {
 		this.gameService.addUser(data.gameId, client.id);
 		this.gameService.createGame(data);
-		console.log("createGame", data);
 		client.join(data.gameId);
 	}
 
@@ -62,11 +61,17 @@ export class GameGateway implements OnGatewayDisconnect {
 	}
 
 	@SubscribeMessage("spectatorJoinGame")
-	handleSpectatorJoinGame(client: Socket, gameId) { // hostId, playerId
-		 const joinRes =  this.gameService.spectatorJoinGame(gameId);
-		 if (joinRes) {
-			client.join(gameId);
-			client.emit("spectatorJoinGame", gameId);
+	handleSpectatorJoinGame(client: Socket, gameIdInput) { // hostId, playerId
+		 const gameData =  this.gameService.spectatorJoinGame(gameIdInput);
+		 if (gameData) {
+			client.join(gameIdInput);
+			const data = {
+				gameId: gameIdInput,
+				hostScore: gameData.hostScore,
+				playerScore: gameData.playerScore,
+			};
+			client.emit("spectatorJoinGame", data);
+			console.log("spectatorJoinGame", data); // debug
 		 } else {
 			client.emit("joinGameFail", null);
 		 }
@@ -121,8 +126,11 @@ export class GameGateway implements OnGatewayDisconnect {
 		this.server.to(data.gameId).emit('rightPaddleUpdate', data);
 	}
 
+	// scores.score1;
+	// scores.score2 ;
 	@SubscribeMessage("scoreUpdate")
 	handlescoreUpdate(client: Socket, data: GameData) {
+		this.gameService.setScores(data);
 		this.server.to(data.gameId).emit('scoreUpdate', data);
 	}
 

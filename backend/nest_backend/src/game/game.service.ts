@@ -9,20 +9,30 @@ import { GameSettings } from "./types/GameSettings";
 export class GameService {
 	games; // [hostId, playerId]
 	users;
-
 	myGameSubject = new Subject<Map<string, GameSettings>>();
 
 	constructor() {
-		this.games = new Map<string, GameSettings>();
+		this.games = new Map();
 		this.users = new Map();
 	}
 
-	createGame(data: GameInvite) { // for status
+	createGame(data: GameInvite) {
 		this.games.set(data.gameId, {
 			playerId: data.playerId,
-			gameMode: data.mode
+			gameMode: data.mode,
+			hostScore: 0,
+			playerScore: 0
 		});
 		this.myGameSubject.next(this.games);
+	}
+
+	setScores(data) {
+		if (this.games.has(data.gameId)) {
+			this.games.set(data.gameId, {
+				hostScore: data.score1,
+				playerScore: data.score2
+			});
+		}
 	}
 
 	deleteGame(gameId) {
@@ -106,8 +116,12 @@ export class GameService {
 		return true;
 	}
 
-	spectatorJoinGame(userId) {
-		return this.games.has(userId);
+	spectatorJoinGame(gameId) {
+		if (this.games.has(gameId))  {
+			return this.games.get(gameId);
+		} else {
+			return null;
+		}
 	}
 
 	sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
