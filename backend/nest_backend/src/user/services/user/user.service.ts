@@ -45,7 +45,9 @@ export class UserService {
     } else {
       user.friends = [friend];
     }
-    await this.userRepository.save(user);
+    try {
+      await this.userRepository.save(user);
+    } catch (e) {}
   }
 
   async deleteFriend(friendshipDto: FriendshipDto) {
