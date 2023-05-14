@@ -49,11 +49,12 @@ export class UserService {
   }
 
   async deleteFriend(friendshipDto: FriendshipDto) {
-    const user = await this.findUserById(friendshipDto.userId);
-    let friends = await this.findFriends(friendshipDto.userId);
-    friends = friends.filter((user) => user.id != friendshipDto.friendId);
-    user.friends = friends;
-    await this.userRepository.save(user);
+    return await this.userRepository.query(
+      ` DELETE FROM users_friends_users u
+        WHERE (u."usersId_1" = $1 AND u."usersId_2" = $2)
+        OR (u."usersId_1" = $2 AND u."usersId_2" = $1); ` ,
+      [friendshipDto.friendId, friendshipDto.userId],
+    );
   }
 
   async findFriends(id: string): Promise<User[]> {
