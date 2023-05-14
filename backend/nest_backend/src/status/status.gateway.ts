@@ -40,15 +40,18 @@ export class StatusGateway implements OnGatewayDisconnect {
 	}
 
 	async updateStatus(userId, status) {
-		try {
-			await this.userService.changeUserStatus(userId, status);
-			const data = {
-				userId: userId,
-				status: status
+		if (userId) {
+			try {
+				await this.userService.changeUserStatus(userId, status);
+				const data = {
+					userId: userId,
+					status: status
+				}
+				console.log("send update status", data);
+				this.server.emit("userStatusUpdate", data);
+			} catch (error) {
+				console.log(error);
 			}
-			this.server.emit("userStatusUpdate", data);
-		} catch (error) {
-			console.log(error);
 		}
 	}
 
@@ -56,10 +59,11 @@ export class StatusGateway implements OnGatewayDisconnect {
 	handleUserConnect(client: Socket, userId) {
 		this.statusService.setUserStatus(userId, client.id, "online");
 		client.emit("updateGameList", this.gamesCopy);
-		const gameId = this.statusService.getInviteByPlayer(userId);
+		const gameInvite:GameInvite = this.statusService.getInviteByPlayer(userId);
 		this.updateStatus(userId, StatusMode.ONLINE);
-		if (gameId) {
-			client.emit("inviteToGame", gameId);
+		// console.log("getInviteByPlayer: ", gameId);
+		if (gameInvite) {
+			client.emit("inviteToGame", gameInvite);
 		}
 	}
 
@@ -70,15 +74,18 @@ export class StatusGateway implements OnGatewayDisconnect {
 
 	handleDisconnect(client: Socket): any { // user disconnect
 		const userId = this.statusService.deleteId(client.id); // remove invite
+		// console.log("handleDisconnect for: ", userId);
 		const playerId = this.statusService.removeInvite(userId);
+		// console.log("removeInvite result: ", playerId);
 		if (playerId) { // has pending invite
-			const playerSocketId = this.getUserSocket(playerId);
+			const playerSocketId: Socket = this.getUserSocket(playerId);
 			if (playerSocketId) {
 				playerSocketId.emit("cancelInvite", null);
 			}
 		}
 		this.statusService.removeWaitingGame(client.id);
-		this.updateStatus(userId, StatusMode.OFFLINE);
+		if (userId)
+			this.updateStatus(userId, StatusMode.OFFLINE);
 
 		// cancel game
 	}
