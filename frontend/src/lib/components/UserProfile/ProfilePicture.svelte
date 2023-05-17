@@ -1,13 +1,21 @@
 <script lang="ts">
 	import defaultPicture from '$lib/images/default_pic.svg';
+	import { appState } from '$lib/store/appState';
 	import CogIcon from '../CogIcon/CogIcon.svelte';
+	import Modal from '../Modal/Modal.svelte';
+	import UserUpdateModal from './UserUpdateModal.svelte';
 	export let imageSrc: string, isCurrentUser: boolean;
 
 	$: uploadVisible = false;
+	$: modalOpen = false;
 
 	function setUploadVisibility(val: boolean) {
 		// change to val when allow to change profile pic
-		uploadVisible = false;
+		uploadVisible = val;
+	}
+
+	function toggleModal() {
+		modalOpen = !modalOpen;
 	}
 </script>
 
@@ -19,20 +27,28 @@
 	<img src={imageSrc !== 'null' ? imageSrc : defaultPicture} alt="user profile pic" />
 	{#if isCurrentUser}
 		<div class="upload-picture" class:active={uploadVisible}>
-			<label for="upload-profile-pic">
-				<CogIcon/>
-				<input
-					type="file"
-					class="visually-hidden"
-					name="upload-profile-pic"
-					id="upload-profile-pic"
-				/>
-			</label>
+			<button on:click={toggleModal}>
+				<CogIcon />
+			</button>
 		</div>
 	{/if}
 </div>
 
+{#if modalOpen && $appState.user}
+	<Modal onClose={toggleModal} title="Update user info">
+		<UserUpdateModal id={$appState.user.id} username={$appState.user.username} image={imageSrc} />
+	</Modal>
+{/if}
+
 <style>
+	button {
+		background-color: transparent;
+		padding: 0;
+		margin: 0;
+		outline: none;
+		border: none;
+	}
+
 	.image-frame {
 		width: 12rem;
 		height: 12rem;

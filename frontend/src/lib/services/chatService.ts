@@ -84,7 +84,7 @@ export default {
 			});
 			return res.json();
 		} catch (error) {
-			console.error(error);
+			// console.error(error);
 			return false;
 		}
 	},
@@ -100,7 +100,7 @@ export default {
 				return JSON.parse(parsed);
 			}
 		} catch (error) {
-			console.error(error);
+			// console.error(error);
 			return null;
 		}
 	},
@@ -112,7 +112,8 @@ export default {
 				method: 'DELETE'
 			});
 		} catch (error) {
-			console.error(error);
+			// console.error(error);
+			return;
 		}
 	},
 
@@ -122,7 +123,7 @@ export default {
 			const res = await fetch(new URL(userId, baseIdUrl));
 			return res.json();
 		} catch (error) {
-			console.error(error);
+			// console.error(error);
 			return [];
 		}
 	},
@@ -143,7 +144,7 @@ export default {
 				return JSON.parse(parsed);
 			}
 		} catch (error) {
-			console.error(error);
+			// console.error(error);
 			return null;
 		}
 	}

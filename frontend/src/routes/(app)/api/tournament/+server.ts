@@ -13,7 +13,7 @@ export async function GET({ url, cookies, fetch }) {
         const tournamentJSON = await tornament.json();
         return new Response(JSON.stringify(tournamentJSON));
     } catch (error) {
-        console.error(error);
+        // console.error(error);
         return new Response(null);
     }
 }

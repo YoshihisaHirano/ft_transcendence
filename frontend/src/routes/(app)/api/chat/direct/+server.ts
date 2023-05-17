@@ -15,12 +15,12 @@ export async function POST({ url, cookies, fetch, request }) {
         });
         const parsed = await res.text();
         if (!parsed.length) {
-            return new Response(null);
+            return new Response(JSON.stringify(null));
         } else {
             return new Response(parsed);
         }
     } catch (error) {
-        console.error(error, 'here');
+        // console.error(error, 'here');
 		return new Response(JSON.stringify(null));
     }
     return new Response(null);

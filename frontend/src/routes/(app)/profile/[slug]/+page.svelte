@@ -7,6 +7,7 @@
 	$: userData = data;
 	import { onMount } from 'svelte';
 	import { statusIo } from '$lib/sockets/statusSocket';
+	import type { StatusUpdate } from '$lib/types/types';
 
 	if (userData && !userData.success) {
 		goto('/404');

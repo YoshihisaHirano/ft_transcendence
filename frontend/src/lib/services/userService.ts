@@ -134,6 +134,33 @@ export default {
 		}
 	},
 
+	async updateUser(data: { id: string, username: string, image: string}): Promise<void | Error> {
+		try {
+			let res = await fetch(new URL('updateuser', baseUrlWithEndpoint), {
+				method: 'PUT',
+				headers: {
+					...addContentType()
+				},
+				body: JSON.stringify(data)
+			})
+			if (res && res.status === 401) {
+				await this.logout();
+				return;
+			}
+			if (res) {
+				res = await res.json();
+			}
+			if ('message' in res && typeof res.message === 'string') {
+				return new Error(res.message);
+			}
+		} catch (error) {
+			if ((error as Error).message === unauthorizedCode) {
+				this.logout();
+			}
+			return error as Error;
+		}
+	},
+
 	async logout (): Promise<void> {
 		try {
 			await fetch(new URL('logout/', baseUrlWithEndpoint), {
@@ -141,7 +168,7 @@ export default {
 			});
 			removeFromStorage('userId');
 		} catch (error) {
-			console.error(error);
+			// console.error(error);
 		}
 	}
 };

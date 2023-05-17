@@ -27,6 +27,9 @@ export async function POST({ url, request, fetch, cookies }) {
 		if (err instanceof Error && err.message === unauthorizedCode) {
 			throw error(401, unauthorizedCode);
 		}
+		if (err instanceof Error) {
+            throw error(400, err.message);
+        }
 		return new Response(null);
 	}
 }

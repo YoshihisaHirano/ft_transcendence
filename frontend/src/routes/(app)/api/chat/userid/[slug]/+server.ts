@@ -13,7 +13,7 @@ export async function GET({ url, cookies, fetch }) {
         const chatsJSON = await chats.json();
 		return new Response(JSON.stringify(chatsJSON));
     } catch (error) {
-        console.error(error);
+        // console.error(error);
 		return new Response(JSON.stringify(null));
     }
 }

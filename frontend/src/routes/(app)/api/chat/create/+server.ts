@@ -22,7 +22,7 @@ export async function POST({ url, cookies, fetch, request }) {
 		const json = await res.json();
 		return new Response(JSON.stringify(json));
 	} catch (error) {
-		console.error(error);
+		// console.error(error);
 		return new Response(null);
 	}
 }

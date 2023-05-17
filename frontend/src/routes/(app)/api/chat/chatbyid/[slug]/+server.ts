@@ -17,7 +17,7 @@ export async function GET({ url, cookies, fetch }) {
             return new Response(parsed);
         }
     } catch (error) {
-        console.error(error);
+        // console.error(error);
 		return new Response(JSON.stringify(null));
     }
 }

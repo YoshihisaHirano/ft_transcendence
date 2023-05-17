@@ -14,6 +14,7 @@ export async function GET({ url, cookies, fetch }) {
 	const code = url.searchParams.get('code');
 	let login = '';
     let userExists = false;
+	let twofa = false;
 	
 	if (code) {
 		try {
@@ -42,8 +43,7 @@ export async function GET({ url, cookies, fetch }) {
 	// for testing stuff
 	// login = 'momo';
 	if (login) {
-		// console.log(VITE_BACKEND_URL);
-		// try {
+		try {
 			const logMe = await fetch(new URL('/2fa/login', VITE_BACKEND_URL), {
 				method: 'POST',
 				body: JSON.stringify({ login }),
@@ -64,16 +64,21 @@ export async function GET({ url, cookies, fetch }) {
                 userExists = true;
             }
 			if (logMeJSON.auth === '2fa') {
-				throw redirect(302, `/login/2fa/${login}`);
+				twofa = true;
 			}
-			cookies.set('user-token', logMeJSON.token, {
-                path: '/', secure: false
-            });
-		// }
-		// catch (error) {
+			if (logMeJSON.token) {
+				cookies.set('user-token', logMeJSON.token, {
+					path: '/', secure: false
+				});
+			}
+		}
+		catch (error) {
 		// 	console.error(error);
             // throw redirect(302, '/404');
-		// }
+		}
+	}
+	if (twofa) {
+		throw redirect(302, `/login/2fa/${login}`);
 	}
 	if (userExists) {
         throw redirect(308, '/');

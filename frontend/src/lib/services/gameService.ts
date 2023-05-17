@@ -11,7 +11,7 @@ export default {
             const res = await fetch(baseUrlWithEndpoint);
             return res.json();
         } catch (error) {
-            console.error(error);
+            // console.error(error);
             return [];
         }
     },
