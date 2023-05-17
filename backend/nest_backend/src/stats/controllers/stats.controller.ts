@@ -1,10 +1,12 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseFilters, UseGuards } from '@nestjs/common';
 import { StatsService } from 'src/stats/services/stats.service';
 import { StatsDto } from 'src/dtos/stats.dto';
 import { TournamentService } from 'src/tournament/services/tournament.service';
 import JwtTwoFactorGuard from 'src/auth/jwt-2fa-guard';
+import { HttpExceptionFilter } from 'src/utils/http-exception.filter';
 
 @UseGuards(JwtTwoFactorGuard)
+@UseFilters(HttpExceptionFilter)
 @Controller('stats')
 export class StatsController {
   constructor(

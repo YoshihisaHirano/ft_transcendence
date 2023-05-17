@@ -14,10 +14,16 @@ export class StatsService {
     return this.statsRepository.find();
   }
   addStats(statsDto: StatsDto) {
+    if (!statsDto) {
+      throw new Error("statsDto is undefined!");
+    }
     const newStats = this.statsRepository.create(statsDto);
     return this.statsRepository.save(newStats);
   }
   async getUserStats(userId: string) {
+    if (!userId) {
+      throw new Error("userId is undefined!");
+    }
     const stats = await this.statsRepository.find({
       where: [{ userOneId: userId }, { userTwoId: userId }],
       take: 10,

@@ -1,9 +1,11 @@
-import { Controller, Get, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, UseFilters, UseGuards } from '@nestjs/common';
 import { TournamentService } from 'src/tournament/services/tournament.service';
 import JwtTwoFactorGuard from 'src/auth/jwt-2fa-guard';
+import { HttpExceptionFilter } from 'src/utils/http-exception.filter';
 
 @Controller('tournament')
 @UseGuards(JwtTwoFactorGuard)
+@UseFilters(HttpExceptionFilter)
 export class TournamentController {
   constructor(private readonly tournamentService: TournamentService) {}
   @Get()
