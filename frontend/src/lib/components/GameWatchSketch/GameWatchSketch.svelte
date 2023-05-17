@@ -7,7 +7,11 @@
 	import { findScaleCoefficient } from '$lib/utils/utils';
 	import P5 from 'p5-svelte';
 	import type { Sketch } from 'p5-svelte';
-	import type { WatchJoinGameData } from '$lib/types/types.js';
+
+	let scores = {
+		score1: $gameBeingShown?.hostScore || 0,
+		score2: $gameBeingShown?.playerScore || 0
+	};
 
 	let canvasWidth: number = 0;
 	let canvasHeight: number = 0;
@@ -25,10 +29,6 @@
 		const score2Div = document.getElementById('score2');
 
 		p5.setup = () => {
-			let scores = {
-				score1: $gameBeingShown?.hostScore || 0,
-				score2: $gameBeingShown?.playerScore || 0
-			};
 			canvasWidth = Math.min(p5.windowWidth * 0.8, 800);
 			canvasHeight = canvasWidth / 2;
 			const canvas = p5.createCanvas(canvasWidth, canvasHeight);
@@ -71,15 +71,6 @@
 				score1Div.innerHTML = scores.score1.toString();
 				score2Div.innerHTML = scores.score2.toString();
 			}
-
-			gameIo.on('spectatorJoinGame', (data: WatchJoinGameData) => {
-			if (score1Div && score2Div) {
-					scores.score1 = data.hostScore;
-					scores.score2 = data.playerScore;
-					score1Div.innerHTML = scores.score1.toString();
-					score2Div.innerHTML = scores.score2.toString();
-			}
-		})
 
 			gameIo.on('scoreUpdate', (data) => {
 				if (score1Div && score2Div) {

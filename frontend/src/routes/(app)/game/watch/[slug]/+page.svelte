@@ -18,7 +18,6 @@
 		});
 
 		gameIo.on('spectatorJoinGame', (data: WatchJoinGameData) => {
-			//console.log('on spectatorJoinGame', data);
 			gameBeingShown.update((val) => {
 				if (val && val.gameId === data.gameId) {
 					return {...val, hostScore: data.hostScore, playerScore: data.playerScore }

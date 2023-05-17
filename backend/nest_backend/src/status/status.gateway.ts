@@ -47,7 +47,7 @@ export class StatusGateway implements OnGatewayDisconnect {
 					userId: userId,
 					status: status
 				}
-				// console.log("send update status", data);
+				console.log("send update status", data);
 				this.server.emit("userStatusUpdate", data);
 			} catch (error) {
 				console.log(error);
