@@ -142,5 +142,6 @@
 
 	.profile-pic {
 		align-items: center;
+		justify-content: center;
 	}
 </style>
