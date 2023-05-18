@@ -12,7 +12,7 @@ export async function GET({ url, cookies, fetch }) {
         });
         const parsed = await res.text();
         if (!parsed.length) {
-            return new Response(null);
+            return new Response(JSON.stringify(null));
         } else {
             return new Response(parsed);
         }

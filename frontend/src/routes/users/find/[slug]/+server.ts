@@ -23,5 +23,5 @@ export async function GET({ url, cookies, fetch }) {
 	} else {
 		throw redirect(302, '/404');
 	}
-	return new Response(null);
+	return new Response(JSON.stringify({ success: true }));
 }

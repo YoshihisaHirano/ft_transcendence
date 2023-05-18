@@ -30,6 +30,6 @@ export async function POST({ url, request, fetch, cookies }) {
 		if (err instanceof Error) {
             throw error(400, err.message);
         }
-		return new Response(null);
+		return new Response(JSON.stringify({ success: false }));
 	}
 }

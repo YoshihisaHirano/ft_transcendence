@@ -30,6 +30,7 @@ export async function POST({ request, fetch, cookies }) {
 			throw error(401, unauthorizedCode);
 		}
 		throw error(401, 'Wrong authentication code');
+		return new Response(JSON.stringify({ success: false }));
 	}
-	return new Response(null);
+	return new Response(JSON.stringify({ success: true }));
 }
