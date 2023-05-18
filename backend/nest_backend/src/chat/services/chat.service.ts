@@ -51,6 +51,9 @@ export class ChatService {
       throw new Error("chat wasn't found");
     }
     for (let user of usersId) {
+      if (user == null || user == undefined) {
+        throw new Error("One of added users is null");
+      }
       if (!chat.members.includes(user)) {
         chat.members.push(user);
       }

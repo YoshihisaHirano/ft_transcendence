@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { json, urlencoded } from 'express';
 import { ValidationPipe } from '@nestjs/common';
+import { json, urlencoded } from 'express';
 
 
 async function bootstrap() {
@@ -10,14 +10,14 @@ async function bootstrap() {
     cert: process.env.CERTIFICATE,
   };
   const app = await NestFactory.create(AppModule);
-  await app.listen(3000, "0.0.0.0");
   app.enableCors({
     allowedHeaders: ['content-type'],
     origin: ['http://192.168.10.9:5176', 'http://localhost:5176'],
     credentials: true,
   });
-  app.use(json({ limit: '50mb' }));
-  app.use(urlencoded({ extended: true, limit: '50mb' }));
+  app.use(json({limit: "50mb" }));
+  app.use(urlencoded({limit: "50mb", extended: true}));
   app.useGlobalPipes(new ValidationPipe());
+  app.listen(3000, "0.0.0.0");
 }
 bootstrap();

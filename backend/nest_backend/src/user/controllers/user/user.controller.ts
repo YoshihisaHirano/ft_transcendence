@@ -109,8 +109,7 @@ export class UserController {
   }
   @Put('updateuser')
   async updateUser(@Body() updateUserDto: UpdateUserDto) {
-    const user = await this.userService.updateUser(updateUserDto);
-    return this.getUserById(user.id);
+    return await this.userService.updateUser(updateUserDto);
   }
   @Put('blacklist')
   addUserToBlacklist(

@@ -170,7 +170,12 @@ export class UserService {
     }
     user.image = updateUserDto.image;
     user.username = updateUserDto.username;
-    return this.userRepository.save(user);
+    const obj = await this.userRepository.save(user);
+    return {
+      id: updateUserDto.id,
+      username: obj.username,
+      status: obj.status,
+    };
   }
   async addToBlacklist(userId: string, blackId: string) {
     if (!userId || !blackId) {
