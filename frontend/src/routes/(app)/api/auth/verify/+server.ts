@@ -21,6 +21,7 @@ export async function POST({ request, fetch, cookies }) {
 			body: JSON.stringify({ code: bodyJson.code, login: bodyJson.login })
 		});
 		const resJson = await res.json();
+		// console.log(resJson, 'verify resJson')
 		cookies.set('user-token', resJson.token, {
 			path: '/', secure: false
 		});

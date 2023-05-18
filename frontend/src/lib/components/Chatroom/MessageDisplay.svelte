@@ -19,7 +19,7 @@
 
 	onMount(() => {
 		chatIo.on('stillInMute', (data) => {
-			// console.log(data, 'stillInMute');
+			// // console.log(data, 'stillInMute');
 			if (data.chatId === $selectedChatId) {
 				popupMsg = `You are temporarily not allowed to send messages to ${data.chatname}`;
 				setTimeout(() => {

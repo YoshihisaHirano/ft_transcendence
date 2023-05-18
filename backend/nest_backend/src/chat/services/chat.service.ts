@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Chat } from 'src/entities';
 import { Repository } from 'typeorm';
@@ -14,7 +14,7 @@ export class ChatService {
   ) {}
   async createChat(createChatDto: CreateChatDto) {
     if (createChatDto === null || createChatDto === undefined) {
-      throw new Error("createChatDto is undefined!");
+      throw new BadRequestException("createChatDto is undefined!");
     } 
     if (createChatDto.password != null) {
       createChatDto.password = await bcrypt.hash(createChatDto.password, 10);
@@ -29,7 +29,7 @@ export class ChatService {
   }
   getChatsWhereUserIsMember(userId: string) {
     if (userId === null || userId === undefined) {
-      throw new Error("userId is undefined!");
+      throw new BadRequestException("userId is undefined!");
     }
     return this.chatRepository
       .createQueryBuilder('chat')
@@ -39,20 +39,20 @@ export class ChatService {
   }
   async addUsersToChat(usersId: string[], chatId: string) {
     if (usersId === null || usersId === undefined) {
-      throw new Error("usersId is undefined!");
+      throw new BadRequestException("usersId is undefined!");
     }
     if (chatId === null || chatId === undefined) {
-      throw new Error("chatId is undefined!");
+      throw new BadRequestException("chatId is undefined!");
     }
     const chat = await this.chatRepository.findOne({
       where: { chatId: chatId },
     });
     if (chat === null) {
-      throw new Error("chat wasn't found");
+      throw new BadRequestException("chat wasn't found");
     }
     for (let user of usersId) {
       if (user == null || user == undefined) {
-        throw new Error("One of added users is null");
+        throw new BadRequestException("One of added users is null");
       }
       if (!chat.members.includes(user)) {
         chat.members.push(user);
@@ -65,7 +65,7 @@ export class ChatService {
       where: { chatId: chatId },
     });
     if (chat === null) {
-      throw new Error("chat wasn't found");
+      throw new BadRequestException("chat wasn't found");
     }
     chat.adminIds.push(...usersId);
     return this.chatRepository.save(chat);
@@ -75,10 +75,10 @@ export class ChatService {
       where: { chatId: chatId },
     });
     if (chat === null) {
-      throw new Error("chat wasn't found");
+      throw new BadRequestException("chat wasn't found");
     }
     if (chat.ownerId == userId && !isByHimself) {
-      throw new Error("owner rights error!");
+      throw new BadRequestException("owner rights error!");
     }
     let adminsId = chat.adminIds;
     adminsId = adminsId.filter((member) => member != userId);
@@ -100,16 +100,16 @@ export class ChatService {
   }
   async checkPassword(chatId: string, password: string) {
     if (chatId === null || chatId === undefined) {
-      throw new Error("chatId is undefined!");
+      throw new BadRequestException("chatId is undefined!");
     }
     if (!password) {
-      throw new Error("password is undefined!")
+      throw new BadRequestException("password is undefined!")
     }
     const chat = await this.chatRepository.findOne({
       where: { chatId: chatId },
     });
     if (chat === null) {
-      throw new Error("chat wasn't found");
+      throw new BadRequestException("chat wasn't found");
     }
     return bcrypt.compare(password, chat.password);
   }
@@ -118,7 +118,7 @@ export class ChatService {
       where: { chatId: updateChatDto.chatId },
     });
     if (chat === null) {
-      throw new Error("chat wasn't found");
+      throw new BadRequestException("chat wasn't found");
     }
     chat.adminIds = updateChatDto.adminIds;
     chat.chatname = updateChatDto.chatname;
@@ -137,10 +137,10 @@ export class ChatService {
       where: { chatId: chatId },
     });
     if (chat === null) {
-      throw new Error("chat wasn't found");
+      throw new BadRequestException("chat wasn't found");
     }
     if (userId == chat.ownerId) {
-      throw new Error("owner rights error!");
+      throw new BadRequestException("owner rights error!");
     }
     chat.banList.push(userId);
     return this.chatRepository.save(chat);
@@ -150,7 +150,7 @@ export class ChatService {
       where: { chatId: chatId },
     });
     if (chat === null) {
-      throw new Error("chat wasn't found");
+      throw new BadRequestException("chat wasn't found");
     }
     chat.banList = chat.banList.filter((id) => id != userId);
     return this.chatRepository.save(chat);
@@ -160,7 +160,7 @@ export class ChatService {
       where: { chatId: chatId },
     });
     if (chat === null) {
-      throw new Error("chat wasn't found");
+      throw new BadRequestException("chat wasn't found");
     }
     return chat.banList.includes(userId);
   }
@@ -176,7 +176,7 @@ export class ChatService {
   }
   async isUserChatMember(chatId: string, userId: string) {
     if (!chatId || !userId) {
-      throw new Error("chat or user is undefined!")
+      throw new BadRequestException("chat or user is undefined!")
     }
     const chat = await this.chatRepository.findOne({
       where: { chatId: chatId },
@@ -188,7 +188,7 @@ export class ChatService {
   }
   deleteChat(chatId: string) {
     if (!chatId) {
-      throw new Error("chatId is undefined!")
+      throw new BadRequestException("chatId is undefined!")
     }
     return this.chatRepository.delete({ chatId: chatId });
   }

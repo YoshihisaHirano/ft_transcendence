@@ -70,7 +70,7 @@ export class AuthController {
     if (!isCodeValid) {
       throw new UnauthorizedException('Wrong authentication code');
     }
-    await this.userService.switchTwoFactorAuth(login, !user.twoFactorAuthIsEnabled);
+    return this.userService.switchTwoFactorAuth(login, !user.twoFactorAuthIsEnabled);
   }
   @Post('authenticate')
   async authenticate(@Body('code') code: string, @Body('login') login: string) {

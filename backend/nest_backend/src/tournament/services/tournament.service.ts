@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Tournament } from 'src/entities/tournament.entity';
@@ -25,7 +25,7 @@ export class TournamentService {
   }
   addUser(user: User) {
     if (!user) {
-      throw new Error("user is undefined!")
+      throw new BadRequestException("user is undefined!")
     }
     const newTournamentUser: Tournament = {
       playerId: user.id,
@@ -37,7 +37,7 @@ export class TournamentService {
   }
   async updateTournament(statsDto: StatsDto) {
     if (!statsDto) {
-      throw new Error("StatsDto is undefined!");
+      throw new BadRequestException("StatsDto is undefined!");
     }
     const winnerId =
       statsDto.userOneScore > statsDto.userTwoScore
@@ -52,14 +52,14 @@ export class TournamentService {
         where: { playerId: winnerId },
       });
     if (winnerTournamentStats == null) {
-      throw new Error("smth wrong with tournament!");
+      throw new BadRequestException("smth wrong with tournament!");
     } 
     const loserTournamentStats: Tournament =
       await this.tournamentRepository.findOne({
         where: { playerId: loserId },
       });
     if (loserTournamentStats == null) {
-      throw new Error("smth wrong with tournament!");
+      throw new BadRequestException("smth wrong with tournament!");
     }
     winnerTournamentStats.wins++;
     loserTournamentStats.losses++;
@@ -70,13 +70,13 @@ export class TournamentService {
   }
   async getLadderLevel(userId: string): Promise<number> {
     if (!userId) {
-      throw new Error("userId is undefined!")
+      throw new BadRequestException("userId is undefined!")
     }
     const user = await this.tournamentRepository.findOne({
       where: { playerId: userId },
     });
     if (user == null) {
-      throw new Error("User is not found!")
+      throw new BadRequestException("User is not found!")
     }
     const res = await this.tournamentRepository.query(
       ` SELECT COUNT(*) 
@@ -90,13 +90,13 @@ export class TournamentService {
   }
   async getTournamentStats(userId: string): Promise<TournamentDto> {
     if (!userId) {
-      throw new Error("userId is undefined!");
+      throw new BadRequestException("userId is undefined!");
     }
     const userStats = await this.tournamentRepository.findOne({
       where: { playerId: userId },
     });
     if (userStats == null) {
-      throw new Error("user stats weren't found!");
+      throw new BadRequestException("user stats weren't found!");
     }
     const ladderLevel = await this.getLadderLevel(userId);
     return {
@@ -107,13 +107,13 @@ export class TournamentService {
   }
   async getAchievements(userId: string) {
     if (!userId) {
-      throw new Error("userId is undefined!");
+      throw new BadRequestException("userId is undefined!");
     }
     const userStats = await this.tournamentRepository.findOne({
       where: { playerId: userId },
     });
     if (userStats == null) {
-      throw new Error("userStats weren't found!")
+      throw new BadRequestException("userStats weren't found!")
     }
     const matches = userStats.wins + userStats.losses;
     if (matches >= 10) {

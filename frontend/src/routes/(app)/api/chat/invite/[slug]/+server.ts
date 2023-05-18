@@ -5,18 +5,19 @@ import { redirect } from '@sveltejs/kit';
 export async function GET({ cookies, params, fetch }) {
 	const id = params.slug;
 	const userId = cookies.get('user-id') as string;
-    console.log('HERE', userId);
+    // // console.log('HERE', userId);
 	const authToken = cookies.get('user-token');
 	const getChatEndpoint = `chat/chatbyid/${id}/`;
 	const addMemberEndpoint = 'chat/addmembers';
+	let chat: Chat | Error | null = null;
+	try {
 	const chatRaw = await fetch(createBackendUrl(getChatEndpoint), {
 		headers: {
 			...addAuthHeader(authToken || '')
 		}
 	});
-	let chat: Chat | Error | null = null;
-	try {
 		chat = await chatRaw.json();
+		// // console.log(chat);
 	} catch (error) {
 		// console.error(error);
 		chat = null;
@@ -27,6 +28,7 @@ export async function GET({ cookies, params, fetch }) {
 	if (!chat || chat.banList?.find((user) => user.id === userId)) {
 		throw redirect(303, '/404');
 	}
+	// // console.log(chat);
 	if (chat && chat.privacyMode === 'protected') {
 		throw redirect(308, '/chatrooms/invite/protected/' + id);
 	} else {

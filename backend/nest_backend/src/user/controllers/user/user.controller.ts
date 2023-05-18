@@ -67,12 +67,7 @@ export class UserController {
   async createUser(
     @Body() createUserDto: CreateUserDto,
   ): Promise<ResponseUserDto> {
-    let user;
-    try {
-      user = await this.userService.createUser(createUserDto);
-    } catch (err) {
-      throw err;
-    }
+    const user = await this.userService.createUser(createUserDto);
     await this.tournamentService.addUser(user);
     const tournamentStats: TournamentDto = {
       wins: 0,
@@ -108,8 +103,8 @@ export class UserController {
     return this.userService.deleteFriend(friendshipDto);
   }
   @Put('updateuser')
-  async updateUser(@Body() updateUserDto: UpdateUserDto) {
-    return await this.userService.updateUser(updateUserDto);
+  async updateUser(@Body('id') userId: string, @Body('image') image: string) {
+    return await this.userService.updateUser(userId, image);
   }
   @Put('blacklist')
   addUserToBlacklist(

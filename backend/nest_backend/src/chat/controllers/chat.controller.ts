@@ -138,7 +138,7 @@ export class ChatController {
   @Get('chatbyid/:id')
   async getChatById(@Param('id') id: string): Promise<ResponseChatDto> {
     const chat = await this.chatService.findById(id);
-    // console.log("CHAT BY ID", chat);
+    // // console.log("CHAT BY ID", chat);
     return {
       chatId: chat.chatId,
       chatname: chat.chatname,

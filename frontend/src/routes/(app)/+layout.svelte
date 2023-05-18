@@ -42,7 +42,7 @@
 
 		statusIo.on('canStartGame', (data) => {
 			if ($appState?.user) {
-				// console.log(data, $appState.user.id);
+				// // console.log(data, $appState.user.id);
 				const meHost = $appState.user.id === data.gameId;
 				gameMode.set(data.mode);
 				isGameHost.set(meHost);
@@ -75,7 +75,7 @@
 
 		statusIo.on('userStatusUpdate', async (data: StatusUpdate) => {
 			if ($appState.user) {
-				// console.log('userStatusUpdate, main layout', data)
+				// // console.log('userStatusUpdate, main layout', data)
 				if (myId === data.userId) {
 					$appState.user.status = data.status;
 				}

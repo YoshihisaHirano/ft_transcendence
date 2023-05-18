@@ -6,6 +6,7 @@ import { redirect } from '@sveltejs/kit';
 
 export async function load({ params }) {
 	let slug = params.slug;
+	// console.log('2fa slug' ,slug)
 	const userId = getFromStorage('userId');
 	let alreadyLogged = false;
 	let logout = false;

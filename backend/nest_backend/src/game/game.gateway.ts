@@ -33,7 +33,7 @@ export class GameGateway implements OnGatewayDisconnect {
 	@SubscribeMessage("createGame")
 	handleNewGame(client: Socket, data: GameInvite) {
 		if (data == null || data.gameId == null || data.mode == null || data.playerId == null) {
-			console.log("createGame on gateway data error", data);
+			// console.log("createGame on gateway data error", data);
 			return ;
 		}
 		this.gameService.addUser(data.gameId, client.id);
@@ -44,11 +44,11 @@ export class GameGateway implements OnGatewayDisconnect {
 	@SubscribeMessage("playerJoinGame")
 	async handleJoinGame(client: Socket, data: GameInvite) { // hostId, playerId
 		if (data == null || data.gameId == null || data.playerId == null) {
-			console.log("playerJoinGame on gateway data error", data);
+			// console.log("playerJoinGame on gateway data error", data);
 			return ;
 		}
 		const joinRes =  await this.gameService.playerJoinGame(data);
-		//(console.log)(data, client.id, joinRes);
+		//(// console.log)(data, client.id, joinRes);
 		 if (joinRes) {
 			this.gameService.addUser(data.playerId, client.id);
 			client.join(data.gameId);
@@ -63,7 +63,7 @@ export class GameGateway implements OnGatewayDisconnect {
 	@SubscribeMessage("spectatorJoinGame")
 	handleSpectatorJoinGame(client: Socket, gameIdInput) { // hostId, playerId
 		if (gameIdInput == null) {
-			console.log("spectatorJoinGame", gameIdInput)
+			// console.log("spectatorJoinGame", gameIdInput)
 			return ;
 		}
 		 const gameData =  this.gameService.spectatorJoinGame(gameIdInput);

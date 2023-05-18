@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Mute } from 'src/entities/mute.entity';
@@ -14,7 +14,7 @@ export class MuteService {
   ) {}
   findInMuteList(chatId: string, userId: string) {
     if (!chatId || !userId) {
-      throw new Error("chatId or userId is undefined!");
+      throw new BadRequestException("chatId or userId is undefined!");
     }
     return this.muteRepository.findOne({
       where: {
@@ -25,7 +25,7 @@ export class MuteService {
   }
   getMinDiff(startDate: Date, endDate: Date) {
     if (!startDate || !endDate) {
-      throw new Error("dates are undefined!")
+      throw new BadRequestException("dates are undefined!")
     }
     const msInMin = 60 * 1000;
     return Math.round(Math.abs(Number(endDate) - Number(startDate)) / msInMin);
@@ -35,10 +35,10 @@ export class MuteService {
       where: { chatId: chatId },
     });
     if (chat == null) {
-      throw new Error("chat wasn't found!")
+      throw new BadRequestException("chat wasn't found!")
     }
     if (userId == chat.ownerId) {
-      throw new Error("Owner rights error!");
+      throw new BadRequestException("Owner rights error!");
     }
     let muteEntity = await this.findInMuteList(chatId, userId);
     const addedTo = new Date();
@@ -55,7 +55,7 @@ export class MuteService {
   }
   async deleteFromMuteList(chatId: string, userId: string) {
     if (!chatId || !userId) {
-      throw new Error("chatId or userId is undefined!");
+      throw new BadRequestException("chatId or userId is undefined!");
     }
     const muteEntity = await this.findInMuteList(chatId, userId);
     if (muteEntity == null) {
@@ -65,7 +65,7 @@ export class MuteService {
   }
   async isInMuteList(chatId: string, userId: string): Promise<boolean> {
     if (!chatId || !userId) {
-      throw new Error("chatId or userId is undefined!");
+      throw new BadRequestException("chatId or userId is undefined!");
     }
     const muteEntity = await this.findInMuteList(chatId, userId);
     if (muteEntity == null) {
@@ -81,7 +81,7 @@ export class MuteService {
   }
   async getTimeTillUnmute(chatId: string, userId: string): Promise<number> {
     if (!chatId || !userId) {
-      throw new Error("chatId or userId is undefined!");
+      throw new BadRequestException("chatId or userId is undefined!");
     }
     const muteEntity = await this.findInMuteList(chatId, userId);
     if (muteEntity == null) {
