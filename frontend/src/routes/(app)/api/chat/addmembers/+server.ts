@@ -23,6 +23,6 @@ export async function PUT({ url, cookies, fetch, request }) {
 		return new Response(JSON.stringify(json));
 	} catch (error) {
 		// console.error(error);
-		return new Response(null);
+		return new Response(JSON.stringify({ success: false }));
 	}
 }

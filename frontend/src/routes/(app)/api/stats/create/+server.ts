@@ -21,11 +21,11 @@ export async function POST({ url, request, fetch, cookies }) {
 			},
 			body: JSON.stringify(bodyJson)
 		});
-        return new Response(null);
+        return new Response(JSON.stringify({ success: true }));
 	} catch (err) {
 		if (err instanceof Error && err.message === unauthorizedCode) {
 			throw error(401, unauthorizedCode);
 		}
-		return new Response(null);
+		return new Response(JSON.stringify({ success: false }));
 	}
 }

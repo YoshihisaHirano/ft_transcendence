@@ -26,6 +26,7 @@ export async function POST({ request, fetch, cookies }) {
 		if (err instanceof Error && err.message === unauthorizedCode) {
 			throw error(401, unauthorizedCode);
 		}
+		return new Response(JSON.stringify({ success: false }));
 	}
-	return new Response(null);
+	return new Response(JSON.stringify({ success: true }));
 }

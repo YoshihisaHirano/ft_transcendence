@@ -14,6 +14,6 @@ export async function GET({ url, cookies, fetch }) {
         return new Response(JSON.stringify(tournamentJSON));
     } catch (error) {
         // console.error(error);
-        return new Response(null);
+        return new Response(JSON.stringify({ success: false }));
     }
 }

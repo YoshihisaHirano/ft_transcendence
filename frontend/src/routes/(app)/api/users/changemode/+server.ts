@@ -24,7 +24,8 @@ export async function GET({ request, fetch, cookies, url }) {
             if (err instanceof Error && err.message === unauthorizedCode) {
                 throw error(401, unauthorizedCode);
             }
+            return new Response(JSON.stringify({ success: false }));
         }
     }
-    return new Response(null);
+    return new Response(JSON.stringify({ success: true }));
 }
