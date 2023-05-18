@@ -15,7 +15,7 @@ export class StatusService {
 	pendingInvites;
 	mmQueue;
 
-	setUserStatus(userId, socketId, status) {
+	addUser(userId, socketId) {
 		this.users.set(userId, socketId);
 	}
 
@@ -50,6 +50,7 @@ export class StatusService {
 		for (const [key, value] of this.users.entries()) {
 			if (value.localeCompare(socketId) == 0) {
 				userId = key;
+				this.users.delete(userId); // i hope this line not break anything
 				break;
 			}
 		}

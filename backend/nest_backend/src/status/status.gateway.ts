@@ -40,6 +40,10 @@ export class StatusGateway implements OnGatewayDisconnect {
 	}
 
 	async updateStatus(userId, status) {
+		if (userId == null) {
+			console.log("update status data error");
+			return ;
+		}
 		if (userId) {
 			try {
 				await this.userService.changeUserStatus(userId, status);
@@ -57,7 +61,7 @@ export class StatusGateway implements OnGatewayDisconnect {
 
 	@SubscribeMessage("userConnect")
 	handleUserConnect(client: Socket, userId) {
-		this.statusService.setUserStatus(userId, client.id, "online");
+		this.statusService.addUser(userId, client.id);
 		client.emit("updateGameList", this.gamesCopy);
 		const gameInvite:GameInvite = this.statusService.getInviteByPlayer(userId);
 		this.updateStatus(userId, StatusMode.ONLINE);
@@ -68,7 +72,7 @@ export class StatusGateway implements OnGatewayDisconnect {
 	}
 
 	@SubscribeMessage("exitMatchmaking")
-	handleexitMatchmaking(client: Socket, data) {
+	handleExitMatchmaking(client: Socket, data) {
 		this.statusService.removeWaitingGame(client.id);
 	}
 
@@ -92,6 +96,9 @@ export class StatusGateway implements OnGatewayDisconnect {
 
 	@SubscribeMessage("matchMakingGame") // from any player 
 	async handleMatchMakingGame(client: Socket, clientData) {
+		if (clientData == null || clientData.userId == null || clientData.mode == null) {
+			console.log("Zubkova!!! Gde moi dannue????");
+		}
 		const waitingGame = new WaitingGame(clientData.userId, clientData.mode, client.id);
 		const gameArr = this.statusService.addWaitingGame(waitingGame);
 		// console.log(gameArr);
@@ -120,6 +127,10 @@ export class StatusGateway implements OnGatewayDisconnect {
 
 	@SubscribeMessage("inviteUser") // from host
 	handleInviteUser(host: Socket, data: GameInvite) {
+		if (data == null || data.gameId == null || data.mode == null || data.playerId == null) {
+			console.log("inviteUser data error", data);
+			return ;
+		}
 		const playerSocketId: string = this.statusService.getSocketIdByUser(data.playerId);
 		if (playerSocketId == null) {
 			host.emit("inviteFail", "user offline");
@@ -180,7 +191,7 @@ export class StatusGateway implements OnGatewayDisconnect {
 		this.statusService.removeInvite(data.gameId);
 	}
 
-	getUserSocket(userId) {
+	getUserSocket(userId): Socket {
 		const socketId: string = this.statusService.getSocketIdByUser(userId);
 		if (socketId && this.server.sockets.has(socketId)) {
 			return this.server.sockets.get(socketId);
