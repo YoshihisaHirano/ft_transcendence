@@ -30,16 +30,12 @@ export class GameGateway implements OnGatewayDisconnect {
 	@WebSocketServer()
 	server;
 
-
-	getUserSocket(userId) {
-		const socketId = this.gameService.getUserSocketId(userId);
-		if (socketId && this.server.sockets.has(socketId)) {
-			return this.server.sockets.get(socketId);
-		}
-	}
-
 	@SubscribeMessage("createGame")
 	handleNewGame(client: Socket, data: GameInvite) {
+		if (data == null || data.gameId == null || data.mode == null || data.playerId == null) {
+			console.log("createGame on gateway data error", data);
+			return ;
+		}
 		this.gameService.addUser(data.gameId, client.id);
 		this.gameService.createGame(data);
 		client.join(data.gameId);
@@ -47,6 +43,10 @@ export class GameGateway implements OnGatewayDisconnect {
 
 	@SubscribeMessage("playerJoinGame")
 	async handleJoinGame(client: Socket, data: GameInvite) { // hostId, playerId
+		if (data == null || data.gameId == null || data.playerId == null) {
+			console.log("playerJoinGame on gateway data error", data);
+			return ;
+		}
 		const joinRes =  await this.gameService.playerJoinGame(data);
 		//(console.log)(data, client.id, joinRes);
 		 if (joinRes) {
@@ -62,6 +62,10 @@ export class GameGateway implements OnGatewayDisconnect {
 
 	@SubscribeMessage("spectatorJoinGame")
 	handleSpectatorJoinGame(client: Socket, gameIdInput) { // hostId, playerId
+		if (gameIdInput == null) {
+			console.log("spectatorJoinGame", gameIdInput)
+			return ;
+		}
 		 const gameData =  this.gameService.spectatorJoinGame(gameIdInput);
 		 if (gameData) {
 			client.join(gameIdInput);
@@ -71,7 +75,6 @@ export class GameGateway implements OnGatewayDisconnect {
 				playerScore: gameData.playerScore,
 			};
 			client.emit("spectatorJoinGame", data);
-			console.log("spectatorJoinGame", data); // debug
 		 } else {
 			client.emit("joinGameFail", null);
 		 }
@@ -82,10 +85,9 @@ export class GameGateway implements OnGatewayDisconnect {
 		// check input data. ids?? 
 		this.gameService.deleteGame(data.gameId);
 		this.server.to(data.gameId).emit("finishGame", data);
-		this.statusGateway.updateStatus(data.gameId, StatusMode.ONLINE); // twisy? 
+		this.statusGateway.updateStatus(data.gameId, StatusMode.ONLINE);
 		this.statusGateway.updateStatus(data.playerId, StatusMode.ONLINE);
 	}
-
 
 	handleDisconnect(client: Socket) {
 		const leftPlayerId = this.gameService.getUserIdBySocketId(client.id);
@@ -110,7 +112,6 @@ export class GameGateway implements OnGatewayDisconnect {
 		}
 	}
 
-
 	@SubscribeMessage("ballPositionUpdate")
 	handleBallUpdate(client: Socket, data: GameData) {
 		this.server.to(data.gameId).emit('ballPositionUpdate', data);
@@ -133,20 +134,4 @@ export class GameGateway implements OnGatewayDisconnect {
 		this.gameService.setScores(data);
 		this.server.to(data.gameId).emit('scoreUpdate', data);
 	}
-
-// debug
-	@SubscribeMessage("test")
-	handleTest(client, id) {
-		this.gameService.createGame({
-			gameId: id,
-			playerId: "sdfsdf",
-			mode: 'easy'
-		})
-	}
-
-	/*
-		gameHostData (ball, host pos)
-		playerData (host pos)
-		changeScore (score data)
-	*/
 }

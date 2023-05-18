@@ -36,7 +36,9 @@ export class ChatGateway {
 	users;
 
 	updateChat(chatId: string) {
-		this.server.to(chatId).emit("updateChat", chatId);
+		if (chatId) {
+			this.server.to(chatId).emit("updateChat", chatId);
+		}
 	}
 
 	@SubscribeMessage("updateChat")
@@ -46,13 +48,21 @@ export class ChatGateway {
 
 	@SubscribeMessage('joinChat')
 	async handleJoinRoom(client: Socket, data: UserChangeChatStatus) {
-		if (this.chatService.isUserChatMember(data.chatId, data.userId) ) {
-			this.users.set(data.userId, client.id);
-			const messages = await this.messageService.findChatMessages(data.chatId);
-			client.join(data.chatId);
-			client.emit("joinChatStatus", { chatId: data.chatId, messages});
-		} else {
-			client.emit("joinChatStatus", null);
+		if (data == null || data.chatId == null || data.userId == null)  {
+			console.log("joinChat on gateway data error: ", data);
+			return ;
+		}
+		try {
+			if (this.chatService.isUserChatMember(data.chatId, data.userId) ) {
+				this.users.set(data.userId, client.id);
+				const messages = await this.messageService.findChatMessages(data.chatId);
+				client.join(data.chatId);
+				client.emit("joinChatStatus", { chatId: data.chatId, messages});
+			} else {
+				client.emit("joinChatStatus", null);
+			}
+		} catch (error) {
+			console.log(error);
 		}
 	}
 
@@ -70,6 +80,11 @@ export class ChatGateway {
 
   @SubscribeMessage('newMessage')
   async handleMessage(client: Socket, data: CreateMessageDto) {
+	if (data == null || data.authorId == null || data.authorUsername == null
+			|| data.chatId == null || data.text == null) {
+		console.log("newMessage data error on gateway: ", data);
+		return ;
+	}
 	try {
 		if (await this.muteService.isInMuteList(data.chatId, data.authorId)) {
 			const chat = await this.chatService.findById(data.chatId);
@@ -86,6 +101,10 @@ export class ChatGateway {
 
   @SubscribeMessage('kickUser')
   async handleKickUser(admin: Socket, data: UserChangeChatStatus) {
+	if (data == null || data.chatId  == null || data.userId == null) {
+		console.log("kick user data error on gateway: ", data);
+		return;
+	}
 	try {
 		const userToKick = this.server.sockets.get(this.users.get(data.userId));
 		const chat = await this.chatService.findById(data.chatId);
@@ -101,6 +120,10 @@ export class ChatGateway {
   
   @SubscribeMessage('banUser')
   async handleBanUser(admin: Socket, data: UserChangeChatStatus) {
+	if (data == null || data.chatId == null || data.userId) {
+		console.log("banUser data error: ", data);
+		return 0;
+	}
 	try {
 		const userToBan = this.server.sockets.get(this.users.get(data.userId));
 		const chat = await this.chatService.findById(data.chatId);
@@ -118,6 +141,10 @@ export class ChatGateway {
 
   @SubscribeMessage('muteUser')
   async handleMuteUser(admin: Socket, data: UserChangeChatStatus) {
+	if (data == null || data.chatId == null || data.userId == null) {
+		console.log("mute user on gateway data error: ", data);
+		return ;
+	}
 	try {
 		let res = await this.muteService.addToMuteList(data.chatId, data.userId);
 		this.updateChat(data.chatId);
