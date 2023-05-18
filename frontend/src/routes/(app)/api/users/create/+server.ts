@@ -22,6 +22,11 @@ export async function POST({ url, request, fetch, cookies }) {
 			body: JSON.stringify(bodyJson)
 		});
 		const json = await res.json();
+		if (json.id) {
+			cookies.set('user-id', json.id, {
+				path: '/', secure: false
+			});
+		}
 		return new Response(JSON.stringify(json));
 	} catch (err) {
 		if (err instanceof Error && err.message === unauthorizedCode) {
