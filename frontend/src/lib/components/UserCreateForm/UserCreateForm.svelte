@@ -40,8 +40,8 @@
 		const target = e.target as HTMLInputElement;
 		if (target.files) {
 			const uploadedFile = target.files[0];
-			if (uploadedFile && uploadedFile.size > 2000000) {
-				errorMsg = 'Your filesize should not exceed 2Mb!';
+			if (uploadedFile && uploadedFile.size > 350000) {
+				errorMsg = 'Your filesize should not exceed 350kB!';
 				floppyFill = '#E52521';
 				return;
 			}

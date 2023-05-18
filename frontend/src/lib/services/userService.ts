@@ -134,7 +134,7 @@ export default {
 		}
 	},
 
-	async updateUser(data: { id: string, username: string, image: string}): Promise<void | Error> {
+	async updateUser(data: { id: string, image: string}): Promise<void | Error> {
 		try {
 			let res = await fetch(new URL('updateuser', baseUrlWithEndpoint), {
 				method: 'PUT',

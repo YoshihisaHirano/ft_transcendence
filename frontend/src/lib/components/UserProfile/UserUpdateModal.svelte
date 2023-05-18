@@ -4,17 +4,16 @@
 	import Error from '../../../routes/+error.svelte';
 	import Button from '../Button/Button.svelte';
 
-	export let username: string, id: string, image: string;
+	export let id: string, image: string;
 	$: updatedUser = {
 		image,
-		id,
-		username
+		id
 	};
 
 	$: errorMsg = '';
 	$: floppyFill = '#FFF';
 
-	$: userDataChanged = username !== updatedUser.username || image !== updatedUser.image;
+	$: userDataChanged = image !== updatedUser.image;
 
 	function resetError() {
 		errorMsg = '';
@@ -32,7 +31,7 @@
 					if (prevState.user) {
 						return {
 							...prevState,
-							user: { ...prevState.user, username: updatedUser.username, image: updatedUser.image }
+							user: { ...prevState.user, image: updatedUser.image }
 						};
 					}
 					return prevState;
@@ -46,8 +45,8 @@
 		const target = e.target as HTMLInputElement;
 		if (target.files) {
 			const uploadedFile = target.files[0];
-			if (uploadedFile && uploadedFile.size > 500000) {
-				errorMsg = 'Your filesize should not exceed 50Kb!';
+			if (uploadedFile && uploadedFile.size > 350000) {
+				errorMsg = 'Your filesize should not exceed 350Kb!';
 				floppyFill = '#E52521';
 				return;
 			}
@@ -67,9 +66,9 @@
 		}
 	}
 
-	function handleFocus() {
-		errorMsg = '';
-	}
+	// function handleFocus() {
+	// 	errorMsg = '';
+	// }
 </script>
 
 <form>
@@ -77,16 +76,6 @@
 		{#if errorMsg}
 			<legend>{errorMsg}</legend>
 		{/if}
-		<label for="username" class="username">
-			<p>username</p>
-			<input
-				type="text"
-				id="username"
-				class:failed={errorMsg}
-				bind:value={updatedUser.username}
-				on:focus={handleFocus}
-			/>
-		</label>
 		<label for="profile-pic" class="profile-pic">
 			<p>profile pic</p>
 			<svg
@@ -109,7 +98,7 @@
 			/>
 		</label>
 		<Button disabled={errorMsg !== '' || !userDataChanged} variant="success" onClick={updateUser}
-			>Update profile</Button
+			>Update profile picture</Button
 		>
 	</fieldset>
 </form>
