@@ -36,7 +36,7 @@
 
 {#if modalOpen && $appState.user}
 	<Modal onClose={toggleModal} title="Update user info">
-		<UserUpdateModal id={$appState.user.id} username={$appState.user.username} image={imageSrc} />
+		<UserUpdateModal id={$appState.user.id} image={imageSrc} />
 	</Modal>
 {/if}
 
@@ -55,6 +55,7 @@
 		border: 2px solid white;
 		margin-bottom: 8px;
 		position: relative;
+		overflow: hidden;
 	}
 
 	.image-frame img {
