@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -17,6 +18,7 @@ import { Chat } from 'src/entities';
 import { MuteService } from '../services/mute.service';
 import JwtTwoFactorGuard from 'src/auth/jwt-2fa-guard';
 import { HttpExceptionFilter } from 'src/utils/http-exception.filter';
+import { BadRequestError } from 'passport-headerapikey';
 
 @UseGuards(JwtTwoFactorGuard)
 @Controller('chat')
@@ -34,7 +36,7 @@ export class ChatController {
     const chat = await this.chatService.createChat(createChatDto);
     const members: ShortResponseUserDto[] =
       await this.userService.getShortInfoByIds(chat.members);
-    const owner = await 
+    const owner = await
       this.userService.getShortInfoById(chat.ownerId);
     const admins: ShortResponseUserDto[] =
       await this.userService.getShortInfoByIds(chat.adminIds);
@@ -66,8 +68,7 @@ export class ChatController {
         chatId: chat.chatId,
         chatname: chat.chatname,
         members: await this.userService.getShortInfoByIds(chat.members),
-        owner: await 
-          this.userService.getShortInfoById(chat.ownerId),
+        owner: await this.userService.getShortInfoById(chat.ownerId),
         admins: await this.userService.getShortInfoByIds(chat.adminIds),
         privacyMode: chat.privacyMode,
         isDirect: chat.isDirect,
@@ -138,7 +139,9 @@ export class ChatController {
   @Get('chatbyid/:id')
   async getChatById(@Param('id') id: string): Promise<ResponseChatDto> {
     const chat = await this.chatService.findById(id);
-    // // console.log("CHAT BY ID", chat);
+    if (chat == null) {
+      throw new BadRequestException("chat isn't found");
+    }
     return {
       chatId: chat.chatId,
       chatname: chat.chatname,

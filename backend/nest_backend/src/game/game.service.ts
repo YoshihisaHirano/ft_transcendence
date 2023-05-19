@@ -28,9 +28,12 @@ export class GameService {
 
 	setScores(data) {
 		if (this.games.has(data.gameId)) {
+			const gameData = this.games.get(data.gameId);
 			this.games.set(data.gameId, {
-				hostScore: data.score1,
-				playerScore: data.score2
+				playerId: gameData.playerId,
+				gameMode: gameData.gameMode,
+				hostScore: data.scores.score1,
+				playerScore: data.scores.score2
 			});
 		}
 	}
