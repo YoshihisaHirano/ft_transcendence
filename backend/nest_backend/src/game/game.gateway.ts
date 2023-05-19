@@ -90,9 +90,9 @@ export class GameGateway implements OnGatewayDisconnect {
 	}
 
 	handleDisconnect(client: Socket) {
+		this.gameService.sleep(100); // if player offline total its time to status socker change it.
 		const leftPlayerId = this.gameService.getUserIdBySocketId(client.id);
 		if (leftPlayerId)  { // one of players
-			this.gameService.sleep(100); // if player offline total its time to status socker change it.
 			if (this.statusGateway.isUserOnline(leftPlayerId)) {
 				this.statusGateway.updateStatus(leftPlayerId, StatusMode.ONLINE);
 			}
