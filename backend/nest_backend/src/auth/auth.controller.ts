@@ -7,14 +7,17 @@ import {
   Res,
   UnauthorizedException,
   UseGuards,
-  Response
+  Response,
+  UseFilters
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UserService } from '../user/services/user/user.service';
 import { request } from 'express';
 import JwtTwoFactorGuard from './jwt-2fa-guard';
+import { HttpExceptionFilter } from 'src/utils/http-exception.filter';
 
 @Controller('2fa')
+@UseFilters(HttpExceptionFilter)
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
@@ -47,7 +50,6 @@ export class AuthController {
       token: token,
     };
   }
-  // @UseGuards(JwtTwoFactorGuard)
   @Post('generate')
   async register(@Body('login') login: string, @Res() response: Response) {
     const otpAuthUrl =
@@ -68,7 +70,7 @@ export class AuthController {
     if (!isCodeValid) {
       throw new UnauthorizedException('Wrong authentication code');
     }
-    await this.userService.switchTwoFactorAuth(login, !user.twoFactorAuthIsEnabled);
+    return this.userService.switchTwoFactorAuth(login, !user.twoFactorAuthIsEnabled);
   }
   @Post('authenticate')
   async authenticate(@Body('code') code: string, @Body('login') login: string) {

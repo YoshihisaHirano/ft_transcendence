@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  UseFilters,
   UseGuards,
 } from '@nestjs/common';
 import { UserService } from 'src/user/services/user/user.service';
@@ -19,8 +20,11 @@ import { TournamentDto } from 'src/dtos/tournament.dto';
 import { ResponseUserDto } from 'src/dtos/responseUser.dto';
 import JwtTwoFactorGuard from 'src/auth/jwt-2fa-guard';
 import { GameMode } from '../../../entities/user.entity';
+import { HttpExceptionFilter } from 'src/utils/http-exception.filter';
+import { UpdateUserDto } from 'src/dtos/updateUser.dto';
 
 @UseGuards(JwtTwoFactorGuard)
+@UseFilters(HttpExceptionFilter)
 @Controller('users')
 export class UserController {
   constructor(
@@ -63,12 +67,7 @@ export class UserController {
   async createUser(
     @Body() createUserDto: CreateUserDto,
   ): Promise<ResponseUserDto> {
-    let user;
-    try {
-      user = await this.userService.createUser(createUserDto);
-    } catch (err) {
-      throw err;
-    }
+    const user = await this.userService.createUser(createUserDto);
     await this.tournamentService.addUser(user);
     const tournamentStats: TournamentDto = {
       wins: 0,
@@ -103,10 +102,9 @@ export class UserController {
   deleteFriends(@Body() friendshipDto: FriendshipDto) {
     return this.userService.deleteFriend(friendshipDto);
   }
-  @Put('update')
-  async updateUser(@Body('id') id: string, @Body('image') image: string) {
-    const user = await this.userService.updateUserPicture(id, image);
-    return this.getUserById(user.id);
+  @Put('updateuser')
+  async updateUser(@Body('id') userId: string, @Body('image') image: string) {
+    return await this.userService.updateUser(userId, image);
   }
   @Put('blacklist')
   addUserToBlacklist(

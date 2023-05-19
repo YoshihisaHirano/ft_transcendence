@@ -22,11 +22,19 @@ export async function POST({ url, request, fetch, cookies }) {
 			body: JSON.stringify(bodyJson)
 		});
 		const json = await res.json();
+		if (json.id) {
+			cookies.set('user-id', json.id, {
+				path: '/', secure: false
+			});
+		}
 		return new Response(JSON.stringify(json));
 	} catch (err) {
 		if (err instanceof Error && err.message === unauthorizedCode) {
 			throw error(401, unauthorizedCode);
 		}
-		return new Response(null);
+		if (err instanceof Error) {
+            throw error(400, err.message);
+        }
+		return new Response(JSON.stringify({ success: false }));
 	}
 }

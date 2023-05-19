@@ -18,5 +18,5 @@ export async function DELETE({ cookies }) {
         // httpOnly: true,
         secure: false
     });
-    return new Response(null);
+    return new Response(JSON.stringify({ success: true }));
 }

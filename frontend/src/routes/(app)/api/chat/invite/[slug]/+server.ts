@@ -5,28 +5,34 @@ import { redirect } from '@sveltejs/kit';
 export async function GET({ cookies, params, fetch }) {
 	const id = params.slug;
 	const userId = cookies.get('user-id') as string;
-    // console.log('HERE');
+    // // console.log('HERE', userId);
 	const authToken = cookies.get('user-token');
 	const getChatEndpoint = `chat/chatbyid/${id}/`;
 	const addMemberEndpoint = 'chat/addmembers';
+	let chat: Chat | Error | null = null;
+	try {
 	const chatRaw = await fetch(createBackendUrl(getChatEndpoint), {
 		headers: {
 			...addAuthHeader(authToken || '')
 		}
 	});
-	const chat: Chat | Error = await chatRaw.json();
-	// console.log(chat);
-	// console.log(userId);
-	if ('message' in chat) {
+		chat = await chatRaw.json();
+		// // console.log(chat);
+	} catch (error) {
+		// console.error(error);
+		chat = null;
+	}
+	if (chat && 'message' in chat) {
 		throw redirect(303, '/404');
 	}
-	if (!chat || chat.banList.find((user) => user.id === userId)) {
+	if (!chat || chat.banList?.find((user) => user.id === userId)) {
 		throw redirect(303, '/404');
 	}
-	if (chat.privacyMode === 'protected') {
+	// // console.log(chat);
+	if (chat && chat.privacyMode === 'protected') {
 		throw redirect(308, '/chatrooms/invite/protected/' + id);
 	} else {
-		if (chat.members.findIndex((member) => member.id === userId) == -1) {
+		if (chat && chat.members && chat.members.findIndex((member) => member.id === userId) == -1) {
 			const resRaw = await fetch(createBackendUrl(addMemberEndpoint), {
 				method: 'PUT',
 				headers: {
@@ -35,13 +41,19 @@ export async function GET({ cookies, params, fetch }) {
 				},
 				body: JSON.stringify({ usersId: [userId], chatId: id })
 			});
-			const res: Chat | Error = await resRaw.json();
-			if ('message' in res) {
+			let res: Chat | Error | null = null;
+			try {
+				res = await resRaw.json();
+			} catch (error) {
+				// console.error(error);
+				res = null;
+			}
+			if (res && 'message' in res) {
 				throw redirect(303, '/404');
 			}
 		}
 		throw redirect(308, '/chatrooms');
 	}
 
-	return new Response(null);
+	return new Response(JSON.stringify({ success: true }));
 }

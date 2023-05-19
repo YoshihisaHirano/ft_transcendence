@@ -22,7 +22,7 @@ export async function PUT({ url, cookies, fetch, request }) {
 		const json = await res.json();
 		return new Response(JSON.stringify(json));
 	} catch (error) {
-		console.error(error);
-		return new Response(null);
+		// console.error(error);
+		return new Response(JSON.stringify({ success: false }));
 	}
 }

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Message } from '../../entities';
 import { Repository } from 'typeorm';
@@ -14,6 +14,9 @@ export class MessageService {
     return this.messageRepository.find();
   }
   createMessage(createMessageDto: CreateMessageDto) {
+    if (!createMessageDto) {
+      throw new BadRequestException("createMessageDto is undefined!");
+    }
     const newMessage = this.messageRepository.create(createMessageDto);
     return this.messageRepository.save(newMessage);
   }

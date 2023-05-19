@@ -48,7 +48,7 @@ export class StatusService {
 	deleteId(socketId) {
 		let userId: string;
 		for (const [key, value] of this.users.entries()) {
-			if (value.localeCompare(socketId) == 0) {
+			if (value && value.localeCompare(socketId) == 0) {
 				userId = key;
 				this.users.delete(userId); // i hope this line not break anything
 				break;
@@ -77,7 +77,7 @@ export class StatusService {
 	removeWaitingGame(socketId: string) {
 		let i = 0;
 		for ( ; i < this.mmQueue.length; i++) {
-			if (this.mmQueue[i].socketId.localeCompare(socketId) == 0) {
+			if (this.mmQueue[i].socketId && this.mmQueue[i].socketId.localeCompare(socketId) == 0) {
 				this.mmQueue.splice(i, 1);
 				return ;
 			}

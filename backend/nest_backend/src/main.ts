@@ -1,24 +1,23 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { json, urlencoded } from 'express';
 import { ValidationPipe } from '@nestjs/common';
+import { json, urlencoded } from 'express';
+
 
 async function bootstrap() {
   const httpsOptions = {
     key: process.env.PRIVATE_KEY,
     cert: process.env.CERTIFICATE,
   };
-  const app = await NestFactory.create(AppModule, {
-    // httpsOptions,
-  });
-  await app.listen(3000, "0.0.0.0");
+  const app = await NestFactory.create(AppModule);
   app.enableCors({
     allowedHeaders: ['content-type'],
-    origin: ['http://172.20.0.11:5176', 'http://localhost:5176'],
+    origin: ['http://192.168.10.9:5176', 'http://localhost:5176'],
     credentials: true,
   });
-  app.use(json({ limit: '5mb' }));
-  app.use(urlencoded({ extended: true, limit: '5mb' }));
+  app.use(json({limit: "50mb" }));
+  app.use(urlencoded({limit: "50mb", extended: true}));
   app.useGlobalPipes(new ValidationPipe());
+  app.listen(3000, "0.0.0.0");
 }
 bootstrap();

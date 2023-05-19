@@ -1,3 +1,5 @@
 node_modules/
 nest_backend/test_frontend
-backend/nest_backend/.env
+nest_backend/.env*
+docker.env
+docker-compose.yml

@@ -49,7 +49,7 @@ export class ChatGateway {
 	@SubscribeMessage('joinChat')
 	async handleJoinRoom(client: Socket, data: UserChangeChatStatus) {
 		if (data == null || data.chatId == null || data.userId == null)  {
-			console.log("joinChat on gateway data error: ", data);
+			// console.log("joinChat on gateway data error: ", data);
 			return ;
 		}
 		try {
@@ -62,7 +62,7 @@ export class ChatGateway {
 				client.emit("joinChatStatus", null);
 			}
 		} catch (error) {
-			console.log(error);
+			// console.log(error);
 		}
 	}
 
@@ -82,7 +82,7 @@ export class ChatGateway {
   async handleMessage(client: Socket, data: CreateMessageDto) {
 	if (data == null || data.authorId == null || data.authorUsername == null
 			|| data.chatId == null || data.text == null) {
-		console.log("newMessage data error on gateway: ", data);
+		// console.log("newMessage data error on gateway: ", data);
 		return ;
 	}
 	try {
@@ -102,7 +102,7 @@ export class ChatGateway {
   @SubscribeMessage('kickUser')
   async handleKickUser(admin: Socket, data: UserChangeChatStatus) {
 	if (data == null || data.chatId  == null || data.userId == null) {
-		console.log("kick user data error on gateway: ", data);
+		// console.log("kick user data error on gateway: ", data);
 		return;
 	}
 	try {
@@ -120,8 +120,8 @@ export class ChatGateway {
   
   @SubscribeMessage('banUser')
   async handleBanUser(admin: Socket, data: UserChangeChatStatus) {
-	if (data == null || data.chatId == null || data.userId) {
-		console.log("banUser data error: ", data);
+	if (!data || !data.chatId || !data.userId) {
+		// console.log("banUser data error: ", data);
 		return 0;
 	}
 	try {
@@ -142,14 +142,14 @@ export class ChatGateway {
   @SubscribeMessage('muteUser')
   async handleMuteUser(admin: Socket, data: UserChangeChatStatus) {
 	if (data == null || data.chatId == null || data.userId == null) {
-		console.log("mute user on gateway data error: ", data);
+		// console.log("mute user on gateway data error: ", data);
 		return ;
 	}
 	try {
 		let res = await this.muteService.addToMuteList(data.chatId, data.userId);
 		this.updateChat(data.chatId);
 	} catch (e) {
-		console.log(e);
+		// console.log(e);
 	}
   }
 }

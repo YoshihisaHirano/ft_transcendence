@@ -6,7 +6,7 @@ services:
     expose:
       - "5432"
     volumes:
-       - /Users/aalannys/postgres:/data/postgres # school
+      - /home/artyom/postgres:/data/postgres # school
       #- /Users/aleksandr/postgres:/data/postgres # my mac
     env_file:
       - docker.env

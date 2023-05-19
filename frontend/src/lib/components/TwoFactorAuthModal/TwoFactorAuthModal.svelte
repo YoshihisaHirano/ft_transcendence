@@ -29,9 +29,10 @@
 			res = await authService.toggleSwitch2Fa(inputValue, login);
 		} else {
 			res = await authService.verifyCode(inputValue, login);
+			// // console.log('2fa modal res action', res)
 		}
 		
-		if (res && 'error' in res) {
+		if (res && 'message' in res) {
 			errMsg = res.message;
 		} else {
 			errMsg = '';

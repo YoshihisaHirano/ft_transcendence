@@ -41,7 +41,7 @@ export class StatusGateway implements OnGatewayDisconnect {
 
 	async updateStatus(userId, status) {
 		if (userId == null) {
-			console.log("update status data error");
+			// console.log("update status data error");
 			return ;
 		}
 		if (userId) {
@@ -51,10 +51,9 @@ export class StatusGateway implements OnGatewayDisconnect {
 					userId: userId,
 					status: status
 				}
-				// console.log("send update status", data);
 				this.server.emit("userStatusUpdate", data);
 			} catch (error) {
-				console.log(error);
+				// console.log(error);
 			}
 		}
 	}
@@ -65,7 +64,7 @@ export class StatusGateway implements OnGatewayDisconnect {
 		client.emit("updateGameList", this.gamesCopy);
 		const gameInvite:GameInvite = this.statusService.getInviteByPlayer(userId);
 		this.updateStatus(userId, StatusMode.ONLINE);
-		// console.log("getInviteByPlayer: ", gameId);
+		// // console.log("getInviteByPlayer: ", gameId);
 		if (gameInvite) {
 			client.emit("inviteToGame", gameInvite);
 		}
@@ -78,9 +77,9 @@ export class StatusGateway implements OnGatewayDisconnect {
 
 	handleDisconnect(client: Socket): any { // user disconnect
 		const userId = this.statusService.deleteId(client.id); // remove invite
-		// console.log("handleDisconnect for: ", userId);
+		// // console.log("handleDisconnect for: ", userId);
 		const playerId = this.statusService.removeInvite(userId);
-		// console.log("removeInvite result: ", playerId);
+		// // console.log("removeInvite result: ", playerId);
 		if (playerId) { // has pending invite
 			const playerSocketId: Socket = this.getUserSocket(playerId);
 			if (playerSocketId) {
@@ -97,11 +96,11 @@ export class StatusGateway implements OnGatewayDisconnect {
 	@SubscribeMessage("matchMakingGame") // from any player 
 	async handleMatchMakingGame(client: Socket, clientData) {
 		if (clientData == null || clientData.userId == null || clientData.mode == null) {
-			console.log("Zubkova!!! Gde moi dannue????");
+			// console.log("Zubkova!!! Gde moi dannue????");
 		}
 		const waitingGame = new WaitingGame(clientData.userId, clientData.mode, client.id);
 		const gameArr = this.statusService.addWaitingGame(waitingGame);
-		// console.log(gameArr);
+		// // console.log(gameArr);
 		if (gameArr  == null) return ; // no game ready
 		try { // can start game.
 			const hostName = await this.userService.findUsernameById(gameArr[0].playerId);
@@ -114,21 +113,21 @@ export class StatusGateway implements OnGatewayDisconnect {
 				playerName: playerName,
 			}
 			if (this.server.sockets.has(gameArr[0].socketId) == false  || this.server.sockets.has(gameArr[1].socketId) == false) {
-					console.log("someone leave site. it's really bad. we are fucked. don't delete it!!");
+					// console.log("someone leave site. it's really bad. we are fucked. don't delete it!!");
 					return ;
 			}
 			this.server.sockets.get(gameArr[0].socketId).emit("canStartGame", data);
 			this.server.sockets.get(gameArr[1].socketId).emit("canStartGame", data);
 		} catch (e) {
-			console.log("can't find user's names in db.");
-			console.log(e);
+			// console.log("can't find user's names in db.");
+			// console.log(e);
 		}
 	}
 
 	@SubscribeMessage("inviteUser") // from host
 	handleInviteUser(host: Socket, data: GameInvite) {
 		if (data == null || data.gameId == null || data.mode == null || data.playerId == null) {
-			console.log("inviteUser data error", data);
+			// console.log("inviteUser data error", data);
 			return ;
 		}
 		const playerSocketId: string = this.statusService.getSocketIdByUser(data.playerId);
@@ -173,8 +172,8 @@ export class StatusGateway implements OnGatewayDisconnect {
 				player.emit("canStartGame", gameCanStartData);
 				this.statusService.removeInvite(data.gameId); // no need but still
 			} catch (error) {
-				console.log("can't find user's names in db.");
-				console.log(error);
+				// console.log("can't find user's names in db.");
+				// console.log(error);
 			}
 
 		} else {
@@ -216,10 +215,10 @@ export class StatusGateway implements OnGatewayDisconnect {
 					gameArr.push({...curData});
 				}
 			} catch (e) {
-				console.log(e);
+				// console.log(e);
 			}
 		}
-		// console.log(gameArr);
+		// // console.log(gameArr);
 		this.server.emit("updateGameList", gameArr);
 		this.gamesCopy = gameArr;
 	}

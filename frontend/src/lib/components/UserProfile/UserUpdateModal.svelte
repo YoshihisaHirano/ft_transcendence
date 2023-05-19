@@ -1,37 +1,42 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
 	import userService from '$lib/services/userService';
 	import { appState } from '$lib/store/appState';
-	import { saveToStorage } from '$lib/utils/storage';
+	import Error from '../../../routes/+error.svelte';
 	import Button from '../Button/Button.svelte';
 
-	export let intraLogin: string;
-
-	$: newUser = {
-        image: 'null',
-		login: intraLogin,
-		username: '',
+	export let id: string, image: string;
+	$: updatedUser = {
+		image,
+		id
 	};
 
 	$: errorMsg = '';
 	$: floppyFill = '#FFF';
 
+	$: userDataChanged = image !== updatedUser.image;
+
 	function resetError() {
 		errorMsg = '';
 	}
 
-	async function createUser() {
-		if (newUser.username) {
-			const user = await userService.createUser(newUser);
-            if ("message" in user) {
-                errorMsg = user.message;
-                return;
-            }
-            appState.update((prevState) => {
-				return { ...prevState, user: user };
-			});
-			saveToStorage('userId', user.id);
-			goto('/');
+	async function updateUser() {
+		if (userDataChanged && !errorMsg) {
+			try {
+				const res = await userService.updateUser(updatedUser);
+				if (res && 'message' in res) {
+					errorMsg = res.message;
+					return;
+				}
+				appState.update((prevState) => {
+					if (prevState.user) {
+						return {
+							...prevState,
+							user: { ...prevState.user, image: updatedUser.image }
+						};
+					}
+					return prevState;
+				});
+			} catch (error) {}
 		}
 	}
 
@@ -41,22 +46,29 @@
 		if (target.files) {
 			const uploadedFile = target.files[0];
 			if (uploadedFile && uploadedFile.size > 350000) {
-				errorMsg = 'Your filesize should not exceed 350kB!';
+				errorMsg = 'Your filesize should not exceed 350Kb!';
 				floppyFill = '#E52521';
 				return;
 			}
-			reader.readAsDataURL(uploadedFile);
-			reader.onload = () => {
-				resetError();
-				floppyFill = '#2CB01A';
-				newUser.image = (reader.result || '') as string;
-			};
+			try {
+				reader.readAsDataURL(uploadedFile);
+				reader.onload = () => {
+					resetError();
+					floppyFill = '#2CB01A';
+					updatedUser.image = (reader.result || '') as string;
+				};
+			} catch (error) {
+				if (error instanceof Error) {
+					errorMsg = error.message;
+					floppyFill = '#E52521';
+				}
+			}
 		}
 	}
 
-    function handleFocus() {
-        errorMsg = '';
-    }
+	// function handleFocus() {
+	// 	errorMsg = '';
+	// }
 </script>
 
 <form>
@@ -64,10 +76,6 @@
 		{#if errorMsg}
 			<legend>{errorMsg}</legend>
 		{/if}
-		<label for="username" class="username">
-			<p>username</p>
-			<input type="text" id="username" class:failed={errorMsg} bind:value={newUser.username} on:focus={handleFocus} />
-		</label>
 		<label for="profile-pic" class="profile-pic">
 			<p>profile pic</p>
 			<svg
@@ -89,8 +97,8 @@
 				class="visually-hidden"
 			/>
 		</label>
-		<Button disabled={errorMsg !== '' || newUser.username === ''} variant="success" onClick={createUser}
-			>Sign me up</Button
+		<Button disabled={errorMsg !== '' || !userDataChanged} variant="success" onClick={updateUser}
+			>Update profile picture</Button
 		>
 	</fieldset>
 </form>
@@ -134,5 +142,6 @@
 
 	.profile-pic {
 		align-items: center;
+		justify-content: center;
 	}
 </style>
