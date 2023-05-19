@@ -12,7 +12,7 @@
 	import { messagesState } from '$lib/store/messagesState';
 
 	$: userChats = $chatState;
-	// $: console.log(userChats);
+	// $: // console.log(userChats);
 	$: isModalOpen = false;
 
 	onMount(() => {	

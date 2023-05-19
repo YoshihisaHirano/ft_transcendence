@@ -17,7 +17,7 @@
 		statusIo.on('userStatusUpdate', async (data: StatusUpdate) => {
 			if (userData.user) {
 				const user = userData.user;
-				// console.log('userStatusUpdate, profile page', data);
+				// // console.log('userStatusUpdate, profile page', data);
 				if (user.id === data.userId) {
 					user.status = data.status;
 				}

@@ -15,12 +15,14 @@ export default {
 		} else {
 			try {
 				const res = await fetch(new URL(userId, baseIdUrl));
+				// // console.log(res)
 				if (res.status === 401) {
 					await this.logout();
 					return null;
 				}
 				return res.json();
 			} catch (err) {
+				// // console.log(err)
 				return null;
 			}
 		}
@@ -134,7 +136,7 @@ export default {
 		}
 	},
 
-	async updateUser(data: { id: string, username: string, image: string}): Promise<void | Error> {
+	async updateUser(data: { id: string, image: string}): Promise<void | Error> {
 		try {
 			let res = await fetch(new URL('updateuser', baseUrlWithEndpoint), {
 				method: 'PUT',

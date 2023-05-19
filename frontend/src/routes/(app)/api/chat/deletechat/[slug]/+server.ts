@@ -19,6 +19,6 @@ export async function DELETE({ url, cookies, fetch }) {
 		return new Response(JSON.stringify(json));
 	} catch (error) {
 		// console.error(error);
-		return new Response(null);
+		return new Response(JSON.stringify({ success: false }));
 	}
 }

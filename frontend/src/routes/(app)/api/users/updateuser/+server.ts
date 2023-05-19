@@ -19,7 +19,7 @@ export async function PUT({ url, cookies, fetch, request }) {
         if (resJson && resJson.statusCode >= 400) {
             throw error(404, 'Not found');
         }
-        return new Response(null);
+        return new Response(JSON.stringify({ success: true }));
     } catch (err: any) {
         if (err instanceof Error && err.message === unauthorizedCode) {
 			throw error(401, unauthorizedCode);
@@ -30,6 +30,6 @@ export async function PUT({ url, cookies, fetch, request }) {
         if (err instanceof Error) {
             throw error(400, err.message);
         }
-        return new Response(null);   
+        return new Response(JSON.stringify({ success: false })); 
     }
 }

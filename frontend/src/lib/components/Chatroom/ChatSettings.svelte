@@ -38,10 +38,10 @@
 	chatSettings.chatname != chatname;
 
 	async function chatUpdater() {
-		// console.log('updating chats');
+		// // console.log('updating chats');
 		const privacyModeChanged = chatSettings.privacyMode != privacyMode;
 		const updatedChat = await chatService.updateChat(chatSettings, privacyModeChanged);
-		// console.log(updatedChat);
+		// // console.log(updatedChat);
 			if (!('message' in updatedChat)) {
 				chatIo.emit('updateChat', updatedChat.chatId);
 			}
@@ -58,7 +58,7 @@
 	async function unbanUser(e: Event) {
 		const target = e.target as HTMLButtonElement;
 		const userId = target.dataset.user;
-		// console.log(userId);
+		// // console.log(userId);
 		if (userId) {
 			await userService.unbanUser(chatId, userId);
 			updateChats(ownerId);

@@ -16,6 +16,6 @@ export class TournamentController {
   async testLadderLevel(@Param('id') userId: string) {
     //test method
     const num = await this.tournamentService.getLadderLevel(userId);
-    //(console.log)(num);
+    //(// console.log)(num);
   }
 }

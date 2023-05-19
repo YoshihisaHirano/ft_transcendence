@@ -4,7 +4,7 @@
 	import UserRecord from './UserRecord.svelte';
 
 	export let friends: ShortUser[], currentId: string;
-	// $: console.log(friends);
+	// $: // console.log(friends);
 </script>
 
 <div class="friends-board-container simple-shadow">

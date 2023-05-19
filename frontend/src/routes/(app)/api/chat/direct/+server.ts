@@ -23,5 +23,5 @@ export async function POST({ url, cookies, fetch, request }) {
         // console.error(error, 'here');
 		return new Response(JSON.stringify(null));
     }
-    return new Response(null);
+    return new Response(JSON.stringify({ success: false }));
 }
