@@ -12,7 +12,7 @@ export class GameService {
 	myGameSubject = new Subject<Map<string, GameSettings>>();
 
 	constructor() {
-		this.games = new Map<string, GameSettings>();
+		this.games = new Map();
 		this.users = new Map();
 	}
 
@@ -28,11 +28,15 @@ export class GameService {
 
 	setScores(data) {
 		if (this.games.has(data.gameId)) {
+			const gameData = this.games.get(data.gameId);
 			this.games.set(data.gameId, {
-				hostScore: data.score1,
-				playerScore: data.score2
+				playerId: gameData.playerId,
+				gameMode: gameData.gameMode,
+				hostScore: data.scores.score1,
+				playerScore: data.scores.score2
 			});
 		}
+		// console.log("after update score: ", this.games.get(data.gameId));
 	}
 
 	deleteGame(gameId) {
@@ -68,7 +72,7 @@ export class GameService {
 
 	getUserIdBySocketId(socketId) {
 		for (const [key, value] of this.users.entries()) {
-			if (value && value.localeCompare(socketId) == 0) {
+			if (value.localeCompare(socketId) == 0) {
 				return key;
 			}
 		}
@@ -80,12 +84,11 @@ export class GameService {
 	}
 
 	getSecondPlayerId(leftUserId) {
-		console.log(leftUserId, this.games);
 		if (this.games.has(leftUserId)) { // host left
 			return this.games.get(leftUserId).playerId; // return id player
 		} else {
 			for (const [key, gameSets] of this.games.entries()) {
-				if (gameSets && gameSets.playerId && gameSets.playerId.localeCompare(leftUserId) == 0) {
+				if (gameSets.playerId.localeCompare(leftUserId) == 0) {
 					return key; // return id host
 				}
 			}
@@ -106,7 +109,7 @@ export class GameService {
 
 	async playerJoinGame(data: GameInvite) : Promise<boolean> {
 		let count = 0;
-		//(// console.log)("join game:", data, this.games);
+		//(console.log)("join game:", data, this.games);
 		while (this.games.has(data.gameId) == false && count < 15) {
 			await this.sleep(100);
 			count++;
