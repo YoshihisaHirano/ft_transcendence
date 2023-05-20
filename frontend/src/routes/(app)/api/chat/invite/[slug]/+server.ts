@@ -2,25 +2,29 @@ import { createBackendUrl, addAuthHeader, addContentType } from '$lib/services/s
 import type { Chat } from '$lib/types/types';
 import { redirect } from '@sveltejs/kit';
 
-export async function GET({ cookies, params, fetch }) {
+export async function GET({ cookies, params, fetch, setHeaders }) {
+	setHeaders({ 'cache-control': 'max-age=0' });
 	const id = params.slug;
 	const userId = cookies.get('user-id') as string;
-    console.log('HERE', userId);
+	// console.log('HERE', userId);
 	const authToken = cookies.get('user-token');
 	const getChatEndpoint = `chat/chatbyid/${id}/`;
 	const addMemberEndpoint = 'chat/addmembers';
 	let chat: Chat | Error | null = null;
 	try {
-	const chatRaw = await fetch(createBackendUrl(getChatEndpoint), {
-		headers: {
-			...addAuthHeader(authToken || '')
-		}
-	});
+		const chatRaw = await fetch(createBackendUrl(getChatEndpoint), {
+			headers: {
+				...addAuthHeader(authToken || '')
+			}
+		});
 		chat = await chatRaw.json();
 		// // console.log(chat);
 	} catch (error) {
 		// console.error(error);
 		chat = null;
+	}
+	if (chat && 'privacyMode' in chat && chat.privacyMode === 'private') {
+		throw redirect(303, '/404');
 	}
 	if (chat && 'message' in chat) {
 		throw redirect(303, '/404');
