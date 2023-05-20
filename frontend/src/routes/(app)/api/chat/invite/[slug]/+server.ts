@@ -5,7 +5,7 @@ import { redirect } from '@sveltejs/kit';
 export async function GET({ cookies, params, fetch }) {
 	const id = params.slug;
 	const userId = cookies.get('user-id') as string;
-    // // console.log('HERE', userId);
+    console.log('HERE', userId);
 	const authToken = cookies.get('user-token');
 	const getChatEndpoint = `chat/chatbyid/${id}/`;
 	const addMemberEndpoint = 'chat/addmembers';
@@ -28,7 +28,6 @@ export async function GET({ cookies, params, fetch }) {
 	if (!chat || chat.banList?.find((user) => user.id === userId)) {
 		throw redirect(303, '/404');
 	}
-	// // console.log(chat);
 	if (chat && chat.privacyMode === 'protected') {
 		throw redirect(308, '/chatrooms/invite/protected/' + id);
 	} else {
@@ -46,7 +45,7 @@ export async function GET({ cookies, params, fetch }) {
 				res = await resRaw.json();
 			} catch (error) {
 				// console.error(error);
-				res = null;
+				res = error as Error;
 			}
 			if (res && 'message' in res) {
 				throw redirect(303, '/404');

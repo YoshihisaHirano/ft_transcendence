@@ -54,6 +54,9 @@ export class ChatService {
       if (user == null || user == undefined) {
         throw new BadRequestException("One of added users is null");
       }
+      if (chat.banList.includes(user)) {
+        throw new BadRequestException("adding user from banlist is impossible!")
+      }
       if (!chat.members.includes(user)) {
         chat.members.push(user);
       }
@@ -193,6 +196,9 @@ export class ChatService {
     return this.chatRepository.delete({ chatId: chatId });
   }
   findById(id: string) {
+    if (!id) {
+      throw new BadRequestException("chatId is undefined!");
+    }
     return this.chatRepository.findOne({
       where: { chatId: id },
     });
