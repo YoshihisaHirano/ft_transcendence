@@ -51,12 +51,14 @@
 				return;
 			}
 			try {
-				reader.readAsDataURL(uploadedFile);
-				reader.onload = () => {
-					resetError();
-					floppyFill = '#2CB01A';
-					updatedUser.image = (reader.result || '') as string;
-				};
+				if (uploadedFile instanceof Blob) {
+					reader.readAsDataURL(uploadedFile);
+					reader.onload = () => {
+						resetError();
+						floppyFill = '#2CB01A';
+						updatedUser.image = (reader.result || '') as string;
+					};
+				}
 			} catch (error) {
 				if (error instanceof Error) {
 					errorMsg = error.message;

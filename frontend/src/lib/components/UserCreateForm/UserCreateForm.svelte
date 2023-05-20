@@ -8,9 +8,9 @@
 	export let intraLogin: string;
 
 	$: newUser = {
-        image: 'null',
+		image: 'null',
 		login: intraLogin,
-		username: '',
+		username: ''
 	};
 
 	$: errorMsg = '';
@@ -23,11 +23,11 @@
 	async function createUser() {
 		if (newUser.username) {
 			const user = await userService.createUser(newUser);
-            if ("message" in user) {
-                errorMsg = user.message;
-                return;
-            }
-            appState.update((prevState) => {
+			if ('message' in user) {
+				errorMsg = user.message;
+				return;
+			}
+			appState.update((prevState) => {
 				return { ...prevState, user: user };
 			});
 			saveToStorage('userId', user.id);
@@ -45,18 +45,27 @@
 				floppyFill = '#E52521';
 				return;
 			}
-			reader.readAsDataURL(uploadedFile);
-			reader.onload = () => {
-				resetError();
-				floppyFill = '#2CB01A';
-				newUser.image = (reader.result || '') as string;
-			};
+			try {
+				if (uploadedFile instanceof Blob) {
+					reader.readAsDataURL(uploadedFile);
+					reader.onload = () => {
+						resetError();
+						floppyFill = '#2CB01A';
+						newUser.image = (reader.result || '') as string;
+					};
+				}
+			} catch (error) {
+				if (error instanceof Error) {
+					errorMsg = error.message;
+					floppyFill = '#E52521';
+				}
+			}
 		}
 	}
 
-    function handleFocus() {
-        errorMsg = '';
-    }
+	function handleFocus() {
+		errorMsg = '';
+	}
 </script>
 
 <form>
@@ -66,7 +75,13 @@
 		{/if}
 		<label for="username" class="username">
 			<p>username</p>
-			<input type="text" id="username" class:failed={errorMsg} bind:value={newUser.username} on:focus={handleFocus} />
+			<input
+				type="text"
+				id="username"
+				class:failed={errorMsg}
+				bind:value={newUser.username}
+				on:focus={handleFocus}
+			/>
 		</label>
 		<label for="profile-pic" class="profile-pic">
 			<p>profile pic</p>
@@ -89,8 +104,10 @@
 				class="visually-hidden"
 			/>
 		</label>
-		<Button disabled={errorMsg !== '' || newUser.username === ''} variant="success" onClick={createUser}
-			>Sign me up</Button
+		<Button
+			disabled={errorMsg !== '' || newUser.username === ''}
+			variant="success"
+			onClick={createUser}>Sign me up</Button
 		>
 	</fieldset>
 </form>
