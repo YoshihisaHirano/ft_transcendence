@@ -72,7 +72,7 @@ export class GameService {
 
 	getUserIdBySocketId(socketId) {
 		for (const [key, value] of this.users.entries()) {
-			if (value.localeCompare(socketId) == 0) {
+			if (value && value.localeCompare(socketId) == 0) {
 				return key;
 			}
 		}
@@ -88,7 +88,7 @@ export class GameService {
 			return this.games.get(leftUserId).playerId; // return id player
 		} else {
 			for (const [key, gameSets] of this.games.entries()) {
-				if (gameSets.playerId.localeCompare(leftUserId) == 0) {
+				if (gameSets && gameSets.playerId && gameSets.playerId.localeCompare(leftUserId) == 0) {
 					return key; // return id host
 				}
 			}

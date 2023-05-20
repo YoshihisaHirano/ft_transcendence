@@ -5,7 +5,7 @@ export function saveToStorage(key: string, value: string) {
         try {
             localStorage.setItem(key, value);
         } catch (e) {
-            console.error(e);
+            // console.error(e);
         }
     }
 }
